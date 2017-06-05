@@ -2,6 +2,24 @@
 Thumbs.db
 ehthumbs.db
 
+# visual studio
+*.ncb
+*.user
+*.suo
+*.aps
+*.opensdf
+*.sdf
+*.VC.db
+Thumbs.db
+Temp
+bin
+Bin
+Log
+ipch
+Debug
+Release
+.vs
+
 # Folder config file
 Desktop.ini
 
