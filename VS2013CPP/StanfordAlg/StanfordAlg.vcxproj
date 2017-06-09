@@ -87,6 +87,7 @@
     <ClCompile Include="wk1-MulInteger.cpp" />
     <ClCompile Include="wk2-CountInv.cpp" />
     <ClCompile Include="wk3-QuickSort.cpp" />
+    <ClCompile Include="wk4-ContractionMinCut.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />
