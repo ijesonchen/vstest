@@ -33,6 +33,9 @@
     <ClCompile Include="wk4-ContractionMinCut.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="wk4-VecListGraph.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h">

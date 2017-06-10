@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <list>
 #include <unordered_set>
@@ -10,11 +11,14 @@
 #include <cmath>
 #include <thread>
 #include <chrono>
+#include <tuple>
 
 using namespace std;
 
 uint32_t VEC_COUNT = 200;
 bool PRINT_CONTENT = false;
+
+void TestVecListGraph(void);
 
 class VSet
 {
@@ -115,13 +119,19 @@ public:
 		{
 			cout << h << " ";
 		}
-		cout << endl;
 	}
-private:
+	void PrintEdgeCnt(void)
+	{
+		int s = 0;
+		for_each(edges.begin(), edges.end(), [&s](int32_t n) { s += n; });
+		cout << " edge " << s << " ";
+	}
+public:
 	vector<int32_t> heads;
 	// 1-based
 	vector<int32_t> edges; 
 };
+
 
 class Graph
 {
@@ -259,10 +269,12 @@ public:
 		for (auto v : vList)
 		{
 			v.PrintHeads();
+			v.PrintEdgeCnt();
+			cout << endl;
 		}
 		cout << endl;
 	}
-private:
+public:
 	list<VVec> vList;
 };
 
@@ -281,7 +293,7 @@ void TestMinCut(const std::string& fileName, uint32_t vecCount, uint32_t ans)
 	int sleepSec = 1;
 	VEC_COUNT = vecCount;
 	auto vv = vecCount * vecCount;
-	uint32_t loop = vv * vecCount;
+	uint32_t loop = vv * vv;
 	cout << "|||| " << fileName << " ** " << loop << endl;
 	Graph g(fileName);
 	g.Print();
@@ -323,6 +335,7 @@ void TestMinCut(const std::string& fileName, uint32_t vecCount, uint32_t ans)
 	if (mincut != ans)
 	{
 		gMin.Print();
+		gMin.PrintHeads();
 		abort();
 	}
 }
@@ -367,8 +380,30 @@ void ProgAssign(void)
 
 }
 
+void TestProgAssign()
+{
+	auto fileName = "data\\wk4-kargerMinCut.txt";
+
+	VEC_COUNT = 200;
+	Graph g(fileName);
+
+	g.PrintHeads();
+	auto e = g.E();
+	auto v = g.V();
+	Graph gMin(g);
+	uint32_t mincut = 100;
+	vector<uint32_t> vtMinCut;
+	uint64_t i = 0;
+	uint64_t last = 0;
+}
+
 void Contraction(void)
 {
+	TestVecListGraph();
+
+	return;
+	TestProgAssign();
+	return;
 // 	vector<int> vt(RAND_NUM + 1, 0);
 // 	int k = (RAND_NUM + 1) * 2000;
 // 	int i = -1;
@@ -390,7 +425,8 @@ void Contraction(void)
 
 //	PRINT_CONTENT = true;
 //	TestMinCut(fileName, 200, 10);
-//	TestMinCut("data\\wk4-Test-MinCut-4-2.txt", 4, 2);
+	//	TestMinCut("data\\wk4-Test-MinCut-4-2.txt", 4, 2);
 	TestMinCut("data\\wk4-Test-MinCut-8-1.txt", 8, 1);
+	TestMinCut("data\\wk4-Test-MinCut-8-2-2.txt", 8, 2);
 	TestMinCut("data\\wk4-Test-MinCut-8-2.txt", 8, 2);
 }

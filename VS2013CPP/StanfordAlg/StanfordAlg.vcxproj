@@ -88,6 +88,7 @@
     <ClCompile Include="wk2-CountInv.cpp" />
     <ClCompile Include="wk3-QuickSort.cpp" />
     <ClCompile Include="wk4-ContractionMinCut.cpp" />
+    <ClCompile Include="wk4-VecListGraph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />
