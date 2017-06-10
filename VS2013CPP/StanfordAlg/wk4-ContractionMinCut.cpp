@@ -16,6 +16,9 @@
 /*
 auto fileName = "data\\wk4-kargerMinCut.txt";
 mincut : 17
+
+random select 2 super vertices is wrong, usually stooped when a supper vertex with single vertex
+should chose edged randomly. max loop record is about 2000, usually found min cut within 500 loop;
 */
 
 using namespace std;

@@ -425,7 +425,53 @@ void RunProgAssign(void)
 	}
 }
 
+void ProgAssignTestLoopCountWhenMincut(void)
+{
+	PRINT_CONTENT = false;
+	auto fileName = "data\\wk4-kargerMinCut.txt";
+	auto outputMax = 1000;
+
+	int sleepSec = 1;
+	int32_t vecCount = 200;
+	VEC_COUNT = vecCount;
+	cout << "|||| " << fileName << " ** " << endl;
+	VecListGraph g(fileName);
+
+	int32_t output = outputMax;
+	int32_t mincut = 200 * 200;
+	int32_t last = 0;
+	int32_t idx = 0;
+	vector<int32_t> vtFound;
+	int32_t minLoop = ((uint32_t)-1) / 2;;
+	int32_t maxLoop = 0;
+	int64_t total = 0;
+	while (true)
+	{
+		if (!--output)
+		{
+			output = outputMax;
+			cout << "total " << total << " founds " << vtFound.size() << " min loop " << minLoop << " max loop " << maxLoop << endl;
+			for (auto e : vtFound)
+			{
+				cout << e << " ";
+			}
+			cout << endl;
+		}
+		++idx;
+		++total;
+		auto cut = RunContract(g);
+		if (cut ==17)
+		{
+			vtFound.push_back(idx);
+			if (idx < minLoop) minLoop = idx;
+			if (idx > maxLoop) maxLoop = idx;
+			cout << "total " << total << " min loop " << minLoop << " max loop " << maxLoop << endl;
+			idx = 0;
+		}
+	}
+}
+
 void TestVecListGraph(void)
 {
-	RunProgAssign();
+	ProgAssignTestLoopCountWhenMincut();
 }
