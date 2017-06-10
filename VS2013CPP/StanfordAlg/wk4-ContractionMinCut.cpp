@@ -13,6 +13,11 @@
 #include <chrono>
 #include <tuple>
 
+/*
+auto fileName = "data\\wk4-kargerMinCut.txt";
+mincut : 17
+*/
+
 using namespace std;
 
 uint32_t VEC_COUNT = 200;
@@ -382,7 +387,7 @@ void ProgAssign(void)
 
 void TestProgAssign()
 {
-	auto fileName = "data\\wk4-kargerMinCut.txt";
+	auto fileName = "data\\wk4-kargerMinCut.txt"; 
 
 	VEC_COUNT = 200;
 	Graph g(fileName);

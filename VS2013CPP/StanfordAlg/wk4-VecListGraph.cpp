@@ -404,21 +404,23 @@ void RunProgAssign(void)
 	cout << "|||| " << fileName << " ** " << loop << endl;
 	VecListGraph g(fileName);
 
-	auto idx = 0;
+	int64_t idx = 0;
 	int32_t mincut = 200 * 200;
+	int64_t last = 0;
 	while (true)
 	{
 		++idx;
 		auto cut = RunContract(g);
 		if (mincut > cut)
 		{
-			cout << " loop " << idx << " min " << cut << " last " << mincut << endl;
+			last = idx;
+			cout << " loop " << idx << " min " << cut << " last " << mincut << " idx " << last << endl;
 			mincut = cut;
 			continue;
 		}
 		if (idx % 1024 == 0)
 		{
-			cout << " loop " << idx << " min " << mincut << endl;
+			cout << " loop " << idx << " min " << mincut << " last " << last << endl;
 		}
 	}
 }
