@@ -10,6 +10,7 @@ void CHECK(bool b)
 	}
 }
 
+
 template <typename TA, typename TB>
 void CHECK(const TA& a, const TB& b)
 {
