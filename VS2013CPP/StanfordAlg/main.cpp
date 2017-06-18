@@ -7,12 +7,13 @@ void CountInversions(void);
 void QuickSortPartition(void);
 void Contraction(void);
 void SCC(void);
+void DijkstraShortestPath(void);
 
 using namespace std;
 
 void main(void)
 {
-	SCC();
+	DijkstraShortestPath();
 
 	cout << "enter to exit." << endl;
 	getchar();

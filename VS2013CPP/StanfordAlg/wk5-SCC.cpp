@@ -24,12 +24,14 @@ WARNING: This is the most challenging programming assignment of the course. Beca
 of the graph you may have to manage memory carefully. The best way to do this depends on your 
 programming language and environment, and we strongly suggest that you exchange tips for doing 
 this on the discussion forums.
+
+result(8second):
+434821,968,459,313,211
 */
 
 #include <string>
 #include <iostream>
 #include <vector>
-#include <list>
 #include <fstream>
 #include <queue>
 #include <deque>
@@ -56,7 +58,7 @@ public:
 	void AddEdge(int from, int to) { adj[from].push_front(to); ++nEdge; }
 	int V(void) const { return adj.size() - 1; }
 	int E(void) const { return nEdge; }
-	list<int> Adj(int v) const { return adj[v]; };
+	deque<int> Adj(int v) const { return adj[v]; };
 
 	AdjGraph Reverse(void)
 	{
@@ -93,7 +95,7 @@ public:
 		}
 	}
 private:
-	vector<list<int>> adj;
+	vector<deque<int>> adj;
 	int nEdge = 0;
 };
 
@@ -110,8 +112,8 @@ bool operator==(const AdjGraph& lhs, const AdjGraph& rhs)
 	{
 		auto lList = lhs.Adj(i);
 		auto rList = rhs.Adj(i);
-		lList.sort();
-		rList.sort();
+		sort(lList.begin(), lList.end());
+		sort(rList.begin(), rList.end());
 		if (lList != rList)
 		{
 			return false;
