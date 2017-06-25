@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
+#include "common.h"
 using namespace std;
 
 vector<int32_t> ReadNumber(const string& filename)

@@ -8,12 +8,13 @@ void QuickSortPartition(void);
 void Contraction(void);
 void SCC(void);
 void DijkstraShortestPath(void);
+void MedianHeap(void);
 
 using namespace std;
 
 void main(void)
 {
-	DijkstraShortestPath();
+	MedianHeap();
 
 	cout << "enter to exit." << endl;
 	getchar();

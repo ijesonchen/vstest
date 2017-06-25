@@ -6,7 +6,7 @@ using namespace std;
 
 void main(void)
 {
-	ResourceManage();
+	PredefinedMacro();
 
 	cout << "enter to continue" << endl;
 	getchar();

@@ -54,6 +54,7 @@ result for wk6-test1-8.txt
 #include <sstream>
 #include <cstdint>
 #include <algorithm>
+#include "common.h"
 
 using namespace std;
 

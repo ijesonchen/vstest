@@ -42,6 +42,9 @@
     <ClCompile Include="wk6-DijkstraShortestPath.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="wk7-MediaHeap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h">

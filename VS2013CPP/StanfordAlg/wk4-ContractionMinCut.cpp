@@ -12,6 +12,7 @@
 #include <thread>
 #include <chrono>
 #include <tuple>
+#include "common.h"
 
 /*
 auto fileName = "data\\wk4-kargerMinCut.txt";
