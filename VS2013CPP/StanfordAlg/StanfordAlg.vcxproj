@@ -162,7 +162,7 @@
     <ClCompile Include="wk4-VecListGraph.cpp" />
     <ClCompile Include="wk5-SCC.cpp" />
     <ClCompile Include="wk6-DijkstraShortestPath.cpp" />
-    <ClCompile Include="wk7-MediaHeap.cpp" />
+    <ClCompile Include="wk7-MediaHeapAndBst.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />

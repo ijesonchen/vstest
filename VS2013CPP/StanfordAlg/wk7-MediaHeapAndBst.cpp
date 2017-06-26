@@ -24,6 +24,7 @@ search-tree-based implementations of the algorithm.
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <memory>
 #include "common.h"
 
 using namespace std;
@@ -108,27 +109,158 @@ private:
 	std::function<bool(int, int)> comp;
 };
 
+
+struct Node
+{
+	int key = 0;
+	int nodes = 1;
+	shared_ptr<Node> p = nullptr;
+	shared_ptr<Node> l = nullptr;
+	shared_ptr<Node> r = nullptr;
+
+	Node(int k) :key(k) {}
+	int ith(void)
+	{
+		auto i = nodes;
+		if (r) { i -= r->nodes; };
+		return i;
+	}
+};
+bool operator==(const Node& l, const Node& r)
+{
+	return l.key == r.key;
+}
+
+bool operator<(const Node& l, const Node& r)
+{
+	return l.key < r.key;
+}
+
+bool operator>(const Node& l, const Node& r)
+{
+	return !(l < r);
+}
+
 class Bst
 {
 public:
-	Bst();
-	~Bst();
+	Bst(){};
+	~Bst(){};
 
-	void Push(const int x){ }
-	int Median(void) { return 0; }
+	void Push(const int x){ Insert(x); }
+	int  Size(void) const { return root ? root->nodes : 0; }
 
-	void PrintSorted(void) {}
-private:
-	struct Node 
+	void PrintSorted(void) 
 	{
-		int key = 0;
-		Node* p = nullptr;
-		Node* l = nullptr;
-		Node* r = nullptr;
-	};
+		if (root) { cout << "root: " << root->key << endl; }
+		RecurPrintVal(root);
+		cout << endl;
+	}
+
+	void PrintNodes(void)
+	{
+		RecurPrintNode(root);
+		cout << endl;
+	}
+
+public:
+	int GetMedian(void)
+	{
+		return Get1Basedith((Size() + 1) / 2);
+	}
+	// i 1-based.
+	int Get1Basedith(int i)
+	{
+		if (i <= 0 || i > Size()) { abort(); }
+		return RecurGet1Baseith(root, i);
+	}
+
+	int RecurGet1Baseith(const shared_ptr<Node>& p, int i)
+	{
+		if (i <= 0) { abort(); }
+		auto ip = p->ith();
+		if (i == ip)	{ return p->key; }
+		if (i < ip) { return RecurGet1Baseith(p->l, i); }
+		if (i > ip) { return RecurGet1Baseith(p->r, i - ip); }
+		abort();
+	}
+
+private:
+
+	void Insert(const int x)
+	{
+		auto px = make_shared<Node>(x);
+		if (!root) { root = px; return; }
+		auto pp = root;
+		auto p = root;
+		while (p)
+		{
+			p->nodes++;
+			pp = p;
+			if (*px < *p) { p = p->l; }
+			else if (*px > *p) { p = p->r; }
+			else { abort(); }
+		}
+		px->p = pp;
+		if (*px < *pp) { pp->l = px; }
+		else if (*px > *pp) { pp->r = px; }
+		else { abort(); }
+	}
+
+	void RecurPrintVal(const shared_ptr<Node>& p)
+	{
+		if (!p) { return; }
+		RecurPrintVal(p->l);
+		cout << p->key << " ";
+		RecurPrintVal(p->r);
+	}
+
+	void RecurPrintNode(const shared_ptr<Node>& p)
+	{
+		if (!p) { return; }
+		RecurPrintNode(p->l);
+		cout << p->nodes << " ";
+		RecurPrintNode(p->r);
+	}
+
+
+	shared_ptr<Node> root = nullptr;
 };
 
-int ReturnMedian(const std::string& fileName)
+void TestBst(void)
+{
+	auto wk7fn = "data\\wk7-Median-1213.txt"; // 1213
+	auto v = ReadInt(wk7fn);
+	auto length = 20;
+	Bst b;
+	for (size_t i = 0; i < length; i++)
+	{
+		b.Push(v[i]);
+		b.PrintSorted();
+		cout << b.GetMedian() << endl;
+	}
+	for (size_t i = 0; i < length; i++)
+	{
+		cout << i << ": " << b.Get1Basedith(i+1) << endl;
+	}
+}
+
+int BstMedian(const std::string& fileName)
+{
+	auto vals = ReadInt(fileName);
+	Bst b;
+	auto total = 0;
+	for (auto i : vals)
+	{
+		b.Push(i);
+		total += b.GetMedian();
+	}
+
+	cout << "total " << total << endl;
+	return total % 10000;
+}
+
+int HeapMedian(const std::string& fileName)
 {
 	auto vals = ReadInt(fileName);
 	CHECK(vals.size() > 3);
@@ -170,7 +302,7 @@ int ReturnMedian(const std::string& fileName)
 		}
 		auto mid = leftHeap.Peak();
 		vtMid.push_back(mid);
-		cout << leftHeap.Size() << " " << rightHeap.Size() << " " << i+1 << " " << mid << " " << total << endl;
+//		cout << leftHeap.Size() << " " << rightHeap.Size() << " " << i+1 << " " << mid << " " << total << endl;
 		total += mid;
 	}
 	cout << "total " << total << endl;
@@ -185,8 +317,12 @@ void MedianHeap(void)
 	auto length = fns.size();
 	for (size_t i = 0; i < length; i++)
 	{
-		auto mid = ReturnMedian(fns[i]);
-		cout << fns[i] << " result: " << mid << " answer: " << res[i] << endl;
-		CHECK(res[i] == mid);
+		auto midBst = BstMedian(fns[i]);
+		cout << fns[i] << " BstMedian: " << midBst << " answer: " << res[i] << endl;
+		CHECK(res[i] == midBst);
+
+		auto midHeap = HeapMedian(fns[i]);
+		cout << fns[i] << " HeapMedian: " << midHeap << " answer: " << res[i] << endl;
+		CHECK(res[i] == midHeap);
 	}
 }
