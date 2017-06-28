@@ -18,13 +18,13 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceManage.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="PredefinedMacro.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ReExp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
