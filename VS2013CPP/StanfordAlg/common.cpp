@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <iostream>
+#include <filesystem>
 #include "common.h"
 
 using namespace std;
@@ -28,13 +29,19 @@ void CHECK(const TA& a, const TB& b)
 }
 
 
-std::vector<int> ReadInt(const std::string& filename)
+std::vector<int64_t> ReadInt(const std::string& filename)
 {
 	fstream f(filename, ios::in);
 	if (!f) { abort(); }
-	int x = 0;
-	vector<int> v;
-	while (f >> x){ v.push_back(x); }
+
+	vector<int64_t> v;
+
+	int64_t x = 0;
+	while (f >> x)
+	{
+		v.push_back(x);
+	}
+
 	return std::move(v);
 }
 

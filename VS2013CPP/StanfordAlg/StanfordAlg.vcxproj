@@ -163,6 +163,7 @@
     <ClCompile Include="wk5-SCC.cpp" />
     <ClCompile Include="wk6-DijkstraShortestPath.cpp" />
     <ClCompile Include="wk7-MediaHeapAndBst.cpp" />
+    <ClCompile Include="wk8-2sum.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />

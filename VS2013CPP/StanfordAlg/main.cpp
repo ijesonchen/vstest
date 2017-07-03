@@ -9,12 +9,13 @@ void Contraction(void);
 void SCC(void);
 void DijkstraShortestPath(void);
 void MedianHeap(void);
+void TwoSum(void);
 
 using namespace std;
 
 void main(void)
 {
-	MedianHeap();
+	TwoSum();
 
 	cout << "enter to exit." << endl;
 	getchar();
