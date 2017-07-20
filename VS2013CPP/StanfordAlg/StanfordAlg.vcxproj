@@ -164,6 +164,7 @@
     <ClCompile Include="wk6-DijkstraShortestPath.cpp" />
     <ClCompile Include="wk7-MediaHeapAndBst.cpp" />
     <ClCompile Include="wk8-2sum.cpp" />
+    <ClCompile Include="wk9-Greedy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />

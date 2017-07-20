@@ -10,12 +10,13 @@ void SCC(void);
 void DijkstraShortestPath(void);
 void MedianHeap(void);
 void TwoSum(void);
+void Greedy(void);
 
 using namespace std;
 
 void main(void)
 {
-	TwoSum();
+	Greedy();
 
 	cout << "enter to exit." << endl;
 	getchar();
