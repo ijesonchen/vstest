@@ -11,12 +11,13 @@ void DijkstraShortestPath(void);
 void MedianHeap(void);
 void TwoSum(void);
 void Greedy(void);
+void Clustering(void);
 
 using namespace std;
 
 void main(void)
 {
-	Greedy();
+	Clustering();
 
 	cout << "enter to exit." << endl;
 	getchar();

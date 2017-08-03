@@ -51,6 +51,9 @@
     <ClCompile Include="wk9-Greedy.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="wk10-Clustering.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h">

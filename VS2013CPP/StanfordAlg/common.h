@@ -1,6 +1,12 @@
 #include <vector>
+#include <deque>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <algorithm>
 #include <cstdint>
+#include <ctime>
+
 #pragma warning(disable: 4267 4244 4018 4800)
 
 void CHECK(bool b);
