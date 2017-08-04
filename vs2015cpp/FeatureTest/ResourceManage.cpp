@@ -8,6 +8,14 @@
 both ReturnGuard and ScopeGuard can be used.
 guard function will executed when caller function return.
 use Release() to avoid execution of guard function with ReturnGuard
+All change to variable will affect guard function.
+
+Multiple ReturnGuard:
+call first execute last:
+	ReturnGuard(t1, ...)
+	ReturnGuard(t2, ...)
+	will execute t2 then t1
+
 
 ReturnGuard must specific an ReturnExecutor variable name
 ScopeGuard will gen an anonymous variable name with line number like
@@ -80,9 +88,9 @@ public:
 
 	void SendMsg(const std::string& msg)
 	{
-		cout << "\t\t" << surfix << "SendMsg " << msg << endl;
+		cout << "\t\t" << surfix << " SendMsg " << msg << endl;
 	}
-private:
+public:
 	std::string name;
 	std::string surfix;
 };
@@ -102,7 +110,10 @@ void ResourceManage(void)
 	decltype(t2) t3;
 	t3 = std::move(t2);
 
-	s = "test2";
-	cout << "after ResourceManage" << endl;
+	rmClient.surfix = "Class_Surfix_Changed";
 
+	s = "test2";
+
+	ReturnGuard(t4, rmClient.SendMsg("SecondMsg"));
+	cout << "after ResourceManage" << endl;
 }

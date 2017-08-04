@@ -29,6 +29,7 @@ search-tree-based implementations of the algorithm.
 
 using namespace std;
 
+
 class Heap
 {
 public:
@@ -40,8 +41,8 @@ public:
 
 	Heap(Heap::HeapType ht)
 	{
-		if (ht == MinHeap) { comp = less<int>(); }
-		else if (ht == MaxHeap) { comp = greater<int>(); }
+		if (ht == MinHeap) { comp = std::less<int>(); }
+		else if (ht == MaxHeap) { comp = std::greater<int>(); }
 		else { abort(); }
 	}
 
@@ -53,17 +54,17 @@ public:
 	void PrintSorted(void) const
 	{
 		auto h = *this;
-		cout << Size() << ": ";
+		std::cout << Size() << ": ";
 		auto i = unsigned(-1);
 		int last = unsigned(-1) / 2 + 2;
 		while (h.Size())
 		{
 			auto top = h.Pop();
-			cout << top << " ";
+			std::cout << top << " ";
 			CHECK(last < top);
 			top = last;
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 
 private:
@@ -77,7 +78,7 @@ private:
 		auto p = 0;
 		while ((p = ((i + 1) / 2 - 1)) >= 0)
 		{
-			if (comp(v[i], v[p])) { swap(v[i], v[p]); }
+			if (comp(v[i], v[p])) { std::swap(v[i], v[p]); }
 			i = p;
 		}
 	}
@@ -86,7 +87,7 @@ private:
 	{
 		auto fn = [](int l, int r) -> bool {return l < r; };
 		auto headVal = Peak();
-		swap(v.front(), v.back());
+		std::swap(v.front(), v.back());
 		v.erase(v.end() - 1);
 		auto p = 0;
 		auto l = 2 * p + 1;
@@ -98,17 +99,16 @@ private:
 			if (comp(v[l], val)) { idx = l; val = v[l]; }
 			if (r < v.size() && comp(v[r], val)) { idx = r; val = v[r]; }
 			if (idx == p) { break; }
-			swap(v[idx], v[p]);
+			std::swap(v[idx], v[p]);
 			p = idx;
 			l = 2 * p + 1;
 			r = 2 * p + 2;
 		}
 		return headVal;
 	}
-	vector<int> v;
+	std::vector<int> v;
 	std::function<bool(int, int)> comp;
 };
-
 
 struct Node
 {

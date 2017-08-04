@@ -12,12 +12,13 @@ void MedianHeap(void);
 void TwoSum(void);
 void Greedy(void);
 void Clustering(void);
+void DynamicProgramming(void);
 
 using namespace std;
 
 void main(void)
 {
-	Clustering();
+	DynamicProgramming();
 
 	cout << "enter to exit." << endl;
 	getchar();

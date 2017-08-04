@@ -45,6 +45,29 @@ std::vector<int64_t> ReadInt(const std::string& filename)
 	return std::move(v);
 }
 
+std::vector<int64_t> ReadIntSkipFirst(const std::string& filename)
+{
+	fstream f(filename, ios::in);
+	if (!f) { abort(); }
+
+	vector<int64_t> v;
+
+	int64_t n = 0;
+	f >> n;
+	if (!f) { abort(); }
+
+	int64_t x = 0;
+
+	while (f >> x)
+	{
+		v.push_back(x);
+	}
+
+	CHECK(n == v.size());
+
+	return std::move(v);
+}
+
 void SleepMs(int millisec)
 {
 	cout << "sleep for " << millisec << " milliseconds..." << endl;

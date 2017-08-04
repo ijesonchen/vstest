@@ -54,9 +54,18 @@
     <ClCompile Include="wk10-Clustering.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="wk11-DynamicProgramming.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeHeap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeHeap.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

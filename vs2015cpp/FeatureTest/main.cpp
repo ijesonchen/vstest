@@ -6,7 +6,7 @@ using namespace std;
 
 void main(void)
 {
-	ReExpTest();
+	ResourceManage();
 
 	cout << "enter to continue" << endl;
 	getchar();
