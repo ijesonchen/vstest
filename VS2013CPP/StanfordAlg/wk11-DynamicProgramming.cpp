@@ -1,5 +1,5 @@
 /*
-1。
+1。 ANS: 19
 In this programming problem and the next you'll code up the greedy algorithm from 
 the lectures on Huffman coding.
 Download the text file below.
@@ -18,11 +18,11 @@ this data set. What is the maximum length of a codeword in the resulting Huffman
 ADVICE: If you're not getting the correct answer, try debugging your algorithm 
 using some small test cases. And then post them to the discussion forum!
 
-2。
+2。 ANS: 9
 Continuing the previous problem, what is the minimum length of a codeword in your 
 Huffman code?
 
-3。
+3。 ANS: 10100110
 In this programming problem you'll code up the dynamic programming algorithm for 
 computing a maximum-weight independent set of a path graph.
 Download the text file below.
@@ -52,7 +52,7 @@ using namespace std;
 
 void TestHaffman(const std::string& fn)
 {
-	auto v = ReadIntSkipFirst(fn);
+	auto v = ReadIntWithCount(fn);
 	NodeHeap<IntBinNode> heap(NodeHeapMin);
 
 	vector<shared_ptr<IntBinNode>> resMgr;
@@ -89,17 +89,80 @@ void Haffman(void)
 }
 
 
-void Mwis(const std::string& fn)
+deque<int64_t> Mwis(const std::string& fn)
 {
-	;
+	// first is count, weight is 1-based
+	auto vtInput = ReadInt(fn);
+	vector<int64_t> vtMid(vtInput.size(), 0);
+	vtMid[1] = vtInput[1];
+	auto length = vtInput.size();
+	for (size_t idx = 2; idx < length; idx++)
+	{
+		vtMid[idx] = std::max(vtMid[idx - 1], vtMid[idx - 2] + vtInput[idx]);
+	}
+	cout << fn << " mwis " << vtMid.back() << endl;
+
+	// output input and middle array
+// 	for (auto idx : vtInput)
+// 	{
+// 		cout.width(4);
+// 		cout << idx << " ";
+// 	}
+// 	cout << endl;
+// 	for (auto idx : vtMid)
+// 	{
+// 		cout.width(4);
+// 		cout << idx << " ";
+// 	}
+// 	cout << endl;
+
+	// path
+	deque<int64_t> vtPath;
+	int idx = length;
+	while (--idx >= 1)
+	{
+		if (vtMid[idx] != vtMid[idx-1])
+		{
+			vtPath.push_front(idx);
+			--idx;
+		}
+	}
+	length = vtPath.size();
+
+	if (vtPath.size() < 10)
+	{
+		cout << "path: ";
+		for (auto i : vtPath)
+		{
+			cout << i << " ";
+		}
+		cout << endl;
+	}
+	return vtPath;
 }
 
 void Mwis(void)
 {
-
+	Mwis("data\\zwk11-mwis-2533-1,3,6,9.txt");
+	Mwis("data\\zwk11-mwis-2616-2,4,6,8,10.txt");
+	auto v = Mwis("data\\zwk11-mwis.txt"); // 10100110
+	vector<int> vtRef = { 1, 2, 3, 4, 17, 117, 517, 997 };
+	for (auto i : vtRef)
+	{
+		if (find(v.begin(), v.end(), i) != v.end())
+		{
+			cout << "1";
+		}
+		else
+		{
+			cout << 0;
+		}
+	}
+	cout << endl;
 }
 
 void DynamicProgramming(void)
 {
+	Haffman();
 	Mwis();
 }

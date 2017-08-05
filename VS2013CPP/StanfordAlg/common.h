@@ -13,7 +13,7 @@
 
 void CHECK(bool b);
 std::vector<std::int64_t> ReadInt(const std::string& filename); 
-std::vector<std::int64_t> ReadIntSkipFirst(const std::string& filename);
+std::vector<std::int64_t> ReadIntWithCount(const std::string& filename);
 void SleepMs(int millisec);
 void SleepSec(int sec);
 

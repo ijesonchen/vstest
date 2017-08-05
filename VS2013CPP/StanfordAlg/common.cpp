@@ -45,7 +45,7 @@ std::vector<int64_t> ReadInt(const std::string& filename)
 	return std::move(v);
 }
 
-std::vector<int64_t> ReadIntSkipFirst(const std::string& filename)
+std::vector<int64_t> ReadIntWithCount(const std::string& filename)
 {
 	fstream f(filename, ios::in);
 	if (!f) { abort(); }
