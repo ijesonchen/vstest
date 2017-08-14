@@ -4,10 +4,13 @@
 
 using namespace std;
 
+auto pIncTextFile = R"(
+#include "svnrel.txt"
+)";
+
 void main(void)
 {
-	ReExpTest();
-
+	cout << pIncTextFile << endl;
 	cout << "enter to continue" << endl;
 	getchar();
 }

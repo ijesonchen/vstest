@@ -1,0 +1,13 @@
+Path: .
+Working Copy Root Path: C:\SVN\DrVoice_ReqOpt_vs2015
+URL: https://192.168.13.240/svn/rd/main/branches/DrVoice_ReqOpt_vs2015
+Relative URL: ^/main/branches/DrVoice_ReqOpt_vs2015
+Repository Root: https://192.168.13.240/svn/rd
+Repository UUID: 4168787d-2d15-0543-ad1a-8d698cb5f732
+Revision: 2509
+Node Kind: directory
+Schedule: normal
+Last Changed Author: cjx
+Last Changed Rev: 2507
+Last Changed Date: 2017-08-11 16:11:08 +0800 (÷‹ŒÂ, 11 ∞À‘¬ 2017)
+

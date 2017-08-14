@@ -1,0 +1,17 @@
+?       Pub\Common\a
+    X   Pub\MongoAccess\MongoAuto.cpp
+    X   Pub\MongoAccess\MongoAuto.h
+    X   Pub\MongoAccess\MongoClient.cpp
+    X   Pub\MongoAccess\MongoClient.h
+    X   Pub\MongoAccess\MongocHelp.cpp
+    X   Pub\MongoAccess\MongocHelp.h
+?       Pub\MongoAccess\MongocHelp.h2
+    X   Pub\MongoAccess\mfcnew.h
+M       Pub\libTelParser
+X       Pub\libmongoc
+M       WS_Server\ServerConst.cpp
+
+Performing status on external item at 'Pub\libTelParser':
+    X   Pub\libTelParser\TelParser.h
+
+Performing status on external item at 'Pub\libmongoc':
