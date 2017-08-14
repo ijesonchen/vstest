@@ -68,7 +68,7 @@ bool ParseFile(vector<string>& src, vector<Tag>& tag, vector<string>& vWrite)
 string RawString(const string& s)
 {
 	stringstream ss;
-	ss << "R\"###(" << s << ")###\"" << "," << endl;
+	ss << "\tR\"###(" << s << ")###\"" << "," << endl;
 	auto st = ss.str();
 	return ss.str();
 }
@@ -81,7 +81,7 @@ bool WriteSrc2(const std::string fn)
 	{
 		return false;
 	}
-	f << u8R"~~~(    const char* g_u8RepoString[] = {)~~~";
+	f << u8R"~~~(const char* g_u8RepoString[] = {)~~~";
 	f << endl;
 
 
@@ -92,7 +92,7 @@ bool WriteSrc2(const std::string fn)
 		{
 			f << RawString(s);
 		}
-		f << "\"\"" << endl;
+		f << "\t\"\"" << endl;
 	}
 
 
