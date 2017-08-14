@@ -70,23 +70,22 @@ bool WriteSrc(const std::string fn)
 	{
 		return false;
 	}
+	string s = u8R"~~~(asdfasfd)~~~";
+	f << u8R"~~~(    const char* g_u8RepoString = u8R"###()~~~" << endl;
 
 	if (!vWriteInfo.empty())
 	{
-		string s = u8R"~~~(asdfasfd)~~~";
-		f << u8R"~~~(    const char* g_u8RepoInfoString = u8R"###()~~~" << endl;
 		f << "---->RepoInfo: " << endl;
 		for (auto& s : vWriteInfo)
 		{
 			f << s << endl;
 		}
-		f << u8R"~~~()###";)~~~" << endl << endl;
+		f << endl;
 	}
 
 
 	if (!vWriteStat.empty())
 	{
-		f << u8R"~~~(    const char* g_u8RepoChangeListString = u8R"###()~~~" << endl;
 		f << "---->FileChangeList: " << endl;
 		for (auto& s : vWriteStat)
 		{
@@ -155,30 +154,7 @@ int main(int argc, char** argv)
 	{
 		return -5;
 	}
-
-	const char* g_u8RepoInfoString = u8R"###(---->RepoInfo: 
-Modify Rev: 2507
-Modify Date: 2017-08-11 16:11:08 +0800
-Top Rev: 2509
-Repo Path: ^/main/branches/DrVoice_ReqOpt_vs2015
-Local Path: C:\SVN\DrVoice_ReqOpt_vs2015
-)###";
-
-	const char* g_u8RepoChangeListString = u8R"###(
----->FileChangeList: 
-*) Pub\libTelParser
-*) WS_Server\ServerConst.cpp
-+) Pub\Common\a
-+) Pub\MongoAccess\MongocHelp.h2
-)###";
-
-	cout << "*******" << endl;
-
-	cout << g_u8RepoInfoString << endl;
-	cout << g_u8RepoChangeListString << endl;
-
-
-
+	
 	cout << "done" << endl;
 
 	return 0;
