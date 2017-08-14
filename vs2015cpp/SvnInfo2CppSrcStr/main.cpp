@@ -2,6 +2,8 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <sstream>
+#include "repoString.dat"
 
 using namespace std;
 
@@ -63,6 +65,55 @@ bool ParseFile(vector<string>& src, vector<Tag>& tag, vector<string>& vWrite)
 	return ret;
 }
 
+string RawString(const string& s)
+{
+	stringstream ss;
+	ss << "R\"###(" << s << ")###\"" << "," << endl;
+	auto st = ss.str();
+	return ss.str();
+}
+
+
+bool WriteSrc2(const std::string fn)
+{
+	fstream f(fn, ios::out);
+	if (!f)
+	{
+		return false;
+	}
+	f << u8R"~~~(    const char* g_u8RepoString[] = {)~~~";
+	f << endl;
+
+
+	if (!vWriteInfo.empty())
+	{
+		f << RawString("---->RepoInfo: ");
+		for (auto& s : vWriteInfo)
+		{
+			f << RawString(s);
+		}
+		f << "\"\"" << endl;
+	}
+
+
+
+	if (!vWriteStat.empty())
+	{
+		f << RawString("---->FileChangeList: ");
+		for (auto& s : vWriteStat)
+		{
+			f << RawString(s);
+		}
+	}
+
+	f << u8R"~~~(};)~~~";
+	
+	f << endl;
+
+
+	return true;
+}
+
 bool WriteSrc(const std::string fn)
 {
 	fstream f(fn, ios::out);
@@ -98,7 +149,7 @@ bool WriteSrc(const std::string fn)
 }
 
 int main(int argc, char** argv)
-{
+{	
 	if (argc != knArgc)
 	{
 		cout << "exec info.txt status.txt src.cpp";
@@ -150,7 +201,7 @@ int main(int argc, char** argv)
 		}
 	}
 	
-	if (!WriteSrc(argv[3]))
+	if (!WriteSrc2(argv[3]))
 	{
 		return -5;
 	}
