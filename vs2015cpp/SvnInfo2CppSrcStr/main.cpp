@@ -124,15 +124,16 @@ bool WriteSrc2(const std::string fn)
 	f << endl;
 
 
-	if (!vWriteInfo.empty())
+	if (vWriteInfo.empty())
 	{
-		f << RawString("---->RepoInfo: ");
-		for (auto& s : vWriteInfo)
-		{
-			f << RawString(s);
-		}
-		f << "\t\"\"," << endl;
+		return false;
 	}
+	f << RawString("---->RepoInfo: ");
+	for (auto& s : vWriteInfo)
+	{
+		f << RawString(s);
+	}
+	f << "\t\"\"," << endl;
 
 
 
@@ -225,11 +226,8 @@ int main(int argc, char** argv)
 		return -3;
 	}
 
-	if (!ParseFile(vReadStat, vStatTag, vWriteStat))
-	{
-		cout << "ParseFile failed: " << argv[2] << endl;
-		return -4;
-	}
+	// no return check. maybe no change list
+	ParseFile(vReadStat, vStatTag, vWriteStat);
 
 	for (auto& s : vWriteInfo)
 	{
