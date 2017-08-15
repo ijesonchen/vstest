@@ -92,7 +92,7 @@ bool WriteSrc2(const std::string fn)
 		{
 			f << RawString(s);
 		}
-		f << "\t\"\"" << endl;
+		f << "\t\"\"," << endl;
 	}
 
 
@@ -104,6 +104,7 @@ bool WriteSrc2(const std::string fn)
 		{
 			f << RawString(s);
 		}
+		f << "\t\"\"," << endl;
 	}
 
 	f << u8R"~~~(};)~~~";
