@@ -27,6 +27,9 @@
     <ClCompile Include="ResourceManage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="QuerySemaphoreInfo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

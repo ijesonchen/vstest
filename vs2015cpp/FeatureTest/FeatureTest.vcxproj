@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PredefinedMacro.cpp" />
+    <ClCompile Include="QuerySemaphoreInfo.cpp" />
     <ClCompile Include="ReExp.cpp" />
     <ClCompile Include="ResourceManage.cpp" />
   </ItemGroup>

@@ -3,10 +3,10 @@
 #include "main.h"
 
 using namespace std;
-
+void QuerySemaphoreInfo(void);
 void main(void)
 {
-	ResourceManage();
+	QuerySemaphoreInfo();
 
 	cout << "enter to continue" << endl;
 	getchar();
