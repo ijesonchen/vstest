@@ -5,7 +5,46 @@
 #include <sstream>
 #include "repoString.dat"
 
+//////////////////////////////////////////////////////////////////////////
+/*
+convert repo info by "svn info" to string def in cpp
+used to build repo info into exec
+
+example with vs2015, svn repo
+
+PROPERTY SET:
+	Project Property, Build Event, Pre-Build Event, Command Line, Edit
+	
+	with command line:
+	svn info $(SolutionDir) > $(SolutionDir)Bin\repoInfo.tmp
+	svn stat $(SolutionDir) > $(SolutionDir)Bin\repoStat.tmp
+	$(SolutionDir)doc\SvnInfo2CppSrcStr.exe $(SolutionDir)Bin\repoInfo.tmp $(SolutionDir)Bin\repoStat.tmp $(SolutionDir)repoString.tmp
+	
+CODE:
+	#include "repoString.tmp"
+
+	stringstream ssRepo;
+	ssRepo << u8"RepoInfo:" << "\r\n";
+	for (auto p : g_u8RepoString)
+	{
+	ssRepo << "\r\n" << p;
+	}
+
+	Log(INFO, ssRepo.str());
+
+	stringstream ssBuild;
+	ssBuild << "\r\n\r\n----> Build: " << __DATE__ << ", " << __TIME__ << "\r\n";
+
+	Log(INFO, ssBuild.str());
+*/
+//////////////////////////////////////////////////////////////////////////
+
+
+
+
 using namespace std;
+
+
 
 const int knArgc = 4;
 
@@ -17,11 +56,11 @@ struct Tag {
 
 vector<string> vReadInfo;
 vector<Tag> vInfoTag = {
-	{ "Last Changed Rev", "Modify Rev"},
-	{ "Last Changed Date", "Modify Date"},
-	{ "Revision", "Top Rev" },
-	{ "Relative URL", "Repo Path"},
-	{ "Working Copy Root Path", "Local Path"},
+	{ "Last Changed Rev",		"Modify Rev "},
+	{ "Last Changed Date",		"Modify Date"},
+	{ "Revision",				"Top    Rev " },
+	{ "Relative URL",			"Repo   Path"},
+	{ "Working Copy Root Path", "Local  Path"},
 };
 vector<string> vReadStat;
 vector<Tag> vStatTag = {
@@ -153,18 +192,20 @@ int main(int argc, char** argv)
 {	
 	if (argc != knArgc)
 	{
-		cout << "exec info.txt status.txt src.cpp";
-		return -1;
+		cout << "exec info.txt status.txt src.cpp" << endl;
+		return -100;
 	}
 
 
 	if (!ReadFile(argv[1], vReadInfo))
 	{
+		cout << "ReadFile failed: " << argv[1] << endl;
 		return -1;
 	}
 
 	if (!ReadFile(argv[2], vReadStat))
 	{
+		cout << "ReadFile failed: " << argv[2] << endl;
 		return -2;
 	}
 
@@ -180,11 +221,13 @@ int main(int argc, char** argv)
 
 	if (!ParseFile(vReadInfo, vInfoTag, vWriteInfo))
 	{
+		cout << "ParseFile failed: " << argv[1] << endl;
 		return -3;
 	}
 
 	if (!ParseFile(vReadStat, vStatTag, vWriteStat))
 	{
+		cout << "ParseFile failed: " << argv[2] << endl;
 		return -4;
 	}
 
@@ -204,10 +247,11 @@ int main(int argc, char** argv)
 	
 	if (!WriteSrc2(argv[3]))
 	{
+		cout << "WriteSrc2 failed: " << argv[3] << endl;
 		return -5;
 	}
 	
-	cout << "done" << endl;
+	cout << "SvnInfo2CppSrcStr done." << endl;
 
 	return 0;
 }
