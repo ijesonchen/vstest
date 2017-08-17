@@ -15,12 +15,13 @@ void Greedy(void);
 // 需要测试是否能够加快速度。
 void Clustering(void);
 void DynamicProgramming(void);
+void KnapSack(void);
 
 using namespace std;
 
 void main(void)
 {
-	DynamicProgramming();
+	KnapSack();
 
 	cout << "enter to exit." << endl;
 	getchar();

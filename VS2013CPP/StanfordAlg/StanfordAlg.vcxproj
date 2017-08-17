@@ -158,6 +158,7 @@
     <ClCompile Include="NodeHeap.cpp" />
     <ClCompile Include="wk1-MulInteger.cpp" />
     <ClCompile Include="wk11-DynamicProgramming.cpp" />
+    <ClCompile Include="wk12-knapsack.cpp" />
     <ClCompile Include="wk2-CountInv.cpp" />
     <ClCompile Include="wk3-QuickSort.cpp" />
     <ClCompile Include="wk4-ContractionMinCut.cpp" />
