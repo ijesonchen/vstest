@@ -33,9 +33,9 @@ typedef struct _SEMAPHORE_BASIC_INFORMATION
 void QuerySemaphoreInfo(void)
 {     
 	_NtQuerySemaphore NtQuerySemaphore;     
-	HANDLE Semaphore;     
-	SEMAPHORE_BASIC_INFORMATION BasicInfo;     
-	NTSTATUS Status;       
+	HANDLE Semaphore;
+	SEMAPHORE_BASIC_INFORMATION BasicInfo;
+	NTSTATUS Status;
 	Semaphore = CreateSemaphore(NULL, 50, 100, L"Test");
 	WaitForSingleObject(Semaphore, INFINITE);
 	NtQuerySemaphore = (_NtQuerySemaphore)GetProcAddress (GetModuleHandle (L"ntdll.dll"), "NtQuerySemaphore");      
