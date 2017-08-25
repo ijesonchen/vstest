@@ -33,6 +33,9 @@
     <ClCompile Include="array.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="atomic.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

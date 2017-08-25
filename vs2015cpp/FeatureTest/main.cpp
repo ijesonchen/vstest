@@ -5,8 +5,8 @@
 using namespace std;
 void main(void)
 {
-	ArrayTest();
+	AtomicTest();
 
 	cout << "enter to continue" << endl;
-//	getchar();
+	getchar();
 }

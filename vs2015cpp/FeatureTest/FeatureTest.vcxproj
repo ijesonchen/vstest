@@ -159,6 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="array.cpp" />
+    <ClCompile Include="atomic.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PredefinedMacro.cpp" />
     <ClCompile Include="QuerySemaphoreInfo.cpp" />
