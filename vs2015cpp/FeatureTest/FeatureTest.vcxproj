@@ -160,11 +160,15 @@
   <ItemGroup>
     <ClCompile Include="array.cpp" />
     <ClCompile Include="atomic.cpp" />
+    <ClCompile Include="filesystem_test.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PredefinedMacro.cpp" />
     <ClCompile Include="QuerySemaphoreInfo.cpp" />
     <ClCompile Include="ReExp.cpp" />
     <ClCompile Include="ResourceManage.cpp" />
+    <ClCompile Include="ConsoleColor.cpp" />
+    <ClCompile Include="smart_pointer.cpp" />
+    <ClCompile Include="TypeTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h" />

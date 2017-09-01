@@ -63,6 +63,9 @@
     <ClCompile Include="wk12-knapsack.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="wk13-AllPairShortestPath.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h">

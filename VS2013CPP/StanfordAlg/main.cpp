@@ -16,12 +16,13 @@ void Greedy(void);
 void Clustering(void);
 void DynamicProgramming(void);
 void KnapSack(void);
+void AllPairShortestPath(void);
 
 using namespace std;
 
 void main(void)
 {
-	KnapSack();
+	AllPairShortestPath();
 
 	cout << "enter to exit." << endl;
 	getchar();
