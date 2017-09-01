@@ -334,6 +334,7 @@ void TC_APSPTest(void)
 	if (vtWrong.empty())
 	{
 		cout << "**** ALL PASSED ****" << endl;
+		return;
 	}
 
 	cout << "**** FAILED ****" << endl;
