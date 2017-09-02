@@ -29,7 +29,11 @@ algorithms!
 
 OPTIONAL: Here is a bigger data set to play with.
 
-large.txt 
+large.txt -6
+i7-4790(3.6G-4G 4C8T), 32G ddr3. win7 sp1, vs2013 update4, SSD
+cpu time: 8:22:35, max mem: 11,755,424K
+relative: g1-g3: total cpu less than 5 sec, mem less than 100M
+
 For fun, try computing the shortest shortest path of the graph in the file above.
 
 //////////////////////////////////////////////////////////////////////////
@@ -378,8 +382,8 @@ void APSP_Stanford(void)
 void AllPairShortestPath(void)
 {
 	// assignment1AllPairsShortestPath/input_random_1_2.txt bad 51 right NULL
-	bPrintDetail = false;
-	TC_APSPTest();
+// 	bPrintDetail = false;
+// 	TC_APSPTest();
 // 	return;
 // 	bPrintDetail = true;
 // 	auto t = MinAllPairShortestPath("data\\zwk13_1_null.txt");

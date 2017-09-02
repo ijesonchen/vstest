@@ -79,3 +79,24 @@ void SleepSec(int sec)
 {
 	SleepMs(sec * 1000);
 }
+
+
+void TimeCost(const std::chrono::high_resolution_clock::time_point& tp)
+{
+	using namespace chrono;
+
+	auto tpNow = high_resolution_clock::now();
+	auto dur = tpNow - tp;
+	auto cost = duration_cast<duration<double>>(dur);
+	auto costsec = cost.count();
+	cout << endl << "time cost: ";
+	if (costsec > 1)
+	{
+		cout << costsec << " seconds.";
+	}
+	else
+	{
+		cout << costsec * 1000 << " milliseconds.";
+	}
+	cout << endl;
+}
