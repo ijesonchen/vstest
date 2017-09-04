@@ -90,6 +90,21 @@ public:
 		assert(n == e);
 	}
 
+	void GenNegMap(int nV)
+	{
+		v = nV;
+		e = v * v;
+		vw.assign(v, vector<int64_t>(v, maxValue));
+		vp.assign(v, vector<int16_t>(v, INT16_MAX));
+		for (auto& v : vw)
+		{
+			for (auto& w : v)
+			{
+				w = -1;
+			}
+		}
+	}
+
 	void Print(void) { return Print(vw); }
 
 	tuple<int64_t, bool> APSP_FloydWarshall(void)
@@ -379,10 +394,22 @@ void APSP_Stanford(void)
 	}
 }
 
+void NoStopOnNegCycle(void)
+{
+	// DO NOT STOP ON NEG CYCLE
+	// weight is -1 for each node.
+	// result is -2^n
+	bPrintDetail = true;
+
+	GraphMatrixSP g;
+	g.GenNegMap(4);
+	g.APSP_FloydWarshall();
+}
+
 void AllPairShortestPath(void)
 {
 	// assignment1AllPairsShortestPath/input_random_1_2.txt bad 51 right NULL
-// 	bPrintDetail = false;
+// 	c = false;
 // 	TC_APSPTest();
 // 	return;
 // 	bPrintDetail = true;
