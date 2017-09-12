@@ -161,6 +161,7 @@
     <ClCompile Include="array.cpp" />
     <ClCompile Include="atomic.cpp" />
     <ClCompile Include="filesystem_test.cpp" />
+    <ClCompile Include="LogStream.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PredefinedMacro.cpp" />
     <ClCompile Include="QuerySemaphoreInfo.cpp" />

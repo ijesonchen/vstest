@@ -5,7 +5,7 @@
 using namespace std;
 void main(void)
 {
-	FileSystemTest();
+	MainTest();
 	cout << "enter to continue" << endl;
 	getchar();
 }
