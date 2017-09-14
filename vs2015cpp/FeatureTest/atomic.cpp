@@ -1,13 +1,57 @@
 #include <atomic>
 #include <chrono>
 #include <iostream>
+#include <ctime>
 using namespace std;
 using namespace std::chrono;
 
 /*
 release: 10亿次 9sec
 debug: 1亿次 12sec
+
+GCounter/GString  1G次 3.8G cpu
+release: 29 33 sec
+debug:	239 764 sec
+
 */
+
+
+atomic_ullong gCounter;
+
+inline std::uint64_t GCounter(void)
+{
+	return (uint64_t)(std::time(nullptr) << 32) | (++gCounter & 0xFFFFFFFF);
+}
+
+inline char Byte2Char(const char b0)
+{
+	auto b = (b0 > 0xf || b0 < 0) ? 0 : b0;
+	return b < 10 ? ('0' + b) : ('a' - 10 + b);
+}
+
+inline std::string GString(const std::uint64_t i)
+{
+	std::string s;
+	char* p = (char*)&i;
+	char c[3] = { 0 };
+	int k = 8;
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 2; ++j)
+		{
+			unsigned char b = p[--k];
+			c[0] = Byte2Char(b >> 4);
+			c[1] = Byte2Char(b & 15);
+			s.append(c);
+		}
+		if (k)
+		{
+			s.append("-");
+		}
+	}
+
+	return s;
+}
 
 void AtomicTest(void)
 {

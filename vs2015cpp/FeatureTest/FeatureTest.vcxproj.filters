@@ -54,6 +54,9 @@
     <ClCompile Include="LogStream.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BitField.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

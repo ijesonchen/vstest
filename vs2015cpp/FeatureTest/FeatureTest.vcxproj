@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="array.cpp" />
     <ClCompile Include="atomic.cpp" />
+    <ClCompile Include="BitField.cpp" />
     <ClCompile Include="filesystem_test.cpp" />
     <ClCompile Include="LogStream.cpp" />
     <ClCompile Include="main.cpp" />
