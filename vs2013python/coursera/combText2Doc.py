@@ -2,6 +2,7 @@
 from docx.shared import Inches
 import os
 
+# pip install python-docx ; 0.8.6
 # combine text in subfolders in one doc
 PATH = r'''Z:\1'''
 

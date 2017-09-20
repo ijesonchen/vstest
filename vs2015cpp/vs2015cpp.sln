@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FeatureTest", "FeatureTest\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SvnInfo2CppSrcStr", "SvnInfo2CppSrcStr\SvnInfo2CppSrcStr.vcxproj", "{35921A83-4A99-405F-8AAE-2C239E32EEDF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jTail", "jTail\jTail.vcxproj", "{BE9982E1-3677-46CC-96E1-C92CF2593706}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{35921A83-4A99-405F-8AAE-2C239E32EEDF}.Release|x64.Build.0 = Release|x64
 		{35921A83-4A99-405F-8AAE-2C239E32EEDF}.Release|x86.ActiveCfg = Release|Win32
 		{35921A83-4A99-405F-8AAE-2C239E32EEDF}.Release|x86.Build.0 = Release|Win32
+		{BE9982E1-3677-46CC-96E1-C92CF2593706}.Debug|x64.ActiveCfg = Debug|x64
+		{BE9982E1-3677-46CC-96E1-C92CF2593706}.Debug|x64.Build.0 = Debug|x64
+		{BE9982E1-3677-46CC-96E1-C92CF2593706}.Debug|x86.ActiveCfg = Debug|Win32
+		{BE9982E1-3677-46CC-96E1-C92CF2593706}.Debug|x86.Build.0 = Debug|Win32
+		{BE9982E1-3677-46CC-96E1-C92CF2593706}.Release|x64.ActiveCfg = Release|x64
+		{BE9982E1-3677-46CC-96E1-C92CF2593706}.Release|x64.Build.0 = Release|x64
+		{BE9982E1-3677-46CC-96E1-C92CF2593706}.Release|x86.ActiveCfg = Release|Win32
+		{BE9982E1-3677-46CC-96E1-C92CF2593706}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
