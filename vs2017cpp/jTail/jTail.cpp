@@ -34,7 +34,7 @@ void main(int argc, char** argv)
 	auto pos = 0;
 	if (size > firstRead)
 	{
-		pos = size - firstRead;
+		pos = (int)size - firstRead;
 	}
 	string s;
 	while (true)
@@ -43,7 +43,7 @@ void main(int argc, char** argv)
 		if (pos != size)
 		{
 			f.seekg(pos);
-			pos = size;
+			pos = (int)size;
 			while (getline(f, s))
 			{
 				cout << s << endl;

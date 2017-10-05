@@ -37,7 +37,7 @@ void ArrayTest(void)
 	
 	auto rawssp = *spssp;
 	auto rawssp2 = spssp.get();
-	for (int i = 0; i < length; ++i)
+	for (unsigned i = 0; i < length; ++i)
 	{
 		auto p = rawssp[i];
 
@@ -48,7 +48,7 @@ void ArrayTest(void)
 
 	for (size_t i = 0; i < length; i++)
 	{
-		vv[i][i] = i;
+		vv[i][i] = (int)i;
 	}
 
 	int length3 = 4;
@@ -57,6 +57,6 @@ void ArrayTest(void)
 
 	for (size_t i = 0; i < length; i++)
 	{
-		vvv[i][i][i] = i;
+		vvv[i][i][i] = (int)i;
 	}
 }
