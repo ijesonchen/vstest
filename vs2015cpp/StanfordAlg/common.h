@@ -29,6 +29,17 @@ void SleepMs(int millisec);
 void SleepSec(int sec);
 void TimeCost(const std::chrono::high_resolution_clock::time_point& tp);
 
+inline std::chrono::steady_clock::time_point Now(void) 
+	{ return std::chrono::high_resolution_clock::now(); }
+inline float Tock(const std::chrono::steady_clock::time_point& tp)
+	{ return std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - tp).count(); }
+
+// not thread-safe:
+extern std::chrono::steady_clock::time_point g_tp;
+inline void Tick(void)
+	{ g_tp = std::chrono::high_resolution_clock::now(); }
+inline float Tock(void)
+	{ return std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - g_tp).count(); }
 
 // ReturnExecutor var([&](){ f; })
 #define ReturnGuard(name, func)	\

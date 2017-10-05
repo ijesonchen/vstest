@@ -19,6 +19,8 @@ void DynamicProgramming(void);
 void KnapSack(void);
 // wk13: try Johnson alg, correct CLRS 25.3 pesudo code.
 void AllPairShortestPath(void);
+// wk14
+void TravelingSalesmanProblem(void);
 
 using namespace std;
 
@@ -26,7 +28,7 @@ void main(void)
 {
 	auto tp = chrono::high_resolution_clock::now();
 
-	AllPairShortestPath();
+	TravelingSalesmanProblem();
 
 	TimeCost(tp);
 	cout << "enter to exit." << endl;

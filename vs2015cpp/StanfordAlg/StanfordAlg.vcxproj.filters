@@ -66,6 +66,9 @@
     <ClCompile Include="wk13-AllPairShortestPath.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="wk14-DPforTravelingSalesmanProblem(TSP).cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h">

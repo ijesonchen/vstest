@@ -160,6 +160,7 @@
     <ClCompile Include="wk11-DynamicProgramming.cpp" />
     <ClCompile Include="wk12-knapsack.cpp" />
     <ClCompile Include="wk13-AllPairShortestPath.cpp" />
+    <ClCompile Include="wk14-DPforTravelingSalesmanProblem(TSP).cpp" />
     <ClCompile Include="wk2-CountInv.cpp" />
     <ClCompile Include="wk3-QuickSort.cpp" />
     <ClCompile Include="wk4-ContractionMinCut.cpp" />

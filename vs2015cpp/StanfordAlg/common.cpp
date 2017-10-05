@@ -10,6 +10,8 @@
 
 using namespace std;
 
+std::chrono::steady_clock::time_point g_tp;
+
 void CHECK(bool b)
 {
 	if (!b)
