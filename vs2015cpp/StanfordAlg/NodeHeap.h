@@ -93,12 +93,12 @@ private:
 		auto p = 0;
 		auto l = 2 * p + 1;
 		auto r = 2 * p + 2;
-		while (l < v.size())
+		while (l < (int)v.size())
 		{
 			auto idx = p;
 			auto pVal = v[idx];
 			if (comp(*(v[l]), *pVal)) { idx = l; pVal = v[l]; }
-			if (r < v.size() && comp(*(v[r]), *pVal)) { idx = r; pVal = v[r]; }
+			if (r < (int)v.size() && comp(*(v[r]), *pVal)) { idx = r; pVal = v[r]; }
 			if (idx == p) { break; }
 			std::swap(v[idx], v[p]);
 			p = idx;

@@ -197,12 +197,12 @@ private:
 				auto n0 = vv0[i][j];
 				if (n0 == n)
 				{
-					printf("%8d", n);
+					printf("%8lld", (int64_t)n);
 				}
 				else
 				{
 					SetConsoleTextAttribute(handle, FOREGROUND_RED);
-					printf("%8d", n);
+					printf("%8lld", (int64_t)n);
 					SetConsoleTextAttribute(handle, 7);
 				}
 			}
@@ -237,7 +237,7 @@ private:
 					SetConsoleTextAttribute(handle, 7);
 					continue;
 				}
-				printf("%8d", n);
+				printf("%8lld", (int64_t)n);
 			}
 			cout << endl;
 		}
@@ -299,7 +299,7 @@ vector<string> TC_LoadFiles(void)
 	{
 		auto fn = it->path().string();
 		sys::path p(fn);
-		if (p.stem().find("input_random") != string::npos)
+		if (p.stem().string().find("input_random") != string::npos)
 		{
 			vt.push_back(fn);
 			auto ofn = TC_GetOutput(fn);
