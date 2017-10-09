@@ -1,3 +1,10 @@
+//////////////////////////////////////////////////////////////////////////
+// common function
+bool BindCpu(int cpuidx);
+
+
+//////////////////////////////////////////////////////////////////////////
+// test function
 void PredefinedMacro(void);
 void ResourceManage(void);
 void ReExpTest(void);
@@ -9,9 +16,11 @@ void TypeTest(void);
 void FileSystemTest(void);
 void LogStreamTest(void); 
 void BitFieldTest(void);
+void ThreadTest(void);
+
 
 inline void MainTest(void)
 {
-	BitFieldTest();
+	ThreadTest();
 }
 

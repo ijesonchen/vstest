@@ -1,0 +1,1 @@
+bool BindCpu(int cpuidx);

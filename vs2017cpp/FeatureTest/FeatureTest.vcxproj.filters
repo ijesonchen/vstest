@@ -57,9 +57,18 @@
     <ClCompile Include="BitField.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="threadTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
       <Filter>main</Filter>
     </ClInclude>
   </ItemGroup>
