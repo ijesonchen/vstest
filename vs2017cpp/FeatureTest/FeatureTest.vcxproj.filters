@@ -63,6 +63,9 @@
     <ClCompile Include="common.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="localTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
