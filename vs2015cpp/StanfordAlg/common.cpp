@@ -12,7 +12,7 @@ using namespace std;
 
 std::chrono::steady_clock::time_point g_tp;
 
-void CHECK(bool b)
+void EXPECT_TRUE(bool b)
 {
 	if (!b)
 	{
@@ -22,7 +22,7 @@ void CHECK(bool b)
 
 
 template <typename TA, typename TB>
-void CHECK(const TA& a, const TB& b)
+void EXPECT_TRUE(const TA& a, const TB& b)
 {
 	if (a != b)
 	{
@@ -65,7 +65,7 @@ std::vector<int64_t> ReadIntWithCount(const std::string& filename)
 		v.push_back(x);
 	}
 
-	CHECK(n == v.size());
+	EXPECT_TRUE(n == v.size());
 
 	return std::move(v);
 }

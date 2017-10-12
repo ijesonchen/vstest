@@ -6,6 +6,17 @@
 #include <cstdlib>
 #include <windows.h>
 
+void LocaleTest(void);
+//////////////////////////////////////////////////////////////////////////
+
+/*
+win10 , vs2017 15.3 locale works with : chs, .936, zh-CN, chinese-simplified, CHN, CHS, but not china
+Language Strings
+https://msdn.microsoft.com/en-us/library/39cwe7zf.aspx
+Country/Region Strings
+https://msdn.microsoft.com/en-us/library/cdax410z.aspx
+
+*/
 
 using namespace std;
 
@@ -40,7 +51,8 @@ find_if中的判别式使用lambda表达式处理:  [](const char ch){ return std::isdigit(c
 	其他方案：
 		mbstowcs/wcstombs全局locale相关， mbstowcs_l可以指定locale但似乎是微软的扩展
 		wstring_convert是C++11标准，但是问题：a)速度相对较慢
-											b)需要用到codecvt头文件，gcc不支持，需要clang
+											b)需要用到codecvt头文件，gcc 5.2开始支持，需要clang
+    ** gcc 5.2 开始支持codecvt
 */
 
 
@@ -137,8 +149,25 @@ void Win32ConvTest()
 	cout << 3 << ss << endl;
 }
 
+void GetLocaleInfo(void)
+{
+	locale loc("en_US.utf8");
+	auto s = loc.name();
+
+	std::wcout << "User-preferred locale setting is " << std::locale("").name().c_str() << '\n';
+	// on startup, the global locale is the "C" locale
+	std::wcout << 1000.01 << '\n';
+	// replace the C++ global locale as well as the C locale with the user-preferred locale
+	std::locale::global(std::locale(""));
+	// use the new global locale for future wide character output
+	std::wcout.imbue(std::locale());
+	// output the same number again
+	std::wcout << 1000.01 << '\n';
+}
+
 void LocaleTest(void)
 {
+	GetLocaleInfo();
 	SetLocaleAndIsDigit();
 	ClibConvTest();
 	Win32ConvTest();

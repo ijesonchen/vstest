@@ -42,7 +42,7 @@ public:
 	bool Load(const std::string& fn)
 	{
 		fstream f(fn, ios::in);
-		CHECK(f.good());
+		EXPECT_TRUE(f.good());
 		uint64_t n = 0;
 		f >> n;
 		double x = 0;
@@ -110,10 +110,10 @@ double TravelingSalesmanProblem(const std::string& fn)
 {
 	auto dmax = std::numeric_limits<double>::max();
 	CityMap cm;
-	CHECK(cm.Load(fn));
+	EXPECT_TRUE(cm.Load(fn));
 	vector<vector<double>> dis;
 	auto n = cm.Size();
-	CHECK(n <= 32);
+	EXPECT_TRUE(n <= 32);
 	auto ns = (unsigned)pow(2, n - 1);
 	dis.assign(ns + 1, vector<double>(n, std::numeric_limits<double>::max()));
 	// dis[s][0] always MAX, useless. can be optimized.
@@ -170,9 +170,9 @@ double TravelingSalesmanProblem(const std::string& fn)
 void TravelingSalesmanProblem(void)
 {
 	vector<string> vfn = {
-// 		"data\\zwk14-3-10.24.txt",
-// 		"data\\zwk14-4-14.txt",
-// 		"data\\zwk14-8-12.36.txt",
+		"data\\zwk14-3-10.24.txt",
+		"data\\zwk14-4-14.txt",
+		"data\\zwk14-8-12.36.txt",
 		"data\\zwk14-16-73.99.txt",
 		"data\\zwk14_tsp.txt",
 // 		"",

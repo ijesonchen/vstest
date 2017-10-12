@@ -629,7 +629,7 @@ void SccTest0Based(void)
 	KosarajuSCC scc(g1, revPost);
 
 	int nScc = scc.Count();
-	CHECK(nScc);
+	EXPECT_TRUE(nScc);
 	cout << "scc count " << nScc << endl;
 
 	vector<deque<int>> vtScc(nScc, deque<int>());

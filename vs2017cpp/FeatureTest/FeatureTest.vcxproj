@@ -161,12 +161,15 @@
     <ClCompile Include="array.cpp" />
     <ClCompile Include="atomic.cpp" />
     <ClCompile Include="BitField.cpp" />
+    <ClCompile Include="callableTest.cpp" />
     <ClCompile Include="common.cpp" />
     <ClCompile Include="filesystem_test.cpp" />
-    <ClCompile Include="localTest.cpp" />
+    <ClCompile Include="localeTest.cpp" />
+    <ClCompile Include="LockTest.cpp" />
     <ClCompile Include="LogStream.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PredefinedMacro.cpp" />
+    <ClCompile Include="projschjThreadPoolTest.cpp" />
     <ClCompile Include="QuerySemaphoreInfo.cpp" />
     <ClCompile Include="ReExp.cpp" />
     <ClCompile Include="ResourceManage.cpp" />
@@ -178,6 +181,7 @@
   <ItemGroup>
     <ClInclude Include="common.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="projschjThreadPool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

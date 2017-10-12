@@ -87,6 +87,6 @@ void CountInversions(void)
 
 //	auto n = BruteForce(vt1);
 	auto n = SortCountInv(vt1.data(), vt2.data(), 0, vt1.size() - 1);
-	CHECK(n == 2407905288);
+	EXPECT_TRUE(n == 2407905288);
 	cout << "inv count " << n << endl;
 }

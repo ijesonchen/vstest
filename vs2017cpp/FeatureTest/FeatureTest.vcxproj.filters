@@ -63,7 +63,16 @@
     <ClCompile Include="common.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="localTest.cpp">
+    <ClCompile Include="callableTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="projschjThreadPoolTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LockTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="localeTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -73,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="common.h">
       <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="projschjThreadPool.h">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

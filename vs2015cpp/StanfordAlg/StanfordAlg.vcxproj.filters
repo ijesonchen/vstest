@@ -69,6 +69,9 @@
     <ClCompile Include="wk14-DPforTravelingSalesmanProblem(TSP).cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="wk15-ApproxForTSP.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h">

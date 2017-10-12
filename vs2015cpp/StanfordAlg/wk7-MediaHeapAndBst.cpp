@@ -61,7 +61,7 @@ public:
 		{
 			auto top = h.Pop();
 			std::cout << top << " ";
-			CHECK(last < top);
+			EXPECT_TRUE(last < top);
 			top = last;
 		}
 		std::cout << std::endl;
@@ -263,7 +263,7 @@ int BstMedian(const std::string& fileName)
 int HeapMedian(const std::string& fileName)
 {
 	auto vals = ReadInt(fileName);
-	CHECK(vals.size() > 3);
+	EXPECT_TRUE(vals.size() > 3);
 	Heap leftHeap(Heap::MaxHeap); // left n/2
 	Heap rightHeap(Heap::MinHeap); // right n - n/2
 	auto a = vals[0];
@@ -319,10 +319,10 @@ void MedianHeap(void)
 	{
 		auto midBst = BstMedian(fns[i]);
 		cout << fns[i] << " BstMedian: " << midBst << " answer: " << res[i] << endl;
-		CHECK(res[i] == midBst);
+		EXPECT_TRUE(res[i] == midBst);
 
 		auto midHeap = HeapMedian(fns[i]);
 		cout << fns[i] << " HeapMedian: " << midHeap << " answer: " << res[i] << endl;
-		CHECK(res[i] == midHeap);
+		EXPECT_TRUE(res[i] == midHeap);
 	}
 }

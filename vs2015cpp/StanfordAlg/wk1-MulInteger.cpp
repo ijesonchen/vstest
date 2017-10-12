@@ -241,7 +241,7 @@ std::string MulInteger(const std::string& x, const std::string& y)
 void MulInteger(void)
 {
 	AddPlaceHolder("x", 3);
-	CHECK(MulInteger("85005719", "55641863") == "4729876570814497");
+	EXPECT_TRUE(MulInteger("85005719", "55641863") == "4729876570814497");
 	AddInteger("6", "10");
 	AddInteger("1", "1");
 	AddInteger("999", "1");

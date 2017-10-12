@@ -193,10 +193,10 @@ int TestUnionFindCluster(const std::string& fn, int nCluster)
 
 void ClusterSmall(void)
 {
-	CHECK(1 == TestUnionFindCluster("data\\zwk10-small-2-1.txt", 2));
-	CHECK(5 == TestUnionFindCluster("data\\zwk10-small-2-5.txt", 2));
-	CHECK(100 == TestUnionFindCluster("data\\zwk10-small-2-100.txt", 2));
-	CHECK(3 == TestUnionFindCluster("data\\zwk10-small-4-3.txt", 4));
+	EXPECT_TRUE(1 == TestUnionFindCluster("data\\zwk10-small-2-1.txt", 2));
+	EXPECT_TRUE(5 == TestUnionFindCluster("data\\zwk10-small-2-5.txt", 2));
+	EXPECT_TRUE(100 == TestUnionFindCluster("data\\zwk10-small-2-100.txt", 2));
+	EXPECT_TRUE(3 == TestUnionFindCluster("data\\zwk10-small-4-3.txt", 4));
 	auto n = TestUnionFindCluster("data\\zwk10-clustering1.txt", 4);
 	cout << "space for clustering1 of 4 cluster is: " << n << endl;
 }
@@ -411,7 +411,7 @@ public:
 				}
 				if (Union(i, j))
 				{
-					CHECK((--nCluster) > 0);
+					EXPECT_TRUE((--nCluster) > 0);
 				}
 			}
 		}

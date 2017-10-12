@@ -17,10 +17,11 @@ void Greedy(void);
 void Clustering(void);
 void DynamicProgramming(void);
 void KnapSack(void);
-// wk13: try Johnson alg, correct CLRS 25.3 pesudo code.
+// wk13: try Johnson alg, correct CLRS 25.3 pseudo code.
 void AllPairShortestPath(void);
 // wk14
 void TravelingSalesmanProblem(void);
+void ApproxTravelingSalesmanProblem(void);
 
 using namespace std;
 
@@ -28,7 +29,7 @@ void main(void)
 {
 	auto tp = chrono::high_resolution_clock::now();
 
-	TravelingSalesmanProblem();
+	ApproxTravelingSalesmanProblem();
 
 	TimeCost(tp);
 	cout << "enter to exit." << endl;

@@ -7,10 +7,12 @@
 #include <vector>
 #include <deque>
 #include <list>
+#include <tuple>
 
 #include <cstdint>
 #include <cinttypes>
 #include <cassert>
+#include <limits>
 
 #include <ctime>
 #include <chrono>
@@ -22,7 +24,7 @@
 
 #pragma warning(disable: 4267 4244 4018 4800)
 
-void CHECK(bool b);
+void EXPECT_TRUE(bool b);
 std::vector<std::int64_t> ReadInt(const std::string& filename);
 std::vector<std::int64_t> ReadIntWithCount(const std::string& filename);
 void SleepMs(int millisec);

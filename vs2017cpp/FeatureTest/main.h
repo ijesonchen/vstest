@@ -11,9 +11,12 @@ void LogStreamTest(void);
 void BitFieldTest(void);
 void ThreadTest(void);
 void LocaleTest(void);
+void CallableTest(void);
+void projschjThreadPoolTest(void);
+void LockTest(void);
 
 inline void MainTest(void)
 {
-	LocaleTest();
+	LockTest();
 }
 
