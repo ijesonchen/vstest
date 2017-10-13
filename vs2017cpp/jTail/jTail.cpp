@@ -24,6 +24,7 @@ void main(int argc, char** argv)
 	}
 	auto durSleep = chrono::duration<float, ratio<1, 1>>(tv);
 	cout << "durSleep " << durSleep.count() << endl;
+	cout << "filename: " << fn << endl;
 	fstream f(fn, ios::in);
 	if (!f)
 	{

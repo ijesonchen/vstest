@@ -6,7 +6,7 @@
 using namespace std;
 void main(void)
 {
-	LocaleTest();
+	MainTest();
 	cout << "enter to continue" << endl;
 	getchar();
 }

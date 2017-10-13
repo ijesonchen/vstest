@@ -151,9 +151,6 @@ void Win32ConvTest()
 
 void GetLocaleInfo(void)
 {
-	locale loc("en_US.utf8");
-	auto s = loc.name();
-
 	std::wcout << "User-preferred locale setting is " << std::locale("").name().c_str() << '\n';
 	// on startup, the global locale is the "C" locale
 	std::wcout << 1000.01 << '\n';

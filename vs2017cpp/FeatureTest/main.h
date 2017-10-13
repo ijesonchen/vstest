@@ -17,6 +17,6 @@ void LockTest(void);
 
 inline void MainTest(void)
 {
-	LockTest();
+	ThreadTest();
 }
 

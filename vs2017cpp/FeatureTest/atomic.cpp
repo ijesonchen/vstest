@@ -1,7 +1,12 @@
 #include <atomic>
 #include <chrono>
 #include <iostream>
+#include <sstream>
 #include <ctime>
+#include <thread>
+#include <vector>
+
+void AtomicTest(void);
 using namespace std;
 using namespace std::chrono;
 
@@ -55,7 +60,7 @@ inline std::string U64toString(const std::uint64_t i)
 	return s;
 }
 
-void AtomicTest(void)
+void AtomicPerf()
 {
 	auto n = high_resolution_clock::period::num;
 	auto d = high_resolution_clock::period::den;
@@ -74,4 +79,53 @@ void AtomicTest(void)
 
 	auto t3 = t2 - t1;
 	cout << "time cost: " << t3.count() * high_resolution_clock::period::num / high_resolution_clock::period::den << endl;
+}
+
+
+atomic_int64_t idx = -1;
+
+void ThreadIdxTest(int64_t total)
+{
+	int64_t i;
+
+	stringstream s0;
+	s0 << this_thread::get_id() << ": ";
+	auto s = s0.str();
+	for (i = ++idx; i < total; i = ++idx)
+	{
+		stringstream ss;
+		ss << s << i << endl;
+		cout << ss.str();
+	}
+	s += ": exit.\n";
+	cout << s;
+}
+
+
+void MultiThreadIdxTest()
+{
+	int64_t total = 100;
+	int nThread = 25;
+	vector<thread> v;
+
+	auto t1 = high_resolution_clock::now();
+	for (int i = 0; i < nThread; ++i)
+	{
+		thread th(ThreadIdxTest, total);
+		v.push_back(std::move(th));
+	}
+	for (auto& i : v)
+	{
+		i.join();
+	}
+
+	auto t2 = high_resolution_clock::now();
+	auto t3 = t2 - t1;
+	cout << "time cost: " << t3.count() * high_resolution_clock::period::num / high_resolution_clock::period::den << endl;
+}
+
+void AtomicTest(void)
+{
+	// atomic_int64_t idx with multithread i = ++idx, passed.
+	MultiThreadIdxTest();
 }

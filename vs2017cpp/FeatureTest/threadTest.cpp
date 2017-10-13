@@ -9,19 +9,14 @@
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////////
-/*
-1. return value of thread function is ignored.
-2. throw exception in thread function will call std::terminate.
-3. use standard thread promise & future to return value and exception for caller
-4. yield will release cpu so other thread can use it. 
-
-
-*/
+//
+// see "Note for STL thread support library" (note-stl-thread.md) on gitpages
+//
 //////////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////
-// test for thread parameter & return velue (with promise & future)
+// test for thread parameter & return value (with promise & future)
 
 struct ThreadParam
 {
@@ -104,19 +99,6 @@ void PromiseFutureTest()
 /*
 if cpu is busy, yield will wait till next cpu time slice
 if cpu is spare, yield will use all cpu time.
-
-NY: thread no yield
-WY: thread with yield
-
-| cond      | NY%  | WY%  | DETAIL          |
-| --------- | ---- | ---- | --------------- |
-| NY*1      | 100% |      |                 |
-| WY*1      |      | 100% |                 |
-| 1 NY, 1WY | 100% | 0%   |                 |
-| 2 NY, 2WY | 100% | 0%   | 50% per NY      |
-| (2-4)NY   | 100% |      | Load balanced   |
-| (2-4)WY   |      | 100% | Load unbalanced |
-
 */
 
 
@@ -169,10 +151,7 @@ void YieldTest()
 
 //////////////////////////////////////////////////////////////////////////
 // exception test
-// Any return value from the function is ignored. 
 // If the function throws an exception, std::terminate is called. 
-// In order to pass return values or exceptions back to the calling thread, 
-// std::promise or std::async may be used.
 
 void ThredException(void)
 {
@@ -208,8 +187,32 @@ void ThreadExceptionTest()
 	}
 }
 
+void ThreadPassByRef(const vector<int>& pv)
+{
+	cout << this_thread::get_id() << ": " << &pv << endl;
+	this_thread::sleep_for(chrono::seconds(10));
+}
+
+void TestPassByRef(void)
+{
+	vector<int> v(20*1024 * 1024, 0);
+	auto length = 10;
+	vector<thread> vt;
+	for (size_t i = 0; i < length; i++)
+	{
+		vt.emplace_back(ThreadPassByRef, std::ref(v));
+	}
+
+	for (auto& i : vt)
+	{
+		i.join();
+	}
+}
+
 void ThreadTest(void)
 {
+	TestPassByRef();
+	return;
 	PromiseFutureTest();
 	YieldTest();
 	ThreadExceptionTest();
