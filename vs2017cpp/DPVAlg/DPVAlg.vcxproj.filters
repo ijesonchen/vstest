@@ -19,6 +19,9 @@
     <ClCompile Include="ch9-8queue.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="recurTest.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

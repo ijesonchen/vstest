@@ -7,4 +7,10 @@
 #include <deque>
 #include <list>
 
-void EightQueue(void);
+void EightQueue(void); 
+void RecurTest(void);
+
+inline void MainFunc(void)
+{
+	RecurTest();
+}
