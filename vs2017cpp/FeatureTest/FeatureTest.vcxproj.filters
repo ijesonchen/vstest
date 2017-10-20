@@ -75,6 +75,9 @@
     <ClCompile Include="localeTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="StructuredBindingDecl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

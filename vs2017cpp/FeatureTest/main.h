@@ -14,9 +14,10 @@ void LocaleTest(void);
 void CallableTest(void);
 void projschjThreadPoolTest(void);
 void LockTest(void);
+void TestStructuredBindingsDeclaration(void);
 
 inline void MainTest(void)
 {
-	ThreadTest();
+	TestStructuredBindingsDeclaration();
 }
 
