@@ -22,6 +22,9 @@
     <ClCompile Include="recurTest.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="maxTest.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

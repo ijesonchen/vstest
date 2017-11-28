@@ -18,6 +18,6 @@ void TestStructuredBindingsDeclaration(void);
 
 inline void MainTest(void)
 {
-	TestStructuredBindingsDeclaration();
+	FileSystemTest();
 }
 

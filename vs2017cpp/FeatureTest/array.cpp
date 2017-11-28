@@ -2,6 +2,7 @@
 #include <array>
 #include <iostream>
 #include <vector>
+#include <sstream>
 //////////////////////////////////////////////////////////////////////////
 /*
 1. array length must be const
@@ -44,12 +45,21 @@ void ArrayTest(void)
 		cout << p << endl;
 	}
 
-	vector<vector<int>> vv(length, vector<int>(length2));
+	vector<vector<unsigned char>> vv(length, vector<unsigned char>(length2));
 
 	for (size_t i = 0; i < length; i++)
 	{
 		vv[i][i] = (int)i;
 	}
+
+	for (size_t i = 0; i < length; i++)
+	{
+		for (size_t j = 0; j < length2; j++)
+		{
+			vv[i][j] = i + j;
+		}
+	}
+
 
 	int length3 = 4;
 	vector<vector<vector<int>>> vvv(length, vector<vector<int>>(length2, vector<int>(length3)));
@@ -59,4 +69,29 @@ void ArrayTest(void)
 	{
 		vvv[i][i][i] = (int)i;
 	}
+
+	// char**: C++ to C lang
+	// C++: vector<string> vs for memory management, vector<char*> vc for C interface
+	// C: char** p = vc.data()
+
+	vector<string> vvs;
+	for (size_t i = 0; i < length; i++)
+	{
+		stringstream ss;
+		ss << "teststr_" << i << "+" << i*i;
+		vvs.push_back(ss.str());
+	}
+
+	vector<char*> vvc;
+	for (auto& s : vvs)
+	{
+		vvc.push_back((char*)s.c_str());
+	}
+
+	auto ppc = vvc.data();
+	for (size_t i = 0; i < length; i++)
+	{
+		cout << ppc[i] << endl;
+	}
+
 }

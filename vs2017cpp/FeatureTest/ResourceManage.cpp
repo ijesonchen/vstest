@@ -56,6 +56,20 @@ private:
 };
 
 
+// minimal code version
+// class ReturnExecutor
+// {
+// 	// will disable auto generated copy/move ctor & assign, no default ctor
+// 	ReturnExecutor(ReturnExecutor& another) = delete;
+// public:
+// 	ReturnExecutor(std::function<void()> i) :f(std::move(i)) {}
+// 	~ReturnExecutor(void) { if (f) f(); }
+// 
+// private:
+// 	std::function<void()> f = nullptr;
+// };
+
+
 class RMClient
 {
 public:

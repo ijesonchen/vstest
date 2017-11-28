@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="gRpc">
+      <UniqueIdentifier>{c8d6caf2-070c-4c29-a8d0-8316e85d20de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="impl">
+      <UniqueIdentifier>{35034387-2409-4146-8e44-1173b8558684}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public">
+      <UniqueIdentifier>{914eabdb-23bd-4e65-b7ef-45149b5a33c7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="gRpcTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RouteGuide.pb.cc">
+      <Filter>gRpc</Filter>
+    </ClCompile>
+    <ClCompile Include="RouteGuide.grpc.pb.cc">
+      <Filter>gRpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\Common.cpp">
+      <Filter>Public</Filter>
+    </ClCompile>
+    <ClCompile Include="RouteGuideSevice.cpp">
+      <Filter>impl</Filter>
+    </ClCompile>
+    <ClCompile Include="RouteGuideClient.cpp">
+      <Filter>impl</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RouteGuide.proto">
+      <Filter>gRpc</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="RouteGuide.pb.h">
+      <Filter>gRpc</Filter>
+    </ClInclude>
+    <ClInclude Include="RouteGuide.grpc.pb.h">
+      <Filter>gRpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Common.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

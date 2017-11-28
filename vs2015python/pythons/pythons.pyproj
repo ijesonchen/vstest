@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66fe8f33-de22-4c6d-bdbc-34693468a442</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>birthdayProbability.py</StartupFile>
+    <StartupFile>pycurlTest.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -24,6 +24,11 @@
   <ItemGroup>
     <Compile Include="birthdayProbability.py" />
     <Compile Include="OptimalBST.py" />
+    <Compile Include="ping-ori.py" />
+    <Compile Include="ping.py" />
+    <Compile Include="pycurlTest.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

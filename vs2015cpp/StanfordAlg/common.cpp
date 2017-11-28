@@ -9,6 +9,7 @@
 #include "common.h"
 
 using namespace std;
+using namespace std::tr2;
 
 std::chrono::steady_clock::time_point g_tp;
 
@@ -101,4 +102,61 @@ void TimeCost(const std::chrono::high_resolution_clock::time_point& tp)
 		cout << costsec * 1000 << " milliseconds.";
 	}
 	cout << endl;
+}
+
+
+// load test case file: beaunus/stanford-algs@github
+std::vector<TestCaseInfo> BeaunusTestCase(const std::string tcPath, const std::string& root /*= "."*/)
+{
+	vector<TestCaseInfo> vtc;
+	string is("input");
+	auto ilen = is.length();
+	string os("output");
+	for (auto it = sys::directory_iterator(root + "\\" + tcPath), end = sys::directory_iterator();
+		it != end; ++it)
+	{
+		auto ifn = it->path().string();
+		auto stem = it->path().stem().string();
+		auto pos = ifn.find(is);
+		if (pos == string::npos)
+		{
+			continue;
+		}
+		// result file name
+		auto rfn(ifn);
+		rfn.replace(pos, ilen, os);
+		if (!sys::exists(rfn))
+		{
+			cout << "output file not exist: " << rfn << endl;
+			continue;
+		}
+		auto rlen = sys::file_size(rfn);
+		if (rlen == uintmax_t(-1))
+		{
+			cout << "output file size error: " << rfn << endl;
+			continue;
+		}
+		ifstream rf(rfn);
+		if (!rf)
+		{
+			cout << "output file open error: " << rfn << endl;
+			continue;
+		}
+		vtc.emplace_back(std::move(ifn));
+		vtc.back().stem = stem;
+		rf >> vtc.back().result;
+	}
+	return std::move(vtc);
+}
+
+void FinalTestResult(int n)
+{
+	if (n)
+	{
+		cout << " * failed: " << n << endl;
+	}
+	else
+	{
+		cout << " * All Passed." << endl;
+	}
 }

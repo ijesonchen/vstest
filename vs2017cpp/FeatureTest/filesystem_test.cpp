@@ -4,11 +4,22 @@
 
 // see Repo755: tr2_filesystem.md
 
+
 using namespace std;
 using namespace std::tr2;
 
+void TestStandard17(void)
+{
+	string dpath("d:\\");
+	sys::path dp(dpath);
+	auto dspace = sys::space(dp);
+	cout << dspace.capacity << endl;
+}
+
+
 void FileSystemTest(void)
 {
+	TestStandard17();
 	string sysPath = "C:\\bin\\ss";
 
 	cout << "sys::path operation" << endl;
@@ -39,8 +50,6 @@ void FileSystemTest(void)
 	}
 
 	cout << "********************************" << endl;
-
-
 
 	cout << "find items in a path" << endl;
 	for (auto it = sys::directory_iterator(sysPath), end = sys::directory_iterator();

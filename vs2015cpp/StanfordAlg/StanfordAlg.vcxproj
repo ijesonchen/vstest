@@ -154,14 +154,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="common.cpp" />
+    <ClCompile Include="DijkstraShortestPath2.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NodeHeap.cpp" />
+    <ClCompile Include="TestCLRS22.cpp" />
     <ClCompile Include="wk1-MulInteger.cpp" />
     <ClCompile Include="wk11-DynamicProgramming.cpp" />
     <ClCompile Include="wk12-knapsack.cpp" />
     <ClCompile Include="wk13-AllPairShortestPath.cpp" />
     <ClCompile Include="wk14-DPforTravelingSalesmanProblem(TSP).cpp" />
     <ClCompile Include="wk15-ApproxForTSP.cpp" />
+    <ClCompile Include="wk16-2SAT.cpp" />
     <ClCompile Include="wk2-CountInv.cpp" />
     <ClCompile Include="wk3-QuickSort.cpp" />
     <ClCompile Include="wk4-ContractionMinCut.cpp" />
