@@ -135,6 +135,7 @@
     <ClCompile Include="B1003.cpp" />
     <ClCompile Include="Blank.cpp" />
     <ClCompile Include="patMain.cpp" />
+    <ClCompile Include="A1004.cpp" />
     <ClCompile Include="StartSelfTest.cpp" />
   </ItemGroup>
   <ItemGroup>

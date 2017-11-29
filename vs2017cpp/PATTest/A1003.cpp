@@ -201,7 +201,5 @@ void A1003(const string& fn)
 void A1003(void)
 {
 	A1003("data\\A1003-1.TXT"); // 2 4
-	A1003("data\\A1003-2.TXT"); // 3 23
-	A1003("data\\A1003-3.TXT"); // 3 34
-	A1003("data\\A1003-4.TXT"); // 3 8
+	A1003("data\\A1003-2.TXT"); // 3 8
 }

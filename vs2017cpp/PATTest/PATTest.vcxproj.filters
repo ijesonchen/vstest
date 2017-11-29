@@ -36,6 +36,9 @@
     <ClCompile Include="Blank.cpp">
       <Filter>Basic</Filter>
     </ClCompile>
+    <ClCompile Include="A1004.cpp">
+      <Filter>Basic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="patMain.h">
