@@ -136,5 +136,5 @@ void A1004(const string& fn)
 void A1004(void)
 {
 	A1004("data\\A1004-1.TXT"); // 0 1
-//	A1004("data\\A1004-2.TXT"); // 
+	A1004("data\\A1004-2.TXT"); // 0 2 0 2 2
 }

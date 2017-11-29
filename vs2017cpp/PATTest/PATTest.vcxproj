@@ -132,10 +132,13 @@
   <ItemGroup>
     <ClCompile Include="A1002.cpp" />
     <ClCompile Include="A1003.cpp" />
+    <ClCompile Include="A1005.cpp" />
     <ClCompile Include="B1003.cpp" />
     <ClCompile Include="Blank.cpp" />
     <ClCompile Include="patMain.cpp" />
     <ClCompile Include="A1004.cpp" />
+    <ClCompile Include="A1006.cpp" />
+    <ClCompile Include="A1007.cpp" />
     <ClCompile Include="StartSelfTest.cpp" />
   </ItemGroup>
   <ItemGroup>

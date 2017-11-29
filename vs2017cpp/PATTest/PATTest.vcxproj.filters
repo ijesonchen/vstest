@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -16,33 +8,51 @@
     <Filter Include="Basic">
       <UniqueIdentifier>{cc815381-fb72-47c6-97e0-37a45e5089aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{5ceaa901-4439-401d-9c77-40dac39df086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Top">
+      <UniqueIdentifier>{46640f0d-e23c-433f-87d1-4ff030010d15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Advanced">
+      <UniqueIdentifier>{e70165f6-051d-4c95-bbb4-774d7d6ebbf7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="patMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="B1003.cpp">
       <Filter>Basic</Filter>
     </ClCompile>
     <ClCompile Include="StartSelfTest.cpp">
       <Filter>Basic</Filter>
     </ClCompile>
-    <ClCompile Include="A1002.cpp">
-      <Filter>Basic</Filter>
-    </ClCompile>
-    <ClCompile Include="A1003.cpp">
-      <Filter>Basic</Filter>
-    </ClCompile>
-    <ClCompile Include="Blank.cpp">
-      <Filter>Basic</Filter>
+    <ClCompile Include="patMain.cpp">
+      <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="A1004.cpp">
-      <Filter>Basic</Filter>
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="A1002.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="A1003.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Blank.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="A1005.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="A1006.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="A1007.cpp">
+      <Filter>Advanced</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="patMain.h">
-      <Filter>Header Files</Filter>
+      <Filter>main</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

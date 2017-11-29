@@ -135,7 +135,7 @@ unsigned long long s2i(const string& s)
 	return a;
 }
 
-string i2s(unsigned long long a)
+string i2str(unsigned long long a)
 {
 	stringstream ss;
 	ss << a;
@@ -146,7 +146,7 @@ string DoubleString(const string& s1)
 {
 	unsigned long long a = s2i(s1);
 	a *= 2;
-	return i2s(a);
+	return i2str(a);
 }
 
 bool IsPerm(const string& s1, const string& s2)
@@ -179,7 +179,7 @@ void SelfTest4(const string& s1)
 			d2 = d2.substr(1);
 			unsigned long long a1 = s2i(d1);
 			++a1;
-			d1 = i2s(a1);
+			d1 = i2str(a1);
 		}
 		s2 = d1 + d2;
 	}
@@ -214,23 +214,23 @@ string Card2String(int n)
 {
 	if (n < 13)
 	{
-		return "S" + i2s(n + 1);
+		return "S" + i2str(n + 1);
 	}
 	else if (n < 26)
 	{
-		return "H" + i2s(n - 12);
+		return "H" + i2str(n - 12);
 	}
 	else if (n < 39)
 	{
-		return "C" + i2s(n - 25);
+		return "C" + i2str(n - 25);
 	}
 	else if (n < 52)
 	{
-		return "D" + i2s(n - 38);
+		return "D" + i2str(n - 38);
 	}
 	else
 	{
-		return "J" + i2s(n - 51);
+		return "J" + i2str(n - 51);
 	}
 }
 

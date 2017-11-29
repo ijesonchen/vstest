@@ -4,6 +4,8 @@
 #include <string>
 
 void RedirCin(const std::string& fn);
+void Tick(void);
+void Tock(void);
 
 // pta: pintia.cn
 void StartSelfTest(void);
@@ -22,10 +24,12 @@ inline void Basic(void)
 void A1002(void);
 void A1003(void);
 void A1004(void);
+void A1005(void);
+void A1006(void);
 
 inline void Advanced(void)
 {
-	A1004();
+	A1006();
 }
 
 inline void Top(void)
