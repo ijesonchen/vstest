@@ -184,7 +184,7 @@ void ApproxTravelingSalesmanProblem(void)
 // 		"data\\zwk14_tsp.txt",      
 		// file above should use LoadMap14, due to different data format.
 
-		"data\\zwk15-6-15.2361.txt", // may not work with FindMinDist, data not sorted by x-coord
+//		"data\\zwk15-6-15.2361.txt", // may not work with FindMinDist, data not sorted by x-coord
 		"data\\zwk15-nn.txt",
 	};
 	/*	

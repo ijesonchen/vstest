@@ -32,7 +32,7 @@ void main(void)
 {
 	auto tp = chrono::high_resolution_clock::now();
 
-	DijkstraShortestPath2();
+	ApproxTravelingSalesmanProblem();
 
 	TimeCost(tp);
 	cout << "enter to exit." << endl;

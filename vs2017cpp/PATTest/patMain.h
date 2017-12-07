@@ -26,10 +26,11 @@ void A1003(void);
 void A1004(void);
 void A1005(void);
 void A1006(void);
+void A1007(void);
 
 inline void Advanced(void)
 {
-	A1006();
+	A1007();
 }
 
 inline void Top(void)

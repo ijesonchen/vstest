@@ -15,9 +15,10 @@ void CallableTest(void);
 void projschjThreadPoolTest(void);
 void LockTest(void);
 void TestStructuredBindingsDeclaration(void);
+void TestRemoveIf(void);
 
 inline void MainTest(void)
 {
-	FileSystemTest();
+	TestRemoveIf();
 }
 

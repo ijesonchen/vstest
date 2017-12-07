@@ -176,6 +176,7 @@
     <ClCompile Include="projschjThreadPoolTest.cpp" />
     <ClCompile Include="QuerySemaphoreInfo.cpp" />
     <ClCompile Include="ReExp.cpp" />
+    <ClCompile Include="remove_if.cpp" />
     <ClCompile Include="ResourceManage.cpp" />
     <ClCompile Include="ConsoleColor.cpp" />
     <ClCompile Include="smart_pointer.cpp" />
