@@ -255,7 +255,7 @@ void A1007(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
-	A1007Kadane2();
+	A1007Scan();
 }
 
 void A1007(void)

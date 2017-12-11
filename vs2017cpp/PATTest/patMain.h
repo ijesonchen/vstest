@@ -27,10 +27,12 @@ void A1004(void);
 void A1005(void);
 void A1006(void);
 void A1007(void);
+void A170917A(void);
+void A170917B(void);
 
 inline void Advanced(void)
 {
-	A1007();
+	A170917B();
 }
 
 inline void Top(void)

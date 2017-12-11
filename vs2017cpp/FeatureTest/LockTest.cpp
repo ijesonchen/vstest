@@ -172,8 +172,25 @@ void CVTest(void)
 	*/
 }
 
+void LockTest2(void)
+{
+	// wrong: temp var, dtor guard immediately
+	lock_guard<mutex> { mtx }; // same as (lock_guard<mutex>) mtx;
+	(lock_guard<mutex>) mtx;
+	// right: local guard
+	lock_guard<mutex> g { mtx };
+	cout << "aaa" << endl;
+	this_thread::sleep_for(chrono::seconds(3));
+	cout << "bbb" << endl;
+}
+
 void LockTest(void)
 {
 	CVTest();
+	thread t(LockTest2);
+	thread t2(LockTest2);
+
+	t.join();
+	t2.join();
 }
 

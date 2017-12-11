@@ -19,6 +19,6 @@ void TestRemoveIf(void);
 
 inline void MainTest(void)
 {
-	TestRemoveIf();
+	LockTest();
 }
 
