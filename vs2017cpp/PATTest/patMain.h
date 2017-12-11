@@ -7,43 +7,16 @@ void RedirCin(const std::string& fn);
 void Tick(void);
 void Tock(void);
 
-// pta: pintia.cn
-void StartSelfTest(void);
-inline void PtaTest(void)
-{
-	StartSelfTest();
-}
+#include "patBasic.h"
+void Basic(void);
 
-void B1003(void);
+#include "patAdvanced.h"
+void Advanced(void);
 
-inline void Basic(void)
-{
-	B1003();
-}
+#include "patTop.h"
+void Top(void);
 
-void A1002(void);
-void A1003(void);
-void A1004(void);
-void A1005(void);
-void A1006(void);
-void A1007(void);
-void A170917A(void);
-void A170917B(void);
-
-inline void Advanced(void)
-{
-	A170917B();
-}
-
-inline void Top(void)
-{
-
-}
-
-inline void Main(void)
-{
-	Advanced();
-}
+void PatMain(void);
 
 
 #endif // patMain_h__

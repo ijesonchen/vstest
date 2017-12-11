@@ -1,6 +1,8 @@
-void A170917A(void);
+void A1132(void);
 /*
-A. Cut Integer (20)
+tips:if A/B is zero? e.g. z=10
+
+1132. Cut Integer (20)
 Cutting an integer means to cut a K digits long integer Z into 
 two integers of (K/2) digits long integers A and B. For example, 
 after cutting Z = 167334, we have A = 167 and B = 334. It is 
@@ -12,7 +14,7 @@ Input Specification:
 
 Each input file contains one test case. For each case, the first 
 line gives a positive integer N (<= 20). Then N lines follow, each 
-gives an integer Z (10<=Z<=231). It is guaranteed that the number 
+gives an integer Z (10<=Z<=2^31). It is guaranteed that the number 
 of digits of Z is an even number.
 
 Output Specification:
@@ -37,29 +39,35 @@ No
 
 using namespace std;
 
-string A170917An2s(int n)
+string A1132n2s(unsigned n)
 {
 	stringstream ss;
 	ss << n;
 	return ss.str();
 }
 
-int A170917As2n(const string& s)
+unsigned A1132s2n(const string& s)
 {
-	int n;
+	unsigned n;
 	stringstream ss(s);
 	ss >> n;
 	return n;
 }
 
-void A170917AFunc(int n0)
+void A1132Func(unsigned n0)
 {
-	string s0 = A170917An2s(n0);
+	string s0 = A1132n2s(n0);
 	int len = (int)s0.length() / 2;
 	string s1 = s0.substr(0, len);
 	string s2 = s0.substr(len, -1);
-	int n1 = A170917As2n(s1);
-	int n2 = A170917As2n(s2);
+	unsigned n1 = A1132s2n(s1);
+	unsigned n2 = A1132s2n(s2);
+	unsigned n3 = n1 * n2;
+	if (!n3)
+	{
+		cout << "No" << endl;
+		return;
+	}
 	if ((n0 % (n1 * n2)) == 0)
 	{
 		cout << "Yes" << endl;
@@ -68,23 +76,23 @@ void A170917AFunc(int n0)
 	{
 		cout << "No" << endl;
 	}
-
 }
 
-void A170917A(const string& fn)
+void A1132(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
 
-	int cnt, n;
+	unsigned cnt, n;
 	cin >> cnt;
 	while (cin >> n)
 	{
-		A170917AFunc(n);
+		A1132Func(n);
 	}
 }
 
-void A170917A(void)
+void A1132(void)
 {
-	A170917A("data\\A170917A-1.TXT"); // Yes No No
+	A1132("data\\A1132-1.TXT"); // Yes No No
+	A1132("data\\A1132-2.TXT"); // No
 }

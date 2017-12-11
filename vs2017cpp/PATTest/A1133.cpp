@@ -1,6 +1,6 @@
-void A170917B(void);
+void A1133(void);
 /*
-B. Splitting A Linked List (25)
+1133. Splitting A Linked List (25)
 Given a singly linked list, you are supposed to rearrange 
 its elements so that all the negative values appear before
 all of the non-negatives, and all the values in [0, K] appear 
@@ -60,42 +60,67 @@ Sample Output:
 #include <cstdlib>
 #include <map>
 #include <vector>
+#include <cstdio>
 
 using namespace std;
 
-struct A170917BNode
+string AddrStr(int n)
+{
+	if (n == -1)
+	{
+		return "-1";
+	}
+	char s[6];
+	sprintf(s, "%05d", n);
+	s[5] = 0;
+	return s;
+}
+
+struct A1133Node
 {
 	int addr;
 	int val;
 	int next;
-	string saddr;
-	string snext;
 
-	A170917BNode(string s1, int v, string s2)
-		: saddr(s1)
+	A1133Node(int a, int v, int n)
+		: addr(a)
 		, val(v)
-		, snext(s2)
+		, next(n)
 	{
-		addr = atoi(s1.c_str());
-		next = atoi(s2.c_str());
+	}
+
+	void Print(void)
+	{
+		cout << AddrStr(addr) << " " << val << " " << AddrStr(next) << endl;
 	}
 };
 
-void A170917BFunc(void)
+void SetNext(vector<A1133Node*>& v)
 {
+	int size = v.size();
+	if (v.size() > 1)
+	{
+		v[size - 2]->next = v[size - 1]->addr;
+	}
+}
+
+// 24/25 pt2 failed
+void A1133Func(void)
+{
+	// avoid memory leakage with smart pointer
 	int start, cnt, b;
 	cin >> start >> cnt >> b;
 
-	int n;
-	string saddr, snext;
-	map<int, A170917BNode*> m;
-	A170917BNode* p = nullptr;
-	while (cin >> saddr >> n >> snext)
+	int a,val,n;
+	map<int, A1133Node*> m;
+	A1133Node* p = nullptr;
+	while (cin >> a >> val >> n)
 	{
-		p = new A170917BNode(saddr, n, snext);
-		m[n] = p;
+		p = new A1133Node(a, val, n);
+		m[a] = p;
 	}
-	vector<A170917BNode*> v;
+	// to list
+	vector<A1133Node*> v;
 	p = m[start];
 	v.push_back(p);
 	while (p->next != -1) 
@@ -103,21 +128,53 @@ void A170917BFunc(void)
 		p = m[p->next];
 		v.push_back(p);
 	}
-	int idx = 0;
-	for (int i = 0; i < cnt; ++i)
+
+	vector<A1133Node*> v1;
+	vector<A1133Node*> v2;
+	vector<A1133Node*> v3;
+	for (int i = 0; i < v.size(); ++i)
 	{
+		int val = v[i]->val;
+		if (v[i]->val < 0)
+		{
+			v1.push_back(v[i]);
+		}
+		else if (val <= b)
+		{
+			v2.push_back(v[i]);
+		}
+		else
+		{
+			v3.push_back(v[i]);
+		}
+	}
+	v1.insert(v1.end(), v2.begin(), v2.end());
+	v1.insert(v1.end(), v3.begin(), v3.end());
+	
+	int length = v1.size();
+	for (int i = 1; i < length; ++i)
+	{
+		A1133Node* p = v1[i - 1];
+		p->next = v1[i]->addr;
+		p->Print();
+	}
+	A1133Node* back = v1.back();
+	back->next = -1;
+	if (length > 1)
+	{
+		back->Print();
 	}
 }
 
-void A170917B(const string& fn)
+void A1133(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
 
-	A170917BFunc();
+	A1133Func();
 }
 
-void A170917B(void)
+void A1133(void)
 {
-	A170917B("data\\A170917B-1.TXT"); // Yes No No
+	A1133("data\\A1133-1.TXT"); // Yes No No
 }

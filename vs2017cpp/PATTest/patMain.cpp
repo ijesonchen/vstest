@@ -7,10 +7,15 @@ using namespace std;
 
 int main(void)
 {
-	Main();
+	PatMain();
 	std::cout << "Press enter";
 	std::getchar();
 }
+
+void Basic(void) { B1003(); }
+void Advanced(void) { A1133(); }
+void Top(void) { }
+void PatMain(void) { Advanced(); }
 
 //////////////////////////////////////////////////////////////////////////
 // redirect file to cin

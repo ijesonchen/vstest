@@ -49,15 +49,33 @@
     <ClCompile Include="A1007.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
-    <ClCompile Include="A170917A.cpp">
+    <ClCompile Include="A1136.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
-    <ClCompile Include="A170917B.cpp">
+    <ClCompile Include="Template.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="A1132.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="A1137.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="A1133.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="patMain.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="patAdvanced.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="patBasic.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="patTop.h">
       <Filter>main</Filter>
     </ClInclude>
   </ItemGroup>

@@ -94,6 +94,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>/D_CRT_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -101,6 +102,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>/D_CRT_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -110,6 +112,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>/D_CRT_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -123,6 +126,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>/D_CRT_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -133,18 +137,24 @@
     <ClCompile Include="A1002.cpp" />
     <ClCompile Include="A1003.cpp" />
     <ClCompile Include="A1005.cpp" />
-    <ClCompile Include="A170917B.cpp" />
+    <ClCompile Include="A1137.cpp" />
+    <ClCompile Include="A1133.cpp" />
     <ClCompile Include="B1003.cpp" />
     <ClCompile Include="Blank.cpp" />
     <ClCompile Include="patMain.cpp" />
     <ClCompile Include="A1004.cpp" />
     <ClCompile Include="A1006.cpp" />
     <ClCompile Include="A1007.cpp" />
-    <ClCompile Include="A170917A.cpp" />
+    <ClCompile Include="A1132.cpp" />
+    <ClCompile Include="A1136.cpp" />
     <ClCompile Include="StartSelfTest.cpp" />
+    <ClCompile Include="Template.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="patAdvanced.h" />
+    <ClInclude Include="patBasic.h" />
     <ClInclude Include="patMain.h" />
+    <ClInclude Include="patTop.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
