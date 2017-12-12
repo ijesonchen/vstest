@@ -23,6 +23,6 @@ void A0000(const string& fn)
 
 void A0000(void)
 {
-	A0000("data\\A0000-1.TXT"); // 
+	A0000("data\\A0000-1.txt"); // 
 }
 

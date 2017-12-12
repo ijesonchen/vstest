@@ -7,9 +7,9 @@
 
 using namespace std;
 
-void A1136Func(void)
+int A1136Func(void)
 {
-
+	return 0;
 }
 
 

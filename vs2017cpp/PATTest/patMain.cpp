@@ -13,7 +13,7 @@ int main(void)
 }
 
 void Basic(void) { B1003(); }
-void Advanced(void) { A1133(); }
+void Advanced(void) { A1139(); }
 void Top(void) { }
 void PatMain(void) { Advanced(); }
 

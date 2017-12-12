@@ -147,6 +147,7 @@
     <ClCompile Include="A1007.cpp" />
     <ClCompile Include="A1132.cpp" />
     <ClCompile Include="A1136.cpp" />
+    <ClCompile Include="A1139.cpp" />
     <ClCompile Include="StartSelfTest.cpp" />
     <ClCompile Include="Template.cpp" />
   </ItemGroup>

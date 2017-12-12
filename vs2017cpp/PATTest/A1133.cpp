@@ -1,5 +1,13 @@
 void A1133(void);
 /*
+PT2不过 原因：只有1个点时，不能正确打印结果。
+
+测试：有数据，地址除-1外为正
+题目：5-digit nonnegative integer， the list is not empty.
+positive K <= 1000
+问题：仔细读题，注意每个数据的限制条件
+	（大部分都有交代，没有交代的一定要考虑各种情况）
+
 1133. Splitting A Linked List (25)
 Given a singly linked list, you are supposed to rearrange 
 its elements so that all the negative values appear before
@@ -13,7 +21,7 @@ Input Specification:
 
 Each input file contains one test case. For each case, the
 first line contains the address of the first node, a positive 
-N (<= 105) which is the total number of nodes, and a positive
+N (<= 10^5) which is the total number of nodes, and a positive
 K (<=1000). The address of a node is a 5-digit nonnegative 
 integer, and NULL is represented by -1.
 
@@ -61,6 +69,7 @@ Sample Output:
 #include <map>
 #include <vector>
 #include <cstdio>
+#include <string>
 
 using namespace std;
 
@@ -95,22 +104,12 @@ struct A1133Node
 	}
 };
 
-void SetNext(vector<A1133Node*>& v)
-{
-	int size = v.size();
-	if (v.size() > 1)
-	{
-		v[size - 2]->next = v[size - 1]->addr;
-	}
-}
-
-// 24/25 pt2 failed
-void A1133Func(void)
+int A1133Func(void)
 {
 	// avoid memory leakage with smart pointer
 	int start, cnt, b;
 	cin >> start >> cnt >> b;
-
+	
 	int a,val,n;
 	map<int, A1133Node*> m;
 	A1133Node* p = nullptr;
@@ -128,7 +127,7 @@ void A1133Func(void)
 		p = m[p->next];
 		v.push_back(p);
 	}
-
+	
 	vector<A1133Node*> v1;
 	vector<A1133Node*> v2;
 	vector<A1133Node*> v3;
@@ -139,31 +138,32 @@ void A1133Func(void)
 		{
 			v1.push_back(v[i]);
 		}
-		else if (val <= b)
+		else if (val > b)
 		{
-			v2.push_back(v[i]);
+			v3.push_back(v[i]);
 		}
 		else
 		{
-			v3.push_back(v[i]);
+			v2.push_back(v[i]);
 		}
 	}
 	v1.insert(v1.end(), v2.begin(), v2.end());
 	v1.insert(v1.end(), v3.begin(), v3.end());
 	
-	int length = v1.size();
+	int length = (int)v1.size();
 	for (int i = 1; i < length; ++i)
 	{
-		A1133Node* p = v1[i - 1];
-		p->next = v1[i]->addr;
-		p->Print();
+		A1133Node* pPrev = v1[i - 1];
+		pPrev->next = v1[i]->addr;
+		pPrev->Print();
 	}
-	A1133Node* back = v1.back();
-	back->next = -1;
-	if (length > 1)
-	{
-		back->Print();
-	}
+	A1133Node* last = v1.back();
+	last->next = -1;
+	// 原来这里有判断 len>1 才打印
+	// 会导致总数为1的时候不打印结果
+	last->Print();
+
+	return 0;
 }
 
 void A1133(const string& fn)
@@ -176,5 +176,6 @@ void A1133(const string& fn)
 
 void A1133(void)
 {
-	A1133("data\\A1133-1.TXT"); // Yes No No
+	A1133("data\\A1133-1.TXT");
+	A1133("data\\A1133-2.TXT");
 }
