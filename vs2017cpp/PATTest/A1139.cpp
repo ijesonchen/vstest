@@ -2,6 +2,14 @@
 1139. First Contact (30)
 
 tip: id可能是0开头的字串，但不为0；（测试输入数据）
+- 22/30 pt2,3,4,5
+	可能存在自环，或中间环路
+- 24/30 pt2，5（超时）
+	pt5 应该是大数据 396ms 1408kb
+	map -> unordered_map 291/384ms(快慢服务器）
+- 28/30 pt2
+	同性别是否需要去重？
+	不需要，去重后pt5错误
 
 Unlike in nowadays, the way that boys and girls expressing
 their feelings of love was quite subtle in the early years.
@@ -91,12 +99,26 @@ Sample Output:
 
 #include "patMain.h"
 #include <iostream>
+#include <string>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <set>
 
 using namespace std;
 
+bool HasData(const vector<int>& v, int k)
+{
+	int n = (int)v.size();
+	for (int i = 0; i < n; ++i)
+	{
+		if (v[i] == k)
+		{
+			return true;
+		}
+	}
+	return false;
+}
 
 class A1139Graph
 {
@@ -109,10 +131,20 @@ public:
 		for (int i = 0; i < m; ++i)
 		{
 			cin >> sa >> sb;
+			if (sa == sb) // self loop
+			{				
+				continue;
+			}
 			int ia = Get(sa);
 			int ib = Get(sb);
-			v[ia].adjs.push_back(ib);
-			v[ib].adjs.push_back(ia);
+			if (!HasData(v[ia].adjs, ib))
+			{
+				v[ia].adjs.push_back(ib);
+			}
+			if (!HasData(v[ib].adjs, ia))
+			{
+				v[ib].adjs.push_back(ia);
+			}
 		}
 		if (v.size() > n)
 		{
@@ -122,38 +154,52 @@ public:
 
 	void Search(const string& sa, const string& st)
 	{
+		// a(sa) - c - d - b(st)
 		map<string, set<string>> res;
 		int ia = Get(sa);
 		Node& na = v[ia];
 		int it = Get(st);
 		Node& nt = v[it];
 		vector<int>& va = na.adjs;
-		for (int ib = 0; ib < va.size(); ++ib)
+		for (int i = 0; i < va.size(); ++i)
 		{
-			Node& nb = v[va[ib]];
-			if (nb.boy != na.boy)
+			Node& nc = v[va[i]];
+			if (nc.boy != na.boy ||
+				nc.id == st) // a-b
 			{
 				continue;
 			}
-			vector<int>& vb = nb.adjs;
-			for (int ic = 0; ic < vb.size(); ++ic)
+			vector<int>& vb = nc.adjs;
+			for (int j = 0; j < vb.size(); ++j)
 			{
-				Node& nc = v[vb[ic]];
-				if (nc.boy != nt.boy)
-				{
+				Node& nd = v[vb[j]];
+				if (nd.boy != nt.boy ||
+					nd.id == sa || // a-c-a
+					nd.id == st) // a-c-b
+				{					
 					continue;;
 				}
-				vector<int>& vc = nc.adjs;
-				for (int id = 0; id < vc.size(); ++id)
+				vector<int>& vc = nd.adjs;
+				for (int k = 0; k < vc.size(); ++k)
 				{
-					Node& nd = v[vc[id]];
-					if (nd.id == st)
+					Node& ndd = v[vc[k]];
+					if (ndd.id == st)
 					{
-						res[nb.pid].insert(nc.pid);
+						res[nc.pid].insert(nd.pid);
 					}
 				}
 			}
 		}
+
+		// dedup will not pass pt5
+// 		bool dedup = (na.boy == nt.boy);
+// 		DedupOutput(res, dedup);
+
+		Output(res);
+	}
+
+	void Output(map<string, set<string>> &res)
+	{
 		int total = 0;
 		for (map<string, set<string>>::iterator it = res.begin();
 			it != res.end();
@@ -176,11 +222,66 @@ public:
 		}
 	}
 
+	void DedupOutput(map<string, set<string>> &res, bool dedup)
+	{
+		// dedup will not pass pt5
+		// c ids
+		vector<string> v1;
+		// d ids
+		vector<string> v2;
+		// d id to v1 index
+		unordered_map<string, set<int>> m2;
+		for (map<string, set<string>>::iterator it = res.begin();
+			it != res.end();
+			++it)
+		{
+			set<string>& s = it->second;
+			for (set<string>::iterator its = s.begin();
+				its != s.end();
+				++its)
+			{
+				const string& s1 = it->first;
+				const string& s2 = *its;
+				bool pass = false;
+				if (dedup)
+				{
+					set<int>& setv1 = m2[s1];
+					for (set<int>::iterator itsv1 = setv1.begin();
+						itsv1 != setv1.end();
+						++itsv1)
+					{
+						if (v1[*itsv1] == s2)
+						{
+							pass = true;
+							continue;
+						}
+					}
+				}
+				if (pass)
+				{
+					continue;
+				}
+				v1.push_back(s1);
+				v2.push_back(s2);
+				if (dedup)
+				{
+					m2[s2].insert((int)v1.size() - 1);
+				}
+			}
+		}
+		int length = (int)v1.size();
+		cout << length << endl;
+		for (int i = 0; i < length; ++i)
+		{
+			cout << v1[i] << " " << v2[i] << endl;
+		}
+	}
+
 private:
 	struct Node
 	{
 		string id;
-		string pid;
+		string pid; // id for print
 		bool boy;
 		// adjacent index in v
 		vector<int> adjs;
@@ -217,12 +318,10 @@ private:
 	// nodes;
 	vector<Node> v;
 	// id to node
-	map<string, int> r;
+	unordered_map<string, int> r;
 };
 
 
-// 22/30 pt2,3,4,5
-// 5应该是大数据 396ms 1408kb
 int A1139Func(void)
 {
 	A1139Graph g;
@@ -249,5 +348,6 @@ void A1139(const string& fn)
 void A1139(void)
 {
 	A1139("data\\A1139-1.txt"); // 
+	A1139("data\\A1139-2.txt"); // 
 }
 
