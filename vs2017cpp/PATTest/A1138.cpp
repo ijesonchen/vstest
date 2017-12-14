@@ -1,12 +1,20 @@
 /*
 1138. Postorder Traversal (25)
 
-sln1: 19/25 pt2,4
-	简单判断：前序 a0 a1 ... 中序 b0, b1, ...
+sln1: 简单判断：前序 a0 a1 ... 中序 b0, b1, ...
 	1. a0是根
 	2. b0 == a1,时，取 bi=a0的前一个
 	3. b0 != a1时，取b0
-
+	19/25 pt2,4
+sln2: 
+	前序： 根 左序列 右序列
+	中序： 左序列 根 右序列
+	后续： 左序列 右序列 根
+	递归：通过根不断分割左右序列，直到
+			1.左序列只有1个元素
+			2.左序列无元素，右序列只有一个元素
+	ac
+	
 
 Suppose that all the keys in a binary tree are distinct positive
 integers. Given the preorder and inorder traversal sequences, you
@@ -78,10 +86,45 @@ int A1138FuncWrong19(void)
 	return 0;
 }
 
+
+void FindFirstPost(int* const pPre, int* const pIn, const int len)
+{
+	int root = *pPre;
+	int* pInRoot = pIn;
+	while (*pInRoot++ != root);
+	--pInRoot;
+	int nLeft = (int)(pInRoot - pIn);
+	int nRight = len - nLeft - 1;
+	if (nLeft == 0)
+	{
+		if (nRight == 1)
+		{
+			cout << *(pInRoot + 1) << endl;
+			return;
+		}
+		FindFirstPost(pPre + 1, pInRoot + 1, nRight);
+	}
+	else if (nLeft == 1)
+	{
+		cout << *pIn << endl;
+		return;
+	}
+	else
+	{
+		FindFirstPost(pPre + 1, pIn, nLeft);
+	}
+}
+
 int A1138Func(void)
 {
 	int n, t;
 	cin >> n;
+	if (n == 1)
+	{
+		cin >> t;
+		cout << t << endl;
+		return 0;
+	}
 	vector<int> vPre;
 	vector<int> vIn;
 
@@ -90,27 +133,14 @@ int A1138Func(void)
 		cin >> t;
 		vPre.push_back(t);
 	}
-	int pre0 = vPre.front();
 	for (int i = 0; i < n; ++i)
 	{
 		cin >> t;
-		if (t == pre0)
-		{
-			break;
-		}
-		vPre.push_back(t);
+		vIn.push_back(t);
 	}
-
-	deque<int> dq;
-
-	int len = vIn.size();
-	int ipre = 1;
-	for (int i = 0; i < len; ++i)
-	{
-		if (vIn[i])
-		{
-		}
-	}
+	
+	int len = (int)vPre.size();
+	FindFirstPost(vPre.data(), vIn.data(), len);
 
 	return 0;
 }
