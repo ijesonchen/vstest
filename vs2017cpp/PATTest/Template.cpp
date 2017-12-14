@@ -20,6 +20,7 @@ void A0000(const string& fn)
 	cout << fn << endl;
 	RedirCin(fn);
 	A0000Func();
+	cout << endl;
 }
 
 void A0000(void)
