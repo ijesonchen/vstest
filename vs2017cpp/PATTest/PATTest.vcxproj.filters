@@ -76,6 +76,12 @@
     <ClCompile Include="Top\T1001.cpp">
       <Filter>Top</Filter>
     </ClCompile>
+    <ClCompile Include="Advanced\A1001.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Basic\B1001.cpp">
+      <Filter>Basic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="patMain.h">
