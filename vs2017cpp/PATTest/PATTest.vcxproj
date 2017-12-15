@@ -134,24 +134,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="A1002.cpp" />
-    <ClCompile Include="A1003.cpp" />
-    <ClCompile Include="A1005.cpp" />
-    <ClCompile Include="A1137.cpp" />
-    <ClCompile Include="A1133.cpp" />
-    <ClCompile Include="B1003.cpp" />
+    <ClCompile Include="Advanced\A1002.cpp" />
+    <ClCompile Include="Advanced\A1003.cpp" />
+    <ClCompile Include="Advanced\A1005.cpp" />
+    <ClCompile Include="Advanced\A1137.cpp" />
+    <ClCompile Include="Advanced\A1133.cpp" />
+    <ClCompile Include="Basic\B1003.cpp" />
     <ClCompile Include="Blank.cpp" />
     <ClCompile Include="patMain.cpp" />
-    <ClCompile Include="A1004.cpp" />
-    <ClCompile Include="A1006.cpp" />
-    <ClCompile Include="A1007.cpp" />
-    <ClCompile Include="A1132.cpp" />
-    <ClCompile Include="A1136.cpp" />
-    <ClCompile Include="A1139.cpp" />
-    <ClCompile Include="A1138.cpp" />
-    <ClCompile Include="Source.cpp" />
-    <ClCompile Include="StartSelfTest.cpp" />
+    <ClCompile Include="Advanced\A1004.cpp" />
+    <ClCompile Include="Advanced\A1006.cpp" />
+    <ClCompile Include="Advanced\A1007.cpp" />
+    <ClCompile Include="Advanced\A1132.cpp" />
+    <ClCompile Include="Advanced\A1136.cpp" />
+    <ClCompile Include="Advanced\A1139.cpp" />
+    <ClCompile Include="Advanced\A1138.cpp" />
+    <ClCompile Include="Advanced\Source.cpp" />
+    <ClCompile Include="Basic\StartSelfTest.cpp" />
     <ClCompile Include="Template.cpp" />
+    <ClCompile Include="Top\T1001.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="patAdvanced.h" />

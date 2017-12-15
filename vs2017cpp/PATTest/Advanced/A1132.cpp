@@ -33,7 +33,7 @@ No
 No
 */
 
-#include "patMain.h"
+#include "..\patMain.h"
 #include <iostream>
 #include <sstream>
 

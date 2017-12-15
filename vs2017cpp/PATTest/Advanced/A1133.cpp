@@ -63,7 +63,7 @@ Sample Output:
 27777 11 -1
 */
 
-#include "patMain.h"
+#include "..\patMain.h"
 #include <iostream>
 #include <cstdlib>
 #include <map>

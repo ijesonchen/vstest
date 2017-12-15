@@ -43,7 +43,7 @@ Sample Output:
 10 1 4
 */
 
-#include "patMain.h"
+#include "..\patMain.h"
 #include <iostream>
 #include <algorithm>
 #include <vector>

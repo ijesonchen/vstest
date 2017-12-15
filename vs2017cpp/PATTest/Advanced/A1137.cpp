@@ -71,7 +71,7 @@ dx86w 220 88 81 84
 wehu8 300 55 84 84
 */
 
-#include "patMain.h"
+#include "..\patMain.h"
 #include <iostream>
 #include <string>
 #include <cmath>

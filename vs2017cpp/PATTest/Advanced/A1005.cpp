@@ -26,7 +26,7 @@ Sample Output:
 one five
 */
 
-#include "patMain.h"
+#include "..\patMain.h"
 
 #include <vector>
 #include <iostream>

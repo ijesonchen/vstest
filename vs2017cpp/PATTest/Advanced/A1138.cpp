@@ -42,7 +42,7 @@ Sample Output:
 3
 */
 
-#include "patMain.h"
+#include "..\patMain.h"
 #include <iostream>
 #include <string>
 #include <vector>

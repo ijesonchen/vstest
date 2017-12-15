@@ -97,7 +97,7 @@ Sample Output:
 0
 */
 
-#include "patMain.h"
+#include "..\patMain.h"
 #include <iostream>
 #include <string>
 #include <vector>

@@ -66,7 +66,7 @@ Sample Output 2:
 Not found in 10 iterations.
 */
 
-#include "patMain.h"
+#include "..\patMain.h"
 #include <iostream>
 #include <string>
 

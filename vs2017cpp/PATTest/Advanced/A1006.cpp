@@ -39,7 +39,7 @@ Sample Output:
 SC3021234 CS301133
 */
 
-#include "patMain.h"
+#include "..\patMain.h"
 #include <iostream>
 #include <vector>
 #include <algorithm>

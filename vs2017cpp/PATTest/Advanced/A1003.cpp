@@ -62,7 +62,7 @@ Sample Output
 
 #include <vector>
 #include <iostream>
-#include "patMain.h"
+#include "..\patMain.h"
 
 using namespace std;
 

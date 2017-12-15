@@ -37,7 +37,7 @@ Sample Output
 
 */
 
-#include "patMain.h"
+#include "..\patMain.h"
 
 #include <vector>
 #include <deque>

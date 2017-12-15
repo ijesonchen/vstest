@@ -15,63 +15,66 @@
       <UniqueIdentifier>{46640f0d-e23c-433f-87d1-4ff030010d15}</UniqueIdentifier>
     </Filter>
     <Filter Include="Advanced">
-      <UniqueIdentifier>{e70165f6-051d-4c95-bbb4-774d7d6ebbf7}</UniqueIdentifier>
+      <UniqueIdentifier>{9e3403e0-abf4-4eb6-ad67-72d37d10b100}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="B1003.cpp">
+    <ClCompile Include="Basic\B1003.cpp">
       <Filter>Basic</Filter>
     </ClCompile>
-    <ClCompile Include="StartSelfTest.cpp">
+    <ClCompile Include="Basic\StartSelfTest.cpp">
       <Filter>Basic</Filter>
     </ClCompile>
     <ClCompile Include="patMain.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="A1004.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="A1002.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="A1003.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
     <ClCompile Include="Blank.cpp">
       <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="A1005.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="A1006.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="A1007.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="A1136.cpp">
-      <Filter>Advanced</Filter>
     </ClCompile>
     <ClCompile Include="Template.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="A1132.cpp">
+    <ClCompile Include="Advanced\Source.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
-    <ClCompile Include="A1137.cpp">
+    <ClCompile Include="Advanced\A1002.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
-    <ClCompile Include="A1133.cpp">
+    <ClCompile Include="Advanced\A1003.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
-    <ClCompile Include="A1139.cpp">
+    <ClCompile Include="Advanced\A1004.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
-    <ClCompile Include="A1138.cpp">
+    <ClCompile Include="Advanced\A1005.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
-    <ClCompile Include="Source.cpp">
+    <ClCompile Include="Advanced\A1006.cpp">
       <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1007.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1132.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1133.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1136.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1137.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1138.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1139.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Top\T1001.cpp">
+      <Filter>Top</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
