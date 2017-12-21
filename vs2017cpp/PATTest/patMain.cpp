@@ -7,14 +7,14 @@ using namespace std;
 
 int main(void)
 {
-	B1001();
+	T1001();
 	std::cout << "Press enter";
 	std::getchar();
 }
 
 void Basic(void) { B1003(); }
 void Advanced(void) { A1138(); }
-void Top(void) { }
+void Top(void) { T1001(); }
 void PatMain(void) { Advanced(); }
 
 //////////////////////////////////////////////////////////////////////////
