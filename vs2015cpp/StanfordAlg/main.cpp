@@ -32,7 +32,7 @@ void main(void)
 {
 	auto tp = chrono::high_resolution_clock::now();
 
-	ApproxTravelingSalesmanProblem();
+	Greedy();
 
 	TimeCost(tp);
 	cout << "enter to exit." << endl;

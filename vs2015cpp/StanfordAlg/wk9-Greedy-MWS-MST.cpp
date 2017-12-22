@@ -181,6 +181,15 @@ int64_t RatioMWS(const string& fn)
 	return CalcMWS(v);
 }
 
+string Mws(const std::string& fn)
+{
+	auto sub = SubMWS(fn);
+	auto ratio = RatioMWS(fn);
+	auto s1 = IntToStr(sub);
+	auto s2 = IntToStr(ratio);
+	return s1 + " " + s2;
+}
+
 void Mws(void)
 {
 	vector<int64_t> v;
@@ -242,7 +251,8 @@ public:
 			vtVertices[s].push_back(Edge(t, w));
 			vtVertices[t].push_back(Edge(s, w));
 		}
-		if (i != e) abort();
+		// Beaunus test case e!=i
+//		if (i != e) abort();
 	};
 
 	int64_t Mst(void)
@@ -298,11 +308,12 @@ private:
 	const int maxDist = 1000000;
 };
 
-void PrimMST(const string& fn)
+string PrimMST(const string& fn)
 {
 	PrimGraph pg;
 	pg.Load(fn);
-	cout << pg.Mst() << endl;
+	auto n = pg.Mst();
+	return IntToStr(n);
 }
 
 void PrimTest(void)
@@ -314,6 +325,8 @@ void PrimTest(void)
 
 void Greedy(void)
 {
-	Mws();
-	PrimTest();
+// 	Mws();
+// 	PrimTest();
+	RunBeaunusTest(Mws, "course3\\assignment1SchedulingAndMST\\questions1And2");
+	RunBeaunusTest(PrimMST, "course3\\assignment1SchedulingAndMST\\question3");
 }

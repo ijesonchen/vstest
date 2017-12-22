@@ -144,7 +144,13 @@ std::vector<TestCaseInfo> BeaunusTestCase(const std::string tcPath, const std::s
 		}
 		vtc.emplace_back(std::move(ifn));
 		vtc.back().stem = stem;
-		rf >> vtc.back().result;
+		auto& result = vtc.back().result;
+		rf >> result;
+		string temp;
+		while (rf >> temp && !temp.empty())
+		{
+			result = result + " " + temp;
+		}
 	}
 	return std::move(vtc);
 }
@@ -159,4 +165,38 @@ void FinalTestResult(int n)
 	{
 		cout << " * All Passed." << endl;
 	}
+}
+
+const std::string BeaunusTestRootDir = "C:\\Users\\user\\Documents\\GitHub\\stanford-algs-testcase\\testCases";
+void RunBeaunusTest(std::string (*TestFunc)(const std::string&), const std::string tcPath, const std::string& root /*= BeaunusTestRootDir*/)
+{
+	int e = 0;
+	auto v = BeaunusTestCase(tcPath, root);
+	for (auto i : v)
+	{
+		auto res = TestFunc(i.input);
+		if (res != i.result)
+		{
+			cout << " * " << i.stem << " failed: " << res << " ans: " << i.result << endl;
+			++e;
+			continue;
+		}
+		cout << i.stem << " passed." << endl;
+	}
+	FinalTestResult(e);
+}
+
+
+std::string IntToStr(const std::int64_t i)
+{
+	stringstream ss;
+	ss << i;
+	return ss.str();
+}
+
+std::string IntToStr(const std::uint64_t i)
+{
+	stringstream ss;
+	ss << i;
+	return ss.str();
 }

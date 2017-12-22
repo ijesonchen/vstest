@@ -3,7 +3,17 @@
 
 sln1: 穷举+BFS, MST
 	19/35 pt2,3 异常(buildCost未找到路径)， pt5 超时
-
+	1. 图正常路径、毁坏路径分别保存
+		vector<vector<int>> adjGood
+		vector<vector<Edge>> adjBad
+	2. 对任意城市i：
+		a) 标记该城市后，BFS对剩余城市求连通分量
+			map<int, vector<int>> mapCC
+		b) 连通个数为1：无需重建
+		c) 对任意两个强连通分量，从毁坏路径中选取
+		最短的连接路径，记录cost，生成连通分量图。
+		d) 求连通分量图的最小生成树，作为i城市对应的花费
+	3. 记录最高花费及对应城市(同一花费可能多个）
 
 It is vitally important to have all the cities connected by 
 highways in a war. If a city is conquered by the enemy, all 
@@ -70,259 +80,274 @@ Sample Output 2:
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <map>
+#include <unordered_map>
+#include <unordered_set>
+#include <set>
 #include <deque>
 
 using namespace std;
 
-class T1001G1
+struct T1001E
+{
+	int u = 0;
+	int v = 0;
+	int c = 0;
+	bool ok = false;
+	T1001E(int _u, int _v, int _c, bool _ok)
+		:u(_u), v(_v), c(_c), ok(_ok) {};
+
+	bool operator<(const T1001E& e)
+	{
+		return c < e.c;
+	}
+};
+
+bool T1001ELess(T1001E* const p1, T1001E* const p2)
+{
+	return *p1 < *p2;
+}
+
+class T1001G
 {
 public:
-	void Read(void)
-	{
-		int n, m;
-		cin >> n >> m;
-		cityCount = n;
-		adjGood.assign(n, vector<Edge>());
-		adjBad.assign(n, vector<Edge>());
-		int u, v, c;
-		bool ok;
-		for (int i = 0; i < m; ++i)
-		{
-			cin >> u >> v >> c >> ok;
-			if (u == v) { continue; }
-			--u; --v;
-			if (ok)
-			{
-				adjGood[u].emplace_back(Edge(u, v, c, ok));
-				adjGood[v].emplace_back(Edge(v, u, c, ok));
-			}
-			else
-			{
-				adjBad[u].emplace_back(Edge(u, v, c, ok));
-				adjBad[v].emplace_back(Edge(v, u, c, ok));
-			}
-		}
-	}
-	
-	void SearchCity(void)
-	{
-		int maxCost = 0;
-		int cost = 0;
-		vector<int> cities;
-		for (int i = 0; i < cityCount; ++i)
-		{
-			cost = CityCost(i);
-			if (cost < maxCost)
-			{
-				continue;
-			}
-			if (cost == maxCost)
-			{
-				cities.push_back(i);
-			}
-			else
-			{
-				maxCost = cost;
-				cities.clear();
-				cities.push_back(i);
-			}
-		}
+	void Read(void);
+	void SearchCity();
+private:
+	// do not return 0;
+	int CityCost(int iCity);
+	int BuildCost(vector<int>& v1, vector<int>& v2);
+	void Bfs(int start);
 
-		if (cities.empty())
+	// for BFS group
+	void ResetBfsAssist(int ibad);
+	int badCity = -1;
+	unordered_map<int, vector<int>> mapCC;
+	vector<bool> visited;
+
+	vector<vector<int>> adjGood;
+	vector<vector<T1001E>> adjBad;
+	int cityCount = 0;
+};
+
+class T1001Mst
+{
+	void SetData(const vector<T1001E>* const p)
+	{
+		pvtEdges = p;
+	}
+
+	int PrimWithMinHeap(void);
+	int KruskalWithUnionfind(void);
+private:
+	vector<T1001E>* pvtEdges;
+};
+
+
+void T1001G::Read(void)
+{
+	int n, m;
+	cin >> n >> m;
+	cityCount = n;
+	adjGood.assign(n, vector<int>());
+	adjBad.assign(n, vector<T1001E>());
+	int u, v, c;
+	bool ok;
+	for (int i = 0; i < m; ++i)
+	{
+		cin >> u >> v >> c >> ok;
+		if (u == v) { continue; }
+		--u; --v;
+		if (ok)
 		{
-			cout << "0" << endl;
+			adjGood[u].emplace_back(v);
+			adjGood[v].emplace_back(u);
 		}
 		else
 		{
-			sort(cities.begin(), cities.end());
-			cout << cities.front() + 1;
-			for (int i = 1; i < cities.size(); ++i)
-			{
-				cout << " " << cities[i] + 1;
-			}
-			cout << endl;
+			adjBad[u].emplace_back(T1001E(u, v, c, ok));
+			adjBad[v].emplace_back(T1001E(v, u, c, ok));
+		}
+	}
+}
+
+void T1001G::SearchCity(void)
+{
+	int maxCost = 0;
+	int cost = 0;
+	vector<int> cities;
+	for (int i = 0; i < cityCount; ++i)
+	{
+		cost = CityCost(i);
+		if (cost > maxCost)
+		{
+			maxCost = cost;
+			cities.clear();
+			cities.push_back(i);
+		}
+		else if (cost == maxCost)
+		{
+			cities.push_back(i);
 		}
 	}
 
-private:
-	struct Edge
+	// output result
+	if (cities.empty())
 	{
-		int u = 0;
-		int v = 0;
-		int c = 0;
-		bool ok = false;
-		Edge(int _u, int _v, int _c, bool _ok)
-			:u(_u), v(_v), c(_c), ok(_ok) {};
-
-		bool operator<(const Edge& e)
-		{
-			return c < e.c;
-		}
-
-		bool Relate(const Edge& e)
-		{
-			return (u == e.u) 
-				|| (u == e.v) 
-				|| (v = e.u) 
-				|| (v = e.v);
-		}
-	};
-
-	void Bfs(int start)
-	{
-		deque<int> dq;
-		dq.push_back(start);
-		while (!dq.empty())
-		{
-			int n = dq.front();
-			dq.pop_back();
-			vector<Edge>& adj = adjGood[n];
-			int length = (int)adj.size();
-			for (int i = 0; i < length; ++i)
-			{
-				Edge& e = adj[i];
-				if (visited[e.v])
-				{
-					continue;
-				}
-				visited[e.v] = true;
-				dq.push_back(e.v);
-				m[start].push_back(e.v);
-			}
-		}
+		cout << "0" << endl;
+		return;
 	}
-
-	// do not return 0;
-	int CityCost(int iCity)
+	set<int> s;
+	for (auto i : cities)
 	{
-		ResetBfsAssist(iCity);
-		for (int i = 0; i < cityCount; ++i)
+		s.insert(i);
+	}
+	auto its = s.begin();
+	cout << *its + 1;
+	for (++its; its != s.end(); ++its)
+	{
+		cout << " " << *its + 1;
+	}
+	cout << endl;
+}
+
+void T1001G::Bfs(int start)
+{
+	vector<int> vleft;
+	vleft.push_back(start);
+	while (!vleft.empty())
+	{
+		int next = vleft.back();
+		vleft.pop_back();
+		auto& subs = adjGood[next];
+		for (auto v : subs)
 		{
-			if (i == badCity)
+			if (visited[v])
 			{
 				continue;
 			}
-			if (!visited[i])
-			{
-				visited[i] = true;
-				m[i].push_back(i);
-				Bfs(i);
-			}
+			visited[v] = true;
+			vleft.push_back(v);
+			mapCC[start].push_back(v);
 		}
-		int msize = (int)m.size();
-		if (msize == 1)
+	}
+}
+
+int T1001G::CityCost(int iCity)
+{
+	ResetBfsAssist(iCity);
+	for (int i = 0; i < cityCount; ++i)
+	{
+		if (i == badCity) { continue; }
+		if (!visited[i])
 		{
-			return -1;
+			visited[i] = true;
+			mapCC[i].push_back(i);
+			Bfs(i);
 		}
-		// MST
-		int buildcost = 0;
-		vector<Edge> groupEdges;
-		vector<vector<int>> costMatrix(msize);
-		map<int, vector<int>>::iterator mbeg = m.begin();
-		map<int, vector<int>>::iterator mend = m.end();
-		map<int, vector<int>>::iterator mi;
-		map<int, vector<int>>::iterator mj;
-		int mii = 0;
-		int mjj = 0;
-		for (mi = m.begin(); mi != mend; ++mi, ++mii)
+	}
+
+	int msize = (int)mapCC.size();
+	if (msize == 1)
+	{
+		return -1;
+	}
+	// mapCC -> graphCC
+	int buildcost = 0;
+	vector<T1001E> groupEdges;
+	vector<vector<int>*> vCC;
+	for (auto& it : mapCC)
+	{
+		vCC.push_back(&(it.second));
+	}
+	int nCC = (int)vCC.size();
+	for (int i = 0; i < nCC; ++i)
+	{
+		for (int j = i + 1; j < nCC; ++j)
 		{
-			for (mj = mi, mjj = mii; mj != mend; ++mj, ++mjj)
-			{
-				if (mi == mj)
-				{
-					continue;
-				}
-				buildcost = BuildCost(mi->second, mj->second);
-				groupEdges.push_back(Edge(mii, mjj, buildcost, true));
-			}
+			buildcost = BuildCost(*vCC[i], *vCC[j]);
+			groupEdges.push_back(T1001E(i, j, buildcost, true));
 		}
-		sort(groupEdges.begin(), groupEdges.end());
-		int totalCost = 0;
-		int geSize = (int)groupEdges.size();
-		for (int i = 0; i < geSize; ++i)
+	}
+	// MST for groupCC
+	vector<T1001E*> pgEdges;
+	for (auto& e : groupEdges)
+	{
+		pgEdges.push_back(&e);
+	}
+	sort(pgEdges.begin(), pgEdges.end(), T1001ELess);
+	int totalCost = 0;
+
+	unordered_set<int> setGroup;
+	bool hasU, hasV;
+	int geSize = (int)pgEdges.size();
+	for (int i = 0; i < geSize; ++i)
+	{
+		T1001E& e = *pgEdges[i];
+		hasU = setGroup.find(e.u) != setGroup.end();
+		hasV = setGroup.find(e.v) != setGroup.end();
+		if (hasU && hasV) { continue; }
+		totalCost += e.c;
+		if (!hasU) { setGroup.insert(e.u); }
+		if (!hasV) { setGroup.insert(e.v); }
+	}
+	return totalCost;
+}
+
+int T1001G::BuildCost(vector<int>& v1, vector<int>& v2)
+{
+	int cost = 0x7FFFFFFF;
+	for (auto const u : v1)
+	{
+		vector<T1001E>& edges = adjBad[u];
+		for (const auto e : edges)
 		{
-			Edge& e = groupEdges[i];
-			if (!e.ok)
+			if (e.v == badCity)
 			{
 				continue;
 			}
-			totalCost += e.c;
-			// mark all e
-			for (int j = i; j < geSize; ++j)
+			for (const auto v : v2)
 			{
-				Edge& e2 = groupEdges[j];
-				if (e.Relate(e2))
+				if (e.v == v)
 				{
-					e2.ok = false;
-				}
-			}
-		}
-		if (totalCost == 0)
-		{
-			abort();
-		}
-		return totalCost;
-	}
-
-	int BuildCost(vector<int>& v1, vector<int>& v2)
-	{
-		int cost = 0x7FFFFFFF;
-		int v1size = (int)v1.size();
-		int v2size = (int)v2.size();
-		for (int i = 0; i < v1size; ++i)
-		{
-			const int u = v1[i];
-			vector<Edge>& edges = adjBad[u];
-			int edgesize = (int)edges.size();
-			for (int j = 0; j < edgesize; ++j)
-			{
-				const Edge& e = edges[j];
-				if (e.v == badCity)
-				{
-					continue;
-				}
-				for (int k = 0; k < v2size; ++k)
-				{
-					const int v = v2[k];
-					if (e.v == v)
+					if (e.c < cost)
 					{
-						if (e.c < cost)
-						{
-							cost = e.c;
-						}
+						cost = e.c;
 					}
 				}
 			}
 		}
-		if (cost == 0x7FFFFFFF)
-		{
-			abort();
-		}
-		return cost;
 	}
-
-	// for BFS group
-	void ResetBfsAssist(int i)
+	if (cost == 0x7FFFFFFF)
 	{
-		badCity = i;
-		m.clear();
-		visited.assign(cityCount, false);
-		visited[badCity] = true;
+		abort();
 	}
-	int badCity = -1;
-	map<int, vector<int>> m;
-	vector<bool> visited;
+	return cost;
+}
 
-	vector<vector<Edge>> adjGood;
-	vector<vector<Edge>> adjBad;
-	int cityCount = 0;
-};
+
+void T1001G::ResetBfsAssist(int ibad)
+{
+	mapCC.clear();
+	visited.assign(cityCount, false);
+	badCity = ibad;
+	visited[badCity] = true;
+}
+
+
+int T1001Mst::PrimWithMinHeap(void)
+{
+	return -1;
+}
+
+int T1001Mst::KruskalWithUnionfind(void)
+{
+	return -1;
+}
 
 // rename this to main int PAT
 int T1001Func(void)
 {
-	T1001G1 g;
+	T1001G g;
 	g.Read();
 	g.SearchCity();
 	return 0;

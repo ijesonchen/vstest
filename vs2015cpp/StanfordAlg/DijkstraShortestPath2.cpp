@@ -188,20 +188,8 @@ void DijkstraShortestPath2Test8Node(void)
 	auto res = DijkstraShortestPath2("data\\wk6-test1-8.txt");
 }
 
+
 void DijkstraShortestPath2(void)
 {
-	int e = 0;
-	auto v = BeaunusTestCase("course2\\assignment2Dijkstra", "C:\\Users\\user\\Documents\\GitHub\\stanford-algs-testcase\\testCases");
-	for (auto i : v)
-	{
-		auto res = DijkstraShortestPath2(i.input);
-		if (res != i.result)
-		{
-			cout << " * " << i.stem << " failed: " << res << " to " << i.result << endl;
-			++e;
-			continue;
-		}
-		cout << i.stem << " passed." << endl;
-	}
-	FinalTestResult(e);
+	RunBeaunusTest(DijkstraShortestPath2, "course2\\assignment2Dijkstra");
 }

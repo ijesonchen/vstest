@@ -48,9 +48,6 @@
     <ClCompile Include="wk8-2sum.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="wk9-Greedy.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="wk10-Clustering.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -79,6 +76,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DijkstraShortestPath2.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="wk9-Greedy-MWS-MST.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

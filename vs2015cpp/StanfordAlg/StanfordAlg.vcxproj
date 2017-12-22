@@ -173,7 +173,7 @@
     <ClCompile Include="wk6-DijkstraShortestPath.cpp" />
     <ClCompile Include="wk7-MediaHeapAndBst.cpp" />
     <ClCompile Include="wk8-2sum.cpp" />
-    <ClCompile Include="wk9-Greedy.cpp" />
+    <ClCompile Include="wk9-Greedy-MWS-MST.cpp" />
     <ClCompile Include="wk10-Clustering.cpp" />
   </ItemGroup>
   <ItemGroup>

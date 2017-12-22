@@ -56,8 +56,14 @@ struct TestCaseInfo
 	TestCaseInfo(const std::string& i) :input(i) {}
 };
 std::vector<TestCaseInfo> BeaunusTestCase(const std::string tcPath, const std::string& root = ".");
-
 void FinalTestResult(int n);
+
+extern const std::string BeaunusTestRootDir;
+void RunBeaunusTest(std::string (*TestFunc)(const std::string&), const std::string tcPath, const std::string& root = BeaunusTestRootDir);
+
+// convert 
+std::string IntToStr(const std::int64_t i);
+std::string IntToStr(const std::uint64_t i);
 
 // ReturnExecutor var([&](){ f; })
 #define ReturnGuard(name, func)	\
