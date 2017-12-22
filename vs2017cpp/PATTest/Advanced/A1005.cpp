@@ -129,15 +129,15 @@ void A1005(const string& fn)
 void A1005(void)
 {
  	A1005("data\\A1005-1.TXT"); // one five
-	Tick();
+	Tick2();
 	A1005("data\\A1005-2.TXT"); // one three seven six nine nine one
-	Tock();
+	Tock2();
 	A1005PARTWIDTH = 3;
 	A1005PARTMAX = 1000;
 	A1005("data\\A1005-2.TXT"); // 
-	Tock();
+	Tock2();
 	A1005PARTWIDTH = 5;
 	A1005PARTMAX = 100000;
 	A1005("data\\A1005-2.TXT"); // 
-	Tock();
+	Tock2();
 }

@@ -4,8 +4,8 @@
 #include <string>
 
 void RedirCin(const std::string& fn);
-void Tick(void);
-void Tock(void);
+void Tick2(void);
+void Tock2(void);
 
 #include "patBasic.h"
 void Basic(void);

@@ -186,17 +186,3 @@ void RunBeaunusTest(std::string (*TestFunc)(const std::string&), const std::stri
 	FinalTestResult(e);
 }
 
-
-std::string IntToStr(const std::int64_t i)
-{
-	stringstream ss;
-	ss << i;
-	return ss.str();
-}
-
-std::string IntToStr(const std::uint64_t i)
-{
-	stringstream ss;
-	ss << i;
-	return ss.str();
-}

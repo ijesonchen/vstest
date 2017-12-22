@@ -34,14 +34,14 @@ void RedirCin(const std::string& fn)
 //////////////////////////////////////////////////////////////////////////
 // tick tock 
 chrono::steady_clock::time_point g_timepoint;
-void Tick(void)
+void Tick2(void)
 {
 	g_timepoint = chrono::high_resolution_clock::now();
 }
 
-void Tock(void)
+void Tock2(void)
 {
 	auto cost = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - g_timepoint).count();;
 	cout << "cost: " << cost << " seconds." << endl;
-	Tick();
+	Tick2();
 }

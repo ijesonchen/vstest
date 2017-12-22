@@ -185,8 +185,8 @@ string Mws(const std::string& fn)
 {
 	auto sub = SubMWS(fn);
 	auto ratio = RatioMWS(fn);
-	auto s1 = IntToStr(sub);
-	auto s2 = IntToStr(ratio);
+	auto s1 = ToStr(sub);
+	auto s2 = ToStr(ratio);
 	return s1 + " " + s2;
 }
 
@@ -313,7 +313,7 @@ string PrimMST(const string& fn)
 	PrimGraph pg;
 	pg.Load(fn);
 	auto n = pg.Mst();
-	return IntToStr(n);
+	return ToStr(n);
 }
 
 void PrimTest(void)

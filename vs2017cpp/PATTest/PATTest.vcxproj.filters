@@ -82,6 +82,9 @@
     <ClCompile Include="Basic\B1001.cpp">
       <Filter>Basic</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\vs2015cpp\StanfordAlg\common.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="patMain.h">
@@ -94,6 +97,9 @@
       <Filter>main</Filter>
     </ClInclude>
     <ClInclude Include="patTop.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vs2015cpp\StanfordAlg\common.h">
       <Filter>main</Filter>
     </ClInclude>
   </ItemGroup>
