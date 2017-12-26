@@ -20,6 +20,8 @@ sln1-1:
 	25/35 pt3：错误 pt5:超时
 sln1-2:
 	改用int64记录cost未改善
+sln1-test:
+	最大cost不超过100W
 
 It is vitally important to have all the cities connected by 
 highways in a war. If a city is conquered by the enemy, all 
