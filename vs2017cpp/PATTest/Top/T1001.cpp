@@ -16,12 +16,16 @@ sln1: 穷举+BFS, MST
 	3. 记录最高花费及对应城市(同一花费可能多个）
 sln1-1:
 	修正MST错误
-	cityCost可能返回0x7FFFFFFF，取消检查abort
+	cityCost可能返回0x7FFFFFFF，(不是任意两个CC都有通路）取消检查abort
 	25/35 pt3：错误 pt5:超时
 sln1-2:
 	改用int64记录cost未改善
 sln1-test:
 	最大cost不超过100W
+sln1-3:修复星型bug tc-4。未见改进
+	
+	MST Prime/Kruskal算法已测试通过。
+
 
 It is vitally important to have all the cities connected by 
 highways in a war. If a city is conquered by the enemy, all 
@@ -97,12 +101,14 @@ Sample Output 2:
 
 using namespace std;
 
+const int T1001MAXDIST = 0x7fffffff;
+
 struct T1001E
 {
 	int u = 0;
 	int v = 0;
-	int64_t c = 0;
-	T1001E(int _u, int _v, int64_t _c)
+	int c = 0;
+	T1001E(int _u, int _v, int _c)
 		:u(_u), v(_v), c(_c) {};
 
 	int t(int s) const { return s == u ? v : u; }
@@ -125,8 +131,8 @@ public:
 	void SearchCity();
 private:
 	// do not return 0;
-	int64_t CityCost(int iCity);
-	int64_t BuildCost(vector<int>& v1, vector<int>& v2);
+	int CityCost(int iCity);
+	int BuildCost(vector<int>& v1, vector<int>& v2);
 	void Bfs(int start);
 
 	// for BFS group
@@ -146,8 +152,8 @@ public:
 	T1001Mst(const vector<T1001E>& v, int n)
 		: pvtEdges(&v), nNodes(n) {};
 
-	int64_t Prim(void);
-	int64_t KruskalWithUnionfind(void);
+	int Prim(void);
+	int KruskalWithUnionfind(void);
 private:
 	const vector<T1001E>* const pvtEdges;
 	int nNodes;
@@ -162,7 +168,7 @@ void T1001G::Read(void)
 	adjGood.assign(n, vector<int>());
 	adjBad.assign(n, vector<T1001E>());
 	int u, v;
-	int64_t c;
+	int c;
 	bool ok;
 	for (int i = 0; i < m; ++i)
 	{
@@ -184,8 +190,8 @@ void T1001G::Read(void)
 
 void T1001G::SearchCity(void)
 {
-	int64_t maxCost = 0;
-	int64_t cost = 0;
+	int maxCost = 0;
+	int cost = 0;
 	vector<int> cities;
 	for (int i = 0; i < cityCount; ++i)
 	{
@@ -244,7 +250,7 @@ void T1001G::Bfs(int start)
 	}
 }
 
-int64_t T1001G::CityCost(int iCity)
+int T1001G::CityCost(int iCity)
 {
 	ResetBfsAssist(iCity);
 	for (int i = 0; i < cityCount; ++i)
@@ -264,7 +270,7 @@ int64_t T1001G::CityCost(int iCity)
 		return -1;
 	}
 	// mapCC -> graphCC
-	int64_t buildcost = 0;
+	int buildcost = 0;
 	vector<T1001E> groupEdges;
 	vector<vector<int>*> vCC;
 	for (auto& it : mapCC)
@@ -277,41 +283,26 @@ int64_t T1001G::CityCost(int iCity)
 		for (int j = i + 1; j < nCC; ++j)
 		{
 			buildcost = BuildCost(*vCC[i], *vCC[j]);
-			groupEdges.push_back(T1001E(i, j, buildcost));
+			if (buildcost != T1001MAXDIST)
+			{
+				groupEdges.push_back(T1001E(i, j, buildcost));
+			}
 		}
 	}
 
+	if (groupEdges.empty())
+	{
+		return T1001MAXDIST;
+	}
+
 	T1001Mst mst(groupEdges, nCC);
+	return mst.KruskalWithUnionfind();
 	return mst.Prim();
-
-	// MST for groupCC
-	vector<T1001E*> pgEdges;
-	for (auto& e : groupEdges)
-	{
-		pgEdges.push_back(&e);
-	}
-	sort(pgEdges.begin(), pgEdges.end(), T1001ELess);
-	int totalCost = 0;
-
-	unordered_set<int> setGroup;
-	bool hasU, hasV;
-	int geSize = (int)pgEdges.size();
-	for (int i = 0; i < geSize; ++i)
-	{
-		T1001E& e = *pgEdges[i];
-		hasU = setGroup.find(e.u) != setGroup.end();
-		hasV = setGroup.find(e.v) != setGroup.end();
-		if (hasU && hasV) { continue; }
-		totalCost += e.c;
-		if (!hasU) { setGroup.insert(e.u); }
-		if (!hasV) { setGroup.insert(e.v); }
-	}
-	return totalCost;
 }
 
-int64_t T1001G::BuildCost(vector<int>& v1, vector<int>& v2)
+int T1001G::BuildCost(vector<int>& v1, vector<int>& v2)
 {
-	int64_t cost = 0x7FFFFFFFFFFFFFFF;
+	int cost = T1001MAXDIST;
 	for (auto const u : v1)
 	{
 		vector<T1001E>& edges = adjBad[u];
@@ -333,10 +324,6 @@ int64_t T1001G::BuildCost(vector<int>& v1, vector<int>& v2)
 			}
 		}
 	}
-	if (cost == 0x7FFFFFFF)
-	{
-		abort();
-	}
 	return cost;
 }
 
@@ -350,11 +337,11 @@ void T1001G::ResetBfsAssist(int ibad)
 }
 
 
-int64_t T1001Mst::Prim(void)
+int T1001Mst::Prim(void)
 {
-	const int64_t MAXDIST = 0x7fffffffffffffff;
+	const int MAXDIST = T1001MAXDIST;
 	vector<bool> visited(nNodes, false);
-	vector<int64_t>  dist(nNodes, MAXDIST);
+	vector<int>  dist(nNodes, MAXDIST);
 	vector<vector<const T1001E*>> adjs(nNodes);
 	for (auto& pe : *pvtEdges)
 	{
@@ -365,7 +352,7 @@ int64_t T1001Mst::Prim(void)
 	int left = nNodes;
 	dist[0] = 0;
 	int u;
-	int64_t total = 0;
+	int total = 0;
 	while (--left >= 0)
 	{
 		u = (int)(min_element(dist.begin(), dist.end()) - dist.begin());
@@ -387,7 +374,7 @@ int64_t T1001Mst::Prim(void)
 }
 
 tuple<int,int>
-	GroupIndex(const vector<int>& group, int u)
+	GetGroupId(const vector<int>& group, int u)
 {
 	int iter = 0;
 	while (group[u] != -1)
@@ -398,7 +385,27 @@ tuple<int,int>
 	return make_tuple(u,iter);
 }
 
-int64_t T1001Mst::KruskalWithUnionfind(void)
+// 查询较少，路径压缩效果不明显
+tuple<int, int>
+GetGroupIdCompressed(vector<int>& group, int u)
+{
+	int iter = 0;
+	int v = u;
+	while (group[u] != -1)
+	{
+		++iter;
+		u = group[u];
+	}
+
+	int temp;
+	while ((temp = group[v]) != -1)
+	{
+		group[v] = u;
+		v = temp;
+	}
+	return make_tuple(u, iter);
+}
+int T1001Mst::KruskalWithUnionfind(void)
 {
 	vector<int> group(nNodes, -1);
 	vector<const T1001E*> vpEdge;
@@ -408,17 +415,18 @@ int64_t T1001Mst::KruskalWithUnionfind(void)
 	}
 	sort(vpEdge.begin(), vpEdge.end(), T1001ELess);
 
-	int64_t total = 0;
+	int total = 0;
 	int left = nNodes - 1;
 	for (auto pe : vpEdge)
 	{
 		auto u = pe->u;
 		auto v = pe->v;
-		auto [gu, iu] = GroupIndex(group, u);
-		auto [gv, iv] = GroupIndex(group, v);
+		int gu, iu, gv, iv;
+		std::tie(gu, iu) = GetGroupId(group, u);
+		std::tie(gv, iv) = GetGroupId(group, v);
 		if (gu == gv) { continue; }
-		if (iu < iv) { group[u] = gv; }
-		else { group[v] = gu; }
+		if (iu < iv) { group[gu] = gv; }
+				else { group[gv] = gu; }
 		total += pe->c;
 		if (--left <= 0) { break; }
 	}
@@ -451,6 +459,7 @@ string KruskalMst(const string& fn)
 	vector<T1001E> vEdge;
 	while (cin >> u >> v >> w)
 	{
+		if (u==v) continue;
 		vEdge.push_back(T1001E(u - 1, v - 1, w));
 	}
 	T1001Mst g(vEdge, n);
@@ -478,10 +487,14 @@ void T1001(const string& fn)
 
 void MstTest1(void)
 {
-	cout << "PrimMst" << endl;
-	RunBeaunusTest(PrimMst, "course3\\assignment1SchedulingAndMST\\question3");
+	Tick2();
+// 	cout << "RunPrimMst" << endl;
+// 	RunBeaunusTest(PrimMst, "course3\\assignment1SchedulingAndMST\\question3");
+// 	Tock2();
+// 	Tick();
 	cout << endl << endl << "RunBeauKruskalMstnusTest" << endl;
 	RunBeaunusTest(KruskalMst, "course3\\assignment1SchedulingAndMST\\question3");
+	Tock2();
 }
 
 void MstTest2(void)
@@ -494,13 +507,17 @@ void MstTest2(void)
 
 void MstTest3(void)
 {
-	auto root = BeaunusTestRootDir + "course3\\assignment1SchedulingAndMST\\question3\\";
-//	auto s = KruskalMst(root + )
+	auto root = BeaunusTestRootDir + "\\course3\\assignment1SchedulingAndMST\\question3\\";
+	auto s1 = KruskalMst(root + "input_random_7_20.txt");
 }
 
 void T1001(void)
 {
- 	T1001("data\\T1001-1.txt"); // 1 2
- 	T1001("data\\T1001-2.txt"); // 0
- 	T1001("data\\T1001-3.txt"); // 3
+	MstTest1();
+	return;
+	T1001("data\\T1001-1.txt"); // 1 2
+	T1001("data\\T1001-2.txt"); // 0
+	T1001("data\\T1001-3.txt"); // 3
+	T1001("data\\T1001-4.txt"); // 4   星型
+	T1001("data\\T1001-5.txt"); // 4 5 杠铃型
 }
