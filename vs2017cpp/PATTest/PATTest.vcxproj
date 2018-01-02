@@ -143,6 +143,7 @@
     <ClCompile Include="Advanced\A1002.cpp" />
     <ClCompile Include="Advanced\A1003.cpp" />
     <ClCompile Include="Advanced\A1005.cpp" />
+    <ClCompile Include="Advanced\A1009.cpp" />
     <ClCompile Include="Advanced\A1137.cpp" />
     <ClCompile Include="Advanced\A1133.cpp" />
     <ClCompile Include="Basic\B1001.cpp" />
@@ -156,7 +157,7 @@
     <ClCompile Include="Advanced\A1136.cpp" />
     <ClCompile Include="Advanced\A1139.cpp" />
     <ClCompile Include="Advanced\A1138.cpp" />
-    <ClCompile Include="Advanced\Source.cpp" />
+    <ClCompile Include="Advanced\A1008.cpp" />
     <ClCompile Include="Basic\StartSelfTest.cpp" />
     <ClCompile Include="Template.cpp" />
     <ClCompile Include="Top\T1001.cpp" />
@@ -167,6 +168,9 @@
     <ClInclude Include="patBasic.h" />
     <ClInclude Include="patMain.h" />
     <ClInclude Include="patTop.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="list.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

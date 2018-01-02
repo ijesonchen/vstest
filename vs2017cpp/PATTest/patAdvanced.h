@@ -1,9 +1,6 @@
 #ifndef patAdvanced_h__
 #define patAdvanced_h__
 
-void A170917A(void);
-void A170917B(void);
-
 void A1001(void);
 void A1002(void);
 void A1003(void);
