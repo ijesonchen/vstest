@@ -129,7 +129,6 @@ void WorkerThread(void)
 	cv.notify_one();
 }
 
-
 void CVTest(void)
 {
 
@@ -150,8 +149,6 @@ void CVTest(void)
 		std::cout << "-->> main() notify_one but hold lock, sleep 2 seconds" << endl;
 		this_thread::sleep_for(chrono::seconds(2));
 		std::cout << "-->> main() release lock" << endl;
-
-
 	}
 
 	// wait for the worker
@@ -172,6 +169,110 @@ void CVTest(void)
 	*/
 }
 
+
+
+void WorkerThreadNoPred(void)
+{
+	// Wait until main() sends data
+	std::cout << "<<-- Worker thread try lock...\n";
+	std::unique_lock<std::mutex> lk(m);
+	std::cout << "<<-- Worker thread try wait...\n";
+	cv.wait(lk);
+
+
+	// after the wait, we own the lock.
+	std::cout << "<<-- Worker thread is processing data and sleep 2 seconds, then unlock.\n";
+	cvData += " after processing";
+	this_thread::sleep_for(chrono::seconds(2));
+
+	// Manual unlocking is done before notifying, to avoid waking up
+	// the waiting thread only to block again (see notify_one for details)
+	std::cout << "<<-- Worker thread unlock.\n";
+	lk.unlock();
+
+	std::cout << "<<-- Worker thread sleep 2 seconds before notify_one\n";
+	this_thread::sleep_for(chrono::seconds(2));
+	std::cout << "<<-- Worker thread notify_one\n";
+	cv.notify_one();
+
+	std::cout << "<<-- Worker thread sleep 2 seconds before exit\n";
+	this_thread::sleep_for(chrono::seconds(2));
+	std::cout << "<<-- Worker thread exited.\n";
+}
+
+void CVTestNoPred(void)
+{
+
+	std::thread worker(WorkerThreadNoPred);
+
+	cvData = "Example data";
+	// send data to the worker thread
+	std::cout << "-->> main() data = " << cvData << '\n';
+	std::cout << "-->> main() sleep 2 seconds" << endl;
+	this_thread::sleep_for(chrono::seconds(2));
+	std::cout << "-->> main() notify_one" << endl;
+	cv.notify_one();
+
+
+	// wait for the worker
+	std::cout << "-->> main() try lock...\n";
+	std::unique_lock<std::mutex> lk(m);
+	std::cout << "-->> main() try wait...\n";
+	cv.wait(lk);
+	std::cout << "-->> Back in main(), data = " << cvData << '\n';
+
+	std::cout << "-->> main() wait worker thread to exit.\n";
+	worker.join();
+	std::cout << "-->> main() exit.\n";
+
+	/*
+	// 理论结果 空行表示sleep，无空行部分可以认为是同时运行
+				<<-- Worker thread try lock...
+				<<-- Worker thread try wait...
+-->> main() data = Example data
+-->> main() sleep 2 seconds
+
+-->> main() notify_one
+				<<-- Worker thread is processing data and sleep 2 seconds, thren unlock.
+-->> main(), try lock...
+
+
+				<<-- Worker thread unlock.
+-->> main(), try wait...
+				<<-- Worker thread sleep 2 seconds before notify_one
+
+				<<-- Worker thread notify_one
+-->> Back in main(), data = Example data after processing
+-->> main(), wait worker thread to exit.
+				<<-- Worker thread sleep 2 seconds before exit
+
+				<<-- Worker thread exited.
+-->> main() exit.
+	// 实际结果，与理论顺序基本一致
+				<<-- Worker thread try lock...
+-->> main() data = Example data
+				<<-- Worker thread try wait...
+-->> main() sleep 2 seconds
+
+-->> main() notify_one
+-->> main() try lock...
+				<<-- Worker thread is processing data and sleep 2 seconds, thren unlock.
+
+
+				<<-- Worker thread unlock.
+				<<-- Worker thread sleep 2 seconds before notify_one
+-->> main() try wait...
+
+				<<-- Worker thread notify_one
+				<<-- Worker thread sleep 2 seconds before exit
+-->> Back in main(), data = Example data after processing
+-->> main() wait worker thread to exit.
+
+				<<-- Worker thread exited.
+-->> main() exit.
+	*/
+}
+
 void LockTest2(void)
 {
 	// wrong: temp var, dtor guard immediately
@@ -186,7 +287,9 @@ void LockTest2(void)
 
 void LockTest(void)
 {
+	CVTestNoPred();
 	CVTest();
+
 	thread t(LockTest2);
 	thread t2(LockTest2);
 

@@ -7,7 +7,7 @@
 using namespace std;
 void main(void)
 {
-	MainTest();
+	LockTest();
 	cout << "enter to continue" << endl;
 	getchar();
 }
