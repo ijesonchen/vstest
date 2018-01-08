@@ -88,6 +88,21 @@
     <ClCompile Include="Advanced\A1009.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
+    <ClCompile Include="Advanced\A1010.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1011.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1012.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1013.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1014.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="patMain.h">
