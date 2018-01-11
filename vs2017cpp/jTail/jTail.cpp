@@ -22,6 +22,11 @@ void main(int argc, char** argv)
 	{
 		tv = atof(argv[2]);
 	}
+	int maxRead = 1000;
+	if (argc == 4)
+	{
+		maxRead = atoi(argv[3]);
+	}
 	auto durSleep = chrono::duration<float, ratio<1, 1>>(tv);
 	cout << "durSleep " << durSleep.count() << endl;
 	cout << "filename: " << fn << endl;
@@ -43,6 +48,10 @@ void main(int argc, char** argv)
 		size = sys::file_size(fn);;
 		if (pos != size)
 		{
+			if (pos + maxRead < size)
+			{
+				pos = size - maxRead;
+			}
 			f.seekg(pos);
 			pos = (int)size;
 			while (getline(f, s))
