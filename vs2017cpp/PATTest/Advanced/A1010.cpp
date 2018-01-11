@@ -1,9 +1,10 @@
 /*
 1010. Radix (25)
 cost: 15:10
+
 二分查找容易超时：代码不严谨
-遍历18分，二分17分
-异常测试：开头没有符号+-，但是进制 radix 最大为 0x7fffffff 
+异常测试：开头没有符号+-，进制 radix 最大为 0x7fffffff 
+部分答案：14 17 18 19 2 impossible
 
 sln1:
 	n1, r
@@ -12,16 +13,20 @@ sln1:
 
 	void div(x,y,&a,&b): x/y=a...b
 	dst RedixConv(src, r1, r2): src,r1 -> dst, r2
-sln2:
+sln2: vector作为大整数容器
 	使用一个vector<int>作为中间结果进行比较
 	遍历19/25 pt10,11，3,4,5,7 错误
 	递归17/25 pt0,10,11,3,4,5,7,8 错误
-	递归2,修正 * +错误后
-		24/25 pt0 错误
-sln3: 发现最大radix是0x7FFFFFFF
-	使用deque<uint32_t>作为中间结果
+    * 修正乘，加错误，修改最大radix后：
+	递归2,24/25 pt0 错误
+	遍历 17/25 pt14,17,18,19,2,7超时
+sln3: deque作为大整数容器
+	radix修正为0x7fffffff
 	遍历：16/25 pt0,19 错误 pt14,17,18,2,7超时
 	二分：23/25 pt0,19 错误
+	修正遍历起点
+	遍历：17/25 pt14,17,18,19,2,7超时
+	二分：24/25 pt0 错误
 
 Given a pair of positive integers, for example, 6 
 and 110, can this equation 6 = 110 be true? The answer 
