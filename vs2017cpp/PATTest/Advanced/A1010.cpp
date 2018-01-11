@@ -3,8 +3,10 @@
 cost: 15:10
 
 二分查找容易超时：代码不严谨
-异常测试：开头没有符号+-，进制 radix 最大为 0x7fffffff 
+异常测试：开头没有符号+-，radix 最大为 0x7fffffff 
 部分答案：14 17 18 19 2 impossible
+pt0：[5,9]
+	二分找到的结果不对（不是找不到结果），遍历结果对
 
 sln1:
 	n1, r
@@ -387,7 +389,7 @@ int A1010Func(void)
 	while (b2low <= b2high)
 	{
 		mid = (b2high - b2low) / 2 + b2low;
-		l2.LoadFrom(s2, mid);
+		l2.LoadFrom(s2, (int)mid);
 		if (l2 == l1)
 		{
 			cout << mid << endl;
@@ -404,53 +406,6 @@ int A1010Func(void)
 	}
 	cout << "Impossible" << endl;
 	return 0;
-
-	// traverse search
-// 	for (int base = b2low; base <= 36; ++base)
-// 	{
-// 		l2.LoadFrom(s2, base);
-// 		if (l1 == l2)
-// 		{
-// 			cout << base << endl;
-// 			return 0;
-// 		}
-// 	}
-// 	cout << "Impossible" << endl;
-// 	return 0;
-
-	// bin search 1
-// 	int b2high = 36;
-// 	int b2mid = (b2low + b2high ) / 2;
-// 	while (b2low < b2high)
-// 	{
-// 		b2mid = (b2low + b2high) / 2;
-// 		l2.LoadFrom(s2, b2mid);
-// 		if (l2 == l1)
-// 		{
-// 			cout << b2mid << endl;
-// 			return 0;
-// 		}
-// 		if (l2 < l1)
-// 		{
-// 			b2low = b2mid + 1;
-// 		}
-// 		else
-// 		{
-// 			b2high = b2mid - 1;
-// 		}
-// 	}
-// 	if (b2low == b2high)
-// 	{
-// 		b2mid = b2low;
-// 	}
-// 	l2.LoadFrom(s2, b2mid);
-// 	if (l1 == l2)
-// 	{
-// 		cout << b2mid << endl;
-// 		return 0;
-// 	}
-// 	cout << "Impossible" << endl;
-// 	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -462,7 +417,7 @@ public:
 	int operator[](int n) { return n; }
 };
 
-const int64_t A1010BinSearchMax = 0x7fffffff;
+const int64_t A1010BinSearchMax = 1000;
 int64_t A1010BinSearch(A1010V v, const int n)
 {
 	int low = 0;
@@ -488,12 +443,40 @@ int64_t A1010BinSearch(A1010V v, const int n)
 	return 0;
 }
 
+int64_t A1010BinSearch2(A1010V v, const int n)
+{
+	int64_t b2low = 0;
+	int64_t b2high = A1010BinSearchMax - 1;
+	int64_t mid = 0;
+	int a = 0;
+	while (b2low <= b2high)
+	{
+		mid = (b2high - b2low) / 2 + b2low;
+		a = (int)v[mid];
+		if (n == a)
+		{
+			cout << mid << endl;
+			return mid;
+		}
+		else if (n > a)
+		{
+			b2low = mid + 1;
+		}
+		else
+		{
+			b2high = mid - 1;
+		}
+	}
+	throw 0;
+	return 0;
+}
+
 void A1010BinSearchTest(void)
 {
 	A1010V v;
-	for (int64_t i = 1; i < A1010BinSearchMax; i *= 2)
+	for (int64_t i = 1; i < A1010BinSearchMax; ++i)
 	{
-		auto ret = A1010BinSearch(v, (int)i);
+		auto ret = A1010BinSearch2(v, (int)i);
 		if (ret != i)
 		{
 			cout << "error: " << i << " ret: " << ret << endl;
@@ -522,6 +505,8 @@ void A1010Comp(const string& s1, const string& s2)
 
 void A1010(void)
 {
+	A1010BinSearchTest();
+	return;
 	A1010("data\\A1010-1.txt"); // 2
 	A1010("data\\A1010-2.txt"); // Impossible
 	A1010("data\\A1010-3.txt"); // 36
