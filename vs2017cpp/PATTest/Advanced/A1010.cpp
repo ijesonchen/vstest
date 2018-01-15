@@ -5,8 +5,27 @@ cost: 15:10
 二分查找容易超时：代码不严谨
 异常测试：开头没有符号+-，radix 最大为 0x7fffffff 
 部分答案：14 17 18 19 2 impossible
-pt0：[5,9]
+pt0：[5,7]
 	二分找到的结果不对（不是找不到结果），遍历结果对
+看网上题解，认为可以用int64_t表示结果。
+pt0的问题：推测是因为可能有多个结果。类似A1010-8.txt
+	所以要限制high的值。取（minBase，N1）中较大的为基准，
+	保证取到尽量小的值。
+
+总结：
+	1. Advanced侧重算法，但是不会特别复杂。
+	所以先考虑一般简单情况，过不了再用复杂方式。
+	考虑出题人意图
+		比如，10位N进制，用int64_t肯定表示不了。但是大数乘法复杂，所以实际testcase没有这么大的数。
+		但是进制转换的时候可能超出范围，这种情况排除就行
+	2. testcase不是非常严谨，有时候会出现不唯一的情况，但是题目没有交代。
+	这时候按常规想法处理就行。
+		比如PT0，就是多个结果都可以，但是只取最小的进制。所以二分容易找到较大值
+	3. 范围搜索时，考虑如何缩小范围
+		范围过大，会有多个解出来，导致错误PT0
+	4. 进制有个最小值，不能直接从2开始搜
+	5. 处理流程出现问题，直接抛异常就可以。还可以反映在结果上。
+
 
 sln1:
 	n1, r
@@ -29,6 +48,7 @@ sln3: deque作为大整数容器
 	修正遍历起点
 	遍历：17/25 pt14,17,18,19,2,7超时
 	二分：24/25 pt0 错误
+sln4：直接用int64_t表示结果。
 
 Given a pair of positive integers, for example, 6 
 and 110, can this equation 6 = 110 be true? The answer 
@@ -69,11 +89,14 @@ Impossible
 */
 
 #include "..\patMain.h"
+#include <sstream>
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <cstdint>
 #include <deque>
+#include <algorithm>
 
 using namespace std;
 
@@ -88,9 +111,9 @@ int A1010ConvCh2I(const char c)
 	else { throw 1; return -1; }
 }
 
-int MinBase(const string& s)
+int A1010MinBase(const string& s)
 {
-	int minBase = 0;
+	int minBase = 1;
 	for (auto c : s)
 	{
 		auto i = A1010ConvCh2I(c);
@@ -100,6 +123,59 @@ int MinBase(const string& s)
 	return minBase + 1;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// convert to int64_t
+int64_t A1010Conv2Int64(const std::string& s, int radix)
+{
+	int carry = A1010ConvCh2I(s.front());
+	int64_t result = carry;
+	auto len = s.length();
+	for (size_t i = 1; i < len; ++i)
+	{
+		result *= radix;
+		if (result < 0)
+		{
+			return -1;
+		}
+		int n = A1010ConvCh2I(s[i]);
+		result += n;
+	}
+	return result;
+}
+
+int A1010Func3(void)
+{
+	string s1, s2;
+	int tag, b1;
+	cin >> s1 >> s2 >> tag >> b1;
+
+	if (tag == 2) { swap(s1, s2); };
+	auto l1 = A1010Conv2Int64(s1, b1);
+	int64_t low = A1010MinBase(s2);
+	int64_t high = std::max(low, l1) + 1;
+	int64_t mid = 0;
+	while (low <= high)
+	{
+		mid = (high - low) / 2 + low;
+		auto l2 = A1010Conv2Int64(s2, mid);
+		if (l2 == l1)
+		{
+			cout << mid << endl;
+			return 0;
+		}
+		if (l2 < 0 || l2 > l1)
+		{
+			high = mid - 1;
+		}
+		else
+		{
+			low = mid + 1;
+		}
+	}
+
+	cout << "Impossible" << endl;
+	return 0;
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -110,17 +186,18 @@ class A1010LI
 public:
 	A1010LI(int n) { result.push_front(n); };
 	using ShortInt = uint32_t;
-	using LargeInt = uint64_t;
+	using LongInt = uint64_t;
 
 	A1010LI& operator*(A1010LI::ShortInt n);
 	A1010LI& operator+(A1010LI::ShortInt n);
 	bool operator==(const A1010LI& other) { return result == other.result; }
 	bool operator<(const A1010LI& other);
 
+	uint64_t A1010LI::ToInt64(void);
 private:
 	const int shift = sizeof(ShortInt) * 8;
 	deque<ShortInt> result;
-	deque<LargeInt> assist;
+	deque<LongInt> assist;
 };
 
 
@@ -132,7 +209,7 @@ A1010LI& A1010LI::operator*(A1010LI::ShortInt n)
 		it *= n;
 	}
 	ShortInt carry = 0;
-	LargeInt ass = 0;
+	LongInt ass = 0;
 	auto len = assist.size();
 	for (int i = (int)len - 1; i >= 0; --i)
 	{
@@ -151,7 +228,7 @@ A1010LI& A1010LI::operator+(A1010LI::ShortInt n)
 {
 	assist.assign(result.begin(), result.end());
 	ShortInt carry = n;
-	LargeInt ass = 0;
+	LongInt ass = 0;
 	for (auto i = (int)assist.size() - 1; i >= 0; ++i)
 	{
 		ass = assist[i] + carry;
@@ -186,6 +263,23 @@ bool A1010LI::operator<(const A1010LI& other)
 	}
 }
 
+
+uint64_t A1010LI::ToInt64(void)
+{
+	if (result.size() * sizeof(ShortInt) >= sizeof(LongInt))
+	{
+		throw 0;
+	}
+	uint64_t u64 = 0;
+	ShortInt* p = (ShortInt*)&u64;
+	auto len = result.size();
+	for (size_t i = 0; i < len; ++i)
+	{
+		p[i] = result[len - 1 - i];
+	}
+	return u64;
+}
+
 A1010LI A1010Str2LI(const string& s, int64_t base)
 {
 	int n = A1010ConvCh2I(s.front());
@@ -208,7 +302,7 @@ int A1010Func2(void)
 
 	if (tag == 2) { swap(s1, s2); };
 	auto l1 = A1010Str2LI(s1, b1);
-	int64_t low = MinBase(s2);
+	int64_t low = A1010MinBase(s2);
 	int64_t high = 0x7fffffff;
 	int64_t mid = 0;
 	while (low <= high)
@@ -247,6 +341,7 @@ public:
 	bool operator==(const A1010LargeInt& other);
 	bool operator<(const A1010LargeInt& other);
 
+	uint64_t ToInt64(void);
 private:
 	int base;
 	using ShortInt = uint32_t;
@@ -355,8 +450,23 @@ bool A1010LargeInt::operator<(const A1010LargeInt& other)
 	return v1 < v2;
 }
 
+uint64_t A1010LargeInt::ToInt64(void)
+{
+	if (result.size() * sizeof(ShortInt) >= sizeof(LongInt))
+	{
+		throw 0;
+	}
+	uint64_t u64 = 0;
+	ShortInt* p = (ShortInt*)&u64;
+	for (int i = 0; i < result.size(); ++i)
+	{
+		p[i] = result[i];
+	}
+	return u64;
+}
+
 // rename this to main int PAT
-int A1010Func(void)
+int A1010Func1(void)
 {
 	string s1, s2;
 	int tag, b1;
@@ -365,25 +475,10 @@ int A1010Func(void)
 	{
 		swap(s1, s2);
 	}
-	bool neg1 = (s1.front() == '-');
-	bool neg2 = (s2.front() == '-');
-	if (neg1 != neg2)
-	{
-		cout << "Impossible" << endl;
-		return 0;		
-	}
-	if (neg1)
-	{
-		s1 = s1.substr(1, string::npos);
-	}
-	if (neg2)
-	{
-		s2 = s2.substr(1, string::npos);
-	}
 	A1010LargeInt l1;
 	l1.LoadFrom(s1, b1);
 	A1010LargeInt l2;
-	int64_t b2low = MinBase(s2);
+	int64_t b2low = A1010MinBase(s2);
 	int64_t b2high = 0x7fffffff;
 	int64_t mid = 0;
 	while (b2low <= b2high)
@@ -491,7 +586,7 @@ void A1010(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
-	A1010Func();
+	A1010Func3();
 	cout << endl;
 }
 
@@ -503,18 +598,57 @@ void A1010Comp(const string& s1, const string& s2)
 	cout << s1 << " comp " << s2 << " : " << (l1 < l2) << endl;
 }
 
+uint64_t A1010StrConv1(const string& s, int radix)
+{
+	auto l1 = A1010Str2LI(s, radix);
+	return l1.ToInt64();
+}
+
+uint64_t A1010StrConv2(const string& s, int radix)
+{
+	A1010LargeInt l1;
+	l1.LoadFrom(s, radix);
+	return l1.ToInt64();
+}
+
+void A1010TestStrConv(void)
+{
+	char buf[1024];
+	stringstream ss;
+
+	int minBase = 2;
+	int maxBase = 36;
+	int maxInt = 1000010000;
+	for (uint64_t i = 1000000000; i < maxInt; ++i)
+	{
+		cout << "number: " << i << endl;
+		for (int j = minBase; j <= maxBase; ++j)
+		{
+			string s = _ltoa(i, buf, j);
+
+			char* p2ll = nullptr;			
+			auto a1 = A1010StrConv1(s, j);
+			auto a2 = A1010StrConv2(s, j);
+			if (a1 == i && a2 == i)
+			{
+				continue;
+			}
+			cout << "i a1 a2: " << i << " " << a1 << " " << a2 << endl;
+			abort();
+		}
+	}
+}
+
 void A1010(void)
 {
-	A1010BinSearchTest();
-	return;
 	A1010("data\\A1010-1.txt"); // 2
 	A1010("data\\A1010-2.txt"); // Impossible
 	A1010("data\\A1010-3.txt"); // 36
- 	A1010("data\\A1010-4.txt"); // 10
+	A1010("data\\A1010-4.txt"); // 10
 	A1010("data\\A1010-5.txt"); // Impossible
 	A1010("data\\A1010-6.txt"); // 3
 	A1010("data\\A1010-7.txt"); // 35
-	A1010("data\\A1010-8.txt"); // any
+	A1010("data\\A1010-8.txt"); // 2
 	A1010("data\\A1010-9.txt"); // 2147483647
 }
 
