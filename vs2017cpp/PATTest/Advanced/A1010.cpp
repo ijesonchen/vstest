@@ -1,6 +1,6 @@
 /*
 1010. Radix (25)
-cost: 15:10
+cost: 15:10 一周
 
 二分查找容易超时：代码不严谨
 异常测试：开头没有符号+-，radix 最大为 0x7fffffff 
@@ -125,7 +125,7 @@ int A1010MinBase(const string& s)
 
 //////////////////////////////////////////////////////////////////////////
 // convert to int64_t
-int64_t A1010Conv2Int64(const std::string& s, int radix)
+int64_t A1010Conv2Int64(const std::string& s, int64_t radix)
 {
 	int carry = A1010ConvCh2I(s.front());
 	int64_t result = carry;
@@ -547,7 +547,7 @@ int64_t A1010BinSearch2(A1010V v, const int n)
 	while (b2low <= b2high)
 	{
 		mid = (b2high - b2low) / 2 + b2low;
-		a = (int)v[mid];
+		a = (int)v[(int)mid];
 		if (n == a)
 		{
 			cout << mid << endl;
@@ -624,7 +624,7 @@ void A1010TestStrConv(void)
 		cout << "number: " << i << endl;
 		for (int j = minBase; j <= maxBase; ++j)
 		{
-			string s = _ltoa(i, buf, j);
+			string s = _ltoa((long)i, buf, j);
 
 			char* p2ll = nullptr;			
 			auto a1 = A1010StrConv1(s, j);
