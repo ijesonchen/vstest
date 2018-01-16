@@ -6,7 +6,7 @@
     <ProjectGuid>425191ba-4766-4b83-9943-70ba8e2e73a0</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>remove_crlf.py</StartupFile>
+    <StartupFile>PatSrcFromTmpl.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,6 +26,9 @@
     <Compile Include="combText2Doc.py" />
     <Compile Include="docxdemo.py" />
     <Compile Include="extractAudio.py" />
+    <Compile Include="PatSrcFromTmpl.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="remove_crlf.py" />
   </ItemGroup>
   <PropertyGroup>
