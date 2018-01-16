@@ -152,6 +152,7 @@ void A1013(const string& fn)
 
 void A1013(void)
 {
-	A1013("data\\A1013-1.txt"); // 
+	A1013("data\\A1013-1.txt"); // 1 0 0
+	A1013("data\\A1013-2.txt"); // 0 0 3
 }
 
