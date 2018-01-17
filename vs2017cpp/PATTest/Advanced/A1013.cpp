@@ -1,10 +1,16 @@
 /*
 1013. Battle Over Cities (25)
-cost：21：30 
+cost：21：30 30min 3/25
+	15:30 10min pass
 
 sln1: BFS求连通分量个数cc，需cc-1条
 	3/25 pt0,1,3 错误 pt4超时
+sln2: map -> unordered_map
+	修正了读取数据的bug
 
+总结：
+	1. 善用unordered_map/set
+	2. 仔细！
 
 It is vitally important to have all the cities connected 
 by highways in a war. If a city is occupied by the enemy, 
@@ -52,14 +58,14 @@ Sample Output
 #include <string>
 #include <vector>
 #include <deque>
-#include <map>
+#include <unordered_map>
 
 using namespace std;
 
 class A1013G
 {
 public:
-	void Load(void);
+	void Load(int nn, int nm);
 	size_t CC(int bad) const;
 private:
 	vector<vector<int>> adjs;
@@ -68,9 +74,10 @@ private:
 };
 
 
-void A1013G::Load(void)
+void A1013G::Load(int nn, int nm)
 {
-	cin >> nNode >> nEdge;
+	nNode = nn;
+	nEdge = nm;
 	adjs.assign(nNode, vector<int>());
 	int u, v;
 	for (int i = 0; i < nEdge; ++i)
@@ -91,7 +98,7 @@ size_t A1013G::CC(int bad) const
 	--bad;
 	vector<bool> visited(nNode, false);
 	visited[bad] = true;
-	map<int, vector<int>> mcc;
+	unordered_map<int, vector<int>> mcc;
 	int idx = 0;
 	for (int i = 0; i < nNode; ++i)
 	{
@@ -129,10 +136,10 @@ size_t A1013G::CC(int bad) const
 // rename this to main int PAT
 int A1013Func(void)
 {
+	int nn, nm, k, n;
+	cin >> nn >> nm >> k;
 	A1013G g;
-	g.Load();
-	int k, n;
-	cin >> k;
+	g.Load(nn, nm);
 	for (int i = 0; i < k; ++i)
 	{
 		cin >> n;
@@ -154,5 +161,6 @@ void A1013(void)
 {
 	A1013("data\\A1013-1.txt"); // 1 0 0
 	A1013("data\\A1013-2.txt"); // 0 0 3
+	A1013("data\\A1013-3.txt"); // 0 0 2
 }
 
