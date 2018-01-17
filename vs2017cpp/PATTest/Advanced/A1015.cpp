@@ -4,12 +4,18 @@ cost: 20:55 15min 12/20
 
 sln1: 穷举素数
 	12/20
+	测试 n <= 1000000
+sln2：看题解 http://blog.csdn.net/realxuejin/article/details/10148713
+	表述不清，没有理解题目意思
+	示例2： 23 2
+	23不可能是2进制，所以题目意思应该是，
+	N在D进制表示下的倒序数字是不是也是素数。
 
 A reversible prime in any number system is a prime whose "reverse" 
 in that number system is also a prime. For example in the decimal 
 system 73 is a reversible prime because its reverse 37 is also a prime.
 
-Now given any two positive integers N (< 105) and D (1 < D <= 10), 
+Now given any two positive integers N (< 10^5) and D (1 < D <= 10), 
 you are supposed to tell if N is a reversible prime with radix D.
 
 Input Specification:
@@ -42,21 +48,25 @@ No
 
 using namespace std;
 
-int64_t A1015Rev(int64_t n)
+int64_t A1015Rev(int64_t n, int r)
 {
-	stringstream ss;
-	ss << n;
-	auto s = ss.str();
-	size_t len = s.length();
-	for (int i = 0; i < len / 2; ++i)
+	string s;
+	while (n >= r)
 	{
-		swap(s[i],s[len - 1 - i]);
+		s.push_back('0' + (char)(n%r));
+		n /= r;
 	}
-	return atoll(s.c_str());
+	s.push_back('0' + (char)n);
+
+	return strtoull(s.c_str(), nullptr, r);
 }
 
 bool IsPrime(int64_t n)
 {
+	if (n < 2)
+	{
+		return false;
+	}
 	auto sq = sqrt(n);
 	for (int i = 2; i <= sq; ++i)
 	{
@@ -72,22 +82,19 @@ bool IsPrime(int64_t n)
 int A1015Func(void)
 {
 	int r;
-	string s;
 	int64_t n1, n2;
 
 	while (true)
 	{
-		n1 = 0, n2 = 0;
-		cin >> s;
-		if (s.front() == '-')
+		cin >> n1;
+		if (n1 < 0)
 		{
 			break;
 		}
 		cin >> r;
-		n1 = strtoull(s.c_str(), nullptr, r);
 		if (IsPrime(n1))
 		{
-			n2 = A1015Rev(n1);
+			n2 = A1015Rev(n1, r);
 			if (IsPrime(n2))
 			{
 				cout << "Yes" << endl;
