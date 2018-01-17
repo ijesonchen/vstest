@@ -274,6 +274,7 @@ void A1014(const string& fn)
 
 void A1014(void)
 {
-	A1014("data\\A1014-1.txt"); // 
+//	A1014("data\\A1014-1.txt"); // 
+	A1014("data\\A1014-2.txt"); // 
 }
 
