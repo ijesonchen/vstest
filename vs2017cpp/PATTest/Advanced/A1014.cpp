@@ -2,11 +2,20 @@
 1014. Waiting in Line (30)
 
 cost: 15:50 90min 19/30
+cost: 50min pass
 
 sln1: 
 	1. 新建customer对象，记录开始时间，处理时间，结束时间
 	2. 新建N个窗口对象，每次找最小的，加入队列
 	pt2,4,5 错误
+sln2: who cannot be served before 17:00, output "Sorry"
+	根据需求使用start判断输出
+
+sln3: 
+	pass后改写func1并相应修改类方法 22/30 pt4异常 pt5错误
+	sln1: 22/30 pt4,5错误
+
+
 
 Suppose a bank has N windows open for service. There is a yellow 
 line in front of the windows which divides the waiting area into 
@@ -67,7 +76,6 @@ Sample Output
 08:10
 17:00
 Sorry
-
 */
 
 #include "..\patMain.h"
@@ -83,14 +91,13 @@ const int A1014MAXTM = 540;
 
 struct A1014Custom 
 {
-	A1014Custom(int p, int i) :proc(p), idx(i) {}
-	int idx = 0;
+	A1014Custom(int p) :proc(p){}
 	int proc = 0;
 	int end = 0;
 	bool timeout = false;
 	void Query(void)
 	{
-		if (timeout || (end > A1014MAXTM))
+		if (timeout)
 		{
 			cout << "Sorry" << endl;
 			return;
@@ -115,7 +122,7 @@ struct A1014Wnd
 		}
 		tmNext = dqCustoms.front()->proc;
 		dqCustoms.front()->end = tmNext;
-		if (tmNext > A1014MAXTM)
+		if (tmNext >= A1014MAXTM)
 		{
 			done = true;
 		}
@@ -125,11 +132,11 @@ struct A1014Wnd
 	{
 		if (dqCustoms.empty())
 		{
-			return;
+			throw 0;
 		}
 		tmNext += dqCustoms.front()->proc;
 		dqCustoms.front()->end = tmNext;
-		if (tmNext > A1014MAXTM)
+		if (tmNext >= A1014MAXTM)
 		{
 			done = true;
 		}
@@ -166,7 +173,7 @@ struct A1014Wnd
 	}
 };
 
-int A1014FindWnd(vector<A1014Wnd>& vWnd)
+int A1014FindNext1(vector<A1014Wnd>& vWnd)
 {
 	int iWnd = 0;
 	int t = vWnd[0].tmNext;
@@ -182,7 +189,7 @@ int A1014FindWnd(vector<A1014Wnd>& vWnd)
 }
 
 // rename this to main int PAT
-int A1014Func(void)
+int A1014Func1(void)
 {
 	int n, m, k, q;
 	cin >> n >> m >> k >> q;
@@ -191,7 +198,7 @@ int A1014Func(void)
 	for (int i = 0; i < k; ++i)
 	{
 		cin >> proc;
-		vCustom.push_back(A1014Custom(proc, i + 1));
+		vCustom.push_back(proc);
 	}
 	
 	vector<A1014Wnd> vWnd(n, A1014Wnd());
@@ -263,18 +270,195 @@ int A1014Func(void)
 	return 0;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// rewrite
+
+struct A1014User
+{
+	int proc = 0;
+	int start = 0;
+	int end = 0;
+
+	A1014User(int p) : proc(p) {};
+	void Query(void);
+};
+
+void A1014User::Query(void)
+{
+	if (start >= A1014MAXTM)
+	{
+		cout << "Sorry" << endl;
+		return;
+	}
+	int h = end / 60;
+	int m = end % 60;
+	printf("%02d:%02d\n", h + 8, m);
+}
+
+struct A1014Win
+{
+	deque<A1014User*> queue;
+	int tmNext = 0;
+	void Init(void);
+	void Next(A1014User* p);
+	void Exhaust(void);
+};
+
+void A1014Win::Init(void)
+{
+	if (queue.empty())
+	{
+		throw 0;
+	}
+	auto p0 = queue.front();
+	p0->start = tmNext;
+	tmNext += p0->proc;
+	p0->end = tmNext;	
+}
+
+void A1014Win::Next(A1014User* p) 
+{
+	if (queue.empty())
+	{
+		throw 0;
+	}
+	queue.pop_front();
+	queue.push_back(p);
+	auto p0 = queue.front();
+	p0->start = tmNext;
+	tmNext += p0->proc;
+	p0->end = tmNext;	
+};
+
+void A1014Win::Exhaust(void) 
+{
+	for (size_t i = 1; i < queue.size(); ++i)
+	{
+		auto p = queue[i];
+		p->start = tmNext;
+		tmNext += p->proc;
+		p->end = tmNext;
+	}
+};
+
+int A1014NextWin(vector<A1014Win>& v)
+{
+	int k = 0;
+	auto tmMin = v.front().tmNext;
+	for (int i = 1; i < (int)v.size(); ++i)
+	{
+		if (v[i].tmNext < tmMin)
+		{
+			tmMin = v[i].tmNext;
+			k = i;
+		}
+	}
+	return k;
+}
+
+int A1014Func2(void)
+{
+	int n, m, k, q, proc, query;
+	cin >> n >> m >> k >> q;
+	vector<A1014User> vUser;
+	for (int i = 0; i < k; ++i)
+	{
+		cin >> proc;
+		vUser.push_back(proc);
+	}
+
+	vector<A1014Win> vWin(n);
+	// enque n * m
+	for (int i = 0, j = 0; i < n*m && i < k; ++i, ++j)
+	{
+		if (j >= n) { j = 0; };
+		vWin[j].queue.push_back(&vUser[i]);
+	}
+
+	// init
+	for (int i = 0; i < n && i < k; ++i)
+	{
+		vWin[i].Init();
+	}
+
+	// behind yellow line
+	for (int i = n*m; i < k; ++i)
+	{
+		int j = A1014NextWin(vWin);
+		vWin[j].Next(&vUser[i]);
+	}
+	// exhaust
+	for (int i = 0; i < n; ++i)
+	{
+		vWin[i].Exhaust();
+	}
+	// query
+	for (int i = 0; i < q; ++i)
+	{
+		cin >> query;
+		vUser[--query].Query();
+	}
+
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// sln3
+
+
+int A1014Func3(void)
+{
+	int n, m, k, q, proc, query;
+	cin >> n >> m >> k >> q;
+	vector<A1014Custom> vUser;
+	for (int i = 0; i < k; ++i)
+	{
+		cin >> proc;
+		vUser.push_back(proc);
+	}
+
+	vector<A1014Wnd> vWin(n);
+	int u = 0;
+	for (; u < n*m && u < k; ++u)
+	{
+		vWin[u%n].dqCustoms.push_back(&vUser[u]);
+	}
+	for (int i = 0; i < k && i < n; ++i)
+	{
+		vWin[i].Init();
+	}
+	for (; u < k; ++u)
+	{
+		int j = A1014FindNext1(vWin);
+		vWin[j].Push(&vUser[u]);
+	}
+	for (auto i = 0; i < n; ++i)
+	{
+		vWin[i].Done();
+	}
+
+	for (int i = 0; i < q; ++i)
+	{
+		cin >> query;
+		vUser[--query].Query();
+	}
+
+	return 0;
+}
+
 
 void A1014(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
-	A1014Func();
+	A1014Func1();
 	cout << endl;
 }
 
 void A1014(void)
 {
-//	A1014("data\\A1014-1.txt"); // 
-	A1014("data\\A1014-2.txt"); // 
+	A1014("data\\A1014-1.txt"); // 08:07 08:06 08:10 17:00 Sorry
+	A1014("data\\A1014-2.txt"); // 17:05 08:01 08:02 Sorry 08:05 08:05 Sorry 08:07 08:09 08:15 08:15 08:18
+	A1014("data\\A1014-3.txt"); // 17:05 08:01
 }
 
