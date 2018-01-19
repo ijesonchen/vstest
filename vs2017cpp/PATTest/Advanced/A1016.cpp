@@ -157,7 +157,7 @@ int A1016PrintCharge(const string& s1, const string& s2)
 	else
 	{
 		if (h1 == h2)
-		{
+		{ 
 			total += (m2 - m1)*A1016vtCost[h1];
 		}
 		else
@@ -171,13 +171,18 @@ int A1016PrintCharge(const string& s1, const string& s2)
 
 	cout << t1 << " " << t2;
 	printf(" %d $%.2f\n", minu, (float)total / 100);
+
+	if (!total)
+	{
+		throw 0;
+	}
 	return total;
 }
 
 void A1016PrintBill(const string& name, const set<A1016Record>& setRec)
 {
 	auto it = setRec.begin();
-	while (it->off && it != setRec.end())
+	while (it != setRec.end() && it->off)
 	{
 		++it;
 	}
@@ -269,5 +274,7 @@ void A1016(const string& fn)
 void A1016(void)
 {
 	A1016("data\\A1016-1.txt"); // 
+	A1016("data\\A1016-2.txt"); // 
+	A1016("data\\A1016-3.txt"); // 
 }
 
