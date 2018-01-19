@@ -125,5 +125,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="list.md" />
+    <None Include="note.md" />
   </ItemGroup>
 </Project>

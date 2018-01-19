@@ -2,9 +2,21 @@
 1016. Phone Bills (25)
 
 cost: 10:00 100min 15/25
+	16:00 60min	pass
 
 sln1：直接计算
 	pt1,2,3  错误
+sln2: 题解：http://blog.csdn.net/apie_czx/article/details/45556103
+	（3）费用的计算：因为各个小时区间内的费用都不相同，所以不能简单
+	的通过计算时间差来解决，这里有个小技巧是对于时间段s-t的费用计算，
+	设定一个起始时间零点t0，都计算t0到ti的费用综合costi，然后把cost
+	进行相减即可。
+	按照新思路计算费用后
+	A1016PrintCharge 15/25
+	A1016PrintCharge2 pass
+	原因未排查。
+
+
 
 A long-distance telephone company charges its customers by the 
 following rules:
@@ -179,6 +191,46 @@ int A1016PrintCharge(const string& s1, const string& s2)
 	return total;
 }
 
+int A1016PrintCharge2(const string& s1, const string& s2)
+{
+	int total = 0;
+	auto t1 = s1.substr(3);
+	auto t2 = s2.substr(3);
+	auto minu = A1016Time2Min(s2) - A1016Time2Min(s1);
+	// d h m  00:00:00
+	const int d1 = atoi(t1.substr(0, 2).c_str());
+	const int h1 = atoi(t1.substr(3, 2).c_str());
+	const int m1 = atoi(t1.substr(6, 2).c_str());
+	const int d2 = atoi(t2.substr(0, 2).c_str());
+	const int h2 = atoi(t2.substr(3, 2).c_str());
+	const int m2 = atoi(t2.substr(6, 2).c_str());
+
+	int c1 = 0;
+	for (int i = 0; i < h1; ++i)
+	{
+		c1 += A1016vtCost[i] * 60;
+	}
+	c1 += m1 * A1016vtCost[h1];
+	c1 += d1 * A1016nDayCost;
+	int c2 = 0; 
+	for (int i = 0; i < h2; ++i)
+	{
+		c2 += A1016vtCost[i] * 60;
+	}
+	c2 += m2 * A1016vtCost[h2];
+	c2 += d2 * A1016nDayCost;
+	total = c2 - c1;
+
+	cout << t1 << " " << t2;
+	printf(" %d $%.2f\n", minu, (float)total / 100);
+
+	if (!total)
+	{
+		throw 0;
+	}
+	return total;
+}
+
 void A1016PrintBill(const string& name, const set<A1016Record>& setRec)
 {
 	auto it = setRec.begin();
@@ -208,7 +260,7 @@ void A1016PrintBill(const string& name, const set<A1016Record>& setRec)
 			cout << name << " " << first->time.substr(0,2) << endl;
 			header = true;
 		}
-		total += A1016PrintCharge(first->time, it->time);
+		total += A1016PrintCharge2(first->time, it->time);
 
 		do 
 		{
@@ -262,19 +314,61 @@ int A1016Func(void)
 	return 0;
 }
 
-
 void A1016(const string& fn)
 {
-	cout << fn << endl;
-	RedirCin(fn);
+ 	cout << fn << endl;
+ 	RedirCin(fn);
 	A1016Func();
+
 	cout << endl;
 }
 
 void A1016(void)
 {
-	A1016("data\\A1016-1.txt"); // 
-	A1016("data\\A1016-2.txt"); // 
+	A1016("data\\A1016-1.txt"); 
+	A1016("data\\A1016-2.txt"); //  
 	A1016("data\\A1016-3.txt"); // 
+
+	/*
+data\A1016-1.txt
+CYJJ 01
+01:05:59 01:07:00 61 $12.10
+Total amount: $12.10
+CYLL 01
+01:06:01 01:08:03 122 $24.40
+28:15:41 28:16:05 24 $3.85
+Total amount: $28.25
+aaa 01
+02:00:01 04:23:59 4318 $638.80
+Total amount: $638.80
+
+data\A1016-2.txt
+a1 02
+01:00:00 31:23:59 44639 $6602.90
+Total amount: $6602.90
+a2 02
+02:11:30 03:11:30 1440 $213.00
+Total amount: $213.00
+a3 02
+02:10:30 02:10:40 10 $1.50
+Total amount: $1.50
+a4 02
+02:10:30 02:11:40 70 $10.50
+Total amount: $10.50
+a5 02
+02:10:40 02:11:30 50 $7.50
+Total amount: $7.50
+
+data\A1016-3.txt
+a6 02
+02:10:40 02:11:30 50 $7.50
+Total amount: $7.50
+a7 02
+02:10:10 02:10:20 10 $1.50
+Total amount: $1.50
+a8 02
+02:11:10 02:12:10 60 $9.00
+Total amount: $9.00	
+	*/
 }
 
