@@ -1,5 +1,8 @@
 //////////////////////////////////////////////////////////////////////////
 /*
+ans(8second):
+434821,968,459,313,211
+
 The file contains the edges of a directed graph. Vertices are labeled as positive integers 
 from 1 to 875714. Every row indicates an edge, the vertex label in first column is the tail 
 and the vertex label in second column is the head (recall the graph is directed, and the 
@@ -25,8 +28,7 @@ of the graph you may have to manage memory carefully. The best way to do this de
 programming language and environment, and we strongly suggest that you exchange tips for doing 
 this on the discussion forums.
 
-result(8second):
-434821,968,459,313,211
+
 */
 
 #include <string>

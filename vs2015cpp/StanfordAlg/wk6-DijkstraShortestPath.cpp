@@ -1,4 +1,5 @@
 /*
+ANS: 2599,2610,2947,2052,2367,2399,2029,2442,2505,3068
 In this programming problem you'll code up Dijkstra's shortest-path algorithm.
 
 Download the following text file:
@@ -185,6 +186,8 @@ public:
 		cout << endl;
 	}
 
+	vector<int64_t> GetDist(void)const { return dist; };
+
 private:
 	void UpdateDstLen(int src)
 	{
@@ -261,4 +264,12 @@ void DijkstraShortestPath(void)
 	ShortestPath sp(g, 1);
 	sp.Calc();
 	sp.PrintDst();
+	auto dist = sp.GetDist();
+	vector<int> vidx = { 7,37,59,82,99,115,133,165,188,197 };
+	cout << "ANS:" << endl;
+	for (auto i : vidx)
+	{
+		cout << dist[i] << ",";
+	}
+	cout << endl;
 }

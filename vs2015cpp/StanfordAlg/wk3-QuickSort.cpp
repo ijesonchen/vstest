@@ -1,3 +1,6 @@
+/*
+ANS: first: 162085 last: 164123 m3: 138382
+*/
 #include <iostream>
 #include <vector>
 #include <cstdint>
