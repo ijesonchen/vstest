@@ -24,7 +24,6 @@ std::get_time: template< class CharT >
 
 #include <ctime>
 
-
 using namespace std;
 
 void TimeTest(void)
@@ -45,5 +44,9 @@ void TimeTest(void)
 	tm tm1, tm2;
 	gmtime_s(&tm1, &t);
 	localtime_s(&tm2, &t);
+
+	long ntz = 0;
+	_get_timezone(&ntz);
+	auto ttt = time(nullptr);
 	
 }

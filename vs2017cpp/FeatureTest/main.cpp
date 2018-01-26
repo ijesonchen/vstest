@@ -6,12 +6,13 @@
 
 
 void TimeTest(void);
+void ConsoleWindowControlTest(void);
 
 
 using namespace std;
 void main(void)
 {
-	TimeTest();
+	ConsoleWindowControlTest();
 	cout << "enter to continue" << endl;
 	getchar();
 }

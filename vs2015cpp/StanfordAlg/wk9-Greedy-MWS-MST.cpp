@@ -1,4 +1,6 @@
 /*
+1。69119377652  2。67311454237  3。-3612829
+
 1。
 In this programming problem and the next you'll code up the greedy algorithms 
 from lecture for minimizing the weighted sum of completion times..

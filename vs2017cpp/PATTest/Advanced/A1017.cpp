@@ -1,7 +1,9 @@
 /*
 1017. Queueing at Bank (25)
+cost: 11:20
+
 Suppose a bank has K windows open for service. There is a 
-yellow line in front of the windows which devides the waiting 
+yellow line in front of the windows which divides the waiting 
 area into two parts. All the customers have to wait in line
 behind the yellow line, until it is his/her turn to be served 
 and there is a window available. It is assumed that no window 
@@ -48,6 +50,44 @@ Sample Output:
 #include <string>
 
 using namespace std;
+
+int A1017Time2Sec(const string& s)
+{
+	int h = atoi(s.substr(0, 2).c_str());
+	int m = atoi(s.substr(3, 2).c_str());
+	int sec = atoi(s.substr(6, 2).c_str());
+	return h * 3600 + m * 60 + sec;
+}
+
+const int A1017StartSec = 8 * 3600;
+
+struct A1017User
+{
+	// arrive time, 8:00::00 is 0
+	int arrive = 0;
+	// time adjust before 8:00
+	int adjust = 0;
+	// proc time
+	int proc = 0;
+	// wait time before proc
+	int wait = 0;
+
+	A1017User(const string& strtm, int pminu)
+	{
+		proc = pminu * 60;
+		auto sec = A1017Time2Sec(strtm);
+		if (sec < A1017StartSec)
+		{
+			arrive = 0;
+			adjust = A1017StartSec - sec;
+		}
+		else
+		{
+			arrive = sec - A1017StartSec;
+			adjust = 0;
+		}
+	}
+};
 
 // rename this to main int PAT
 int A1017Func(void)
