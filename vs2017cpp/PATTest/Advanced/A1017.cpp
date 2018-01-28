@@ -1,6 +1,14 @@
 /*
 1017. Queueing at Bank (25)
-cost: 11:20
+cost: 
+
+test: 
+	1. arrive time >= "17:00:01"
+	2. proc minute > 60
+
+sln1: 直接处理
+	注意：求等待时间，而非处理时间。
+	23/25 pt5:错误
 
 Suppose a bank has K windows open for service. There is a 
 yellow line in front of the windows which divides the waiting 
@@ -48,6 +56,9 @@ Sample Output:
 #include "..\patMain.h"
 #include <iostream>
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <numeric>
 
 using namespace std;
 
@@ -60,38 +71,123 @@ int A1017Time2Sec(const string& s)
 }
 
 const int A1017StartSec = 8 * 3600;
+const int A1017CloseSec = 17 * 3600 + 1;
+const string A1017CloseTime = "17:00:01";
 
 struct A1017User
 {
-	// arrive time, 8:00::00 is 0
+	// arrive sec from 00:0):00
 	int arrive = 0;
-	// time adjust before 8:00
-	int adjust = 0;
-	// proc time
-	int proc = 0;
 	// wait time before proc
 	int wait = 0;
+	// proc time
+	int proc = 0;
 
 	A1017User(const string& strtm, int pminu)
 	{
-		proc = pminu * 60;
-		auto sec = A1017Time2Sec(strtm);
-		if (sec < A1017StartSec)
+		proc = pminu > 60 ? 60 : pminu;
+		proc *= 60;
+		arrive = A1017Time2Sec(strtm);
+		if (arrive < A1017StartSec)
 		{
-			arrive = 0;
-			adjust = A1017StartSec - sec;
+			wait = A1017StartSec - arrive;
 		}
 		else
 		{
-			arrive = sec - A1017StartSec;
-			adjust = 0;
+			wait = 0;
 		}
 	}
+
+	bool operator<(const A1017User& u)
+	{
+		return arrive < u.arrive;
+	}
 };
+
+struct A1017Wnd
+{
+	int next = A1017StartSec;
+	bool closed = false;
+	
+	bool Proc(A1017User& u)
+	{
+		if (next >= u.arrive)
+		{
+			u.wait = next - u.arrive;
+		}
+		else
+		{
+			next = u.arrive;
+		}
+		next += u.proc;
+		if (next >= A1017CloseSec)
+		{
+			closed = true;
+		}
+		return closed;
+	}
+};
+
+int A1017FindNextWnd(vector<A1017Wnd>& vtWnd)
+{
+	int nextSec = A1017CloseSec;
+	int nextWnd = -1;
+	int len = (int)vtWnd.size();
+	for (int  i = 0; i < len; ++i)
+	{
+		if (vtWnd[i].next < nextSec)
+		{
+			nextSec = vtWnd[i].next;
+			nextWnd = i;
+		}
+	}
+	return nextWnd;
+}
+
+bool A1017UserLess(const A1017User& u1, const A1017User& u2)
+{
+	return u1.arrive < u2.arrive;
+}
 
 // rename this to main int PAT
 int A1017Func(void)
 {
+	int n, k;
+	cin >> n >> k;
+
+	vector<A1017User> vtUser;
+	for (int i = 0; i < n; ++i)
+	{
+		string s;
+		int p;
+		cin >> s >> p;
+		if (s >= A1017CloseTime)
+		{
+			continue;
+		}
+		vtUser.push_back(A1017User(s, p));
+	}
+
+	sort(vtUser.begin(), vtUser.end());
+
+	vector<A1017Wnd> vtWnd(k);
+	vector<int> vtt;
+	for (int i =0; i < vtUser.size(); ++i)
+	{
+		auto iw = A1017FindNextWnd(vtWnd);
+		if (iw <= -1)
+		{
+			break;
+		}
+		auto& user = vtUser[i];
+		vtWnd[iw].Proc(user);
+		vtt.push_back(user.wait);
+	}
+
+	int sec = accumulate(vtt.begin(), vtt.end(), 0);
+	float minu = float(sec) / vtt.size() / 60;
+	printf("%.1f", minu);
+
 	return 0;
 }
 
