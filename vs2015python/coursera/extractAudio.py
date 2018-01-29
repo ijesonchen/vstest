@@ -1,8 +1,8 @@
 ﻿import os
 import shutil
 # combine text in subfolders in one doc
-PATH = r'''D:\download\汪汪队中文版'''
-OUTPUT = r'''D:\download\动画MP3\汪汪队中文mp3'''
+PATH = r'''D:\download\02.托马斯和他的朋友们中文版'''
+OUTPUT = r'''D:\download\动画MP3\托马斯中文mp3'''
 
 # ffmpeg -i input.mp4 -vn -y -acodec copy output.aac
 # ffmpeg -i 01.m4a -f mp3 -acodec libmp3lame -y o.mp3
