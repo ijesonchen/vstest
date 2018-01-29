@@ -63,10 +63,10 @@ void RunBeaunusTest(std::string (*TestFunc)(const std::string&), const std::stri
 
 // convert 
 template<typename T>
-std::string ToStr(const T in)
+std::string ToStr(const T inOrder)
 {
 	std::stringstream ss;
-	ss << in;
+	ss << inOrder;
 	return ss.str();
 }
 
