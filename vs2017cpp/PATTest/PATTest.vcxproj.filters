@@ -108,6 +108,9 @@
     <ClCompile Include="Advanced\A1017.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
+    <ClCompile Include="Advanced\A1018.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="patMain.h">
