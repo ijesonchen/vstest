@@ -1,10 +1,12 @@
 ﻿import os
 import shutil
 # combine text in subfolders in one doc
-PATH = r'''Z:\1'''
-OUTPUT = r'''Z:\2'''
+PATH = r'''D:\download\汪汪队中文版'''
+OUTPUT = r'''D:\download\动画MP3\汪汪队中文mp3'''
 
 # ffmpeg -i input.mp4 -vn -y -acodec copy output.aac
+# ffmpeg -i 01.m4a -f mp3 -acodec libmp3lame -y o.mp3
+# ffmpeg -i input.mp4 -vn -y -acodec libmp3lame -f mp3 output.aac
 
 def ExtractAudio(dirname):
     if dirname[0] == '.':
@@ -23,6 +25,8 @@ def ExtractAudio(dirname):
         paths = os.path.splitext(fn)
         if paths[1] == '.mp4':
             print('proc file %s' % fn)
+#            dst = dstpath + '\\' + paths[0] + '.mp3'
+#            cmd = ('%s -i "%s" -vn -y -acodec libmp3lame -f mp3 "%s"'%(ffmpeg, fn, dst))
             dst = dstpath + '\\' + paths[0] + '.m4a'
             cmd = ('%s -i "%s" -vn -y -acodec copy "%s"'%(ffmpeg, fn, dst))
             print(cmd)

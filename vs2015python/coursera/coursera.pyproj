@@ -6,7 +6,7 @@
     <ProjectGuid>425191ba-4766-4b83-9943-70ba8e2e73a0</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>PatSrcFromTmpl.py</StartupFile>
+    <StartupFile>extractAudio.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
