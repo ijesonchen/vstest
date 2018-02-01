@@ -25,10 +25,10 @@ def ExtractAudio(dirname):
         paths = os.path.splitext(fn)
         if paths[1] == '.mp4':
             print('proc file %s' % fn)
-#            dst = dstpath + '\\' + paths[0] + '.mp3'
-#            cmd = ('%s -i "%s" -vn -y -acodec libmp3lame -f mp3 "%s"'%(ffmpeg, fn, dst))
-            dst = dstpath + '\\' + paths[0] + '.m4a'
-            cmd = ('%s -i "%s" -vn -y -acodec copy "%s"'%(ffmpeg, fn, dst))
+            dst = dstpath + '\\' + paths[0] + '.mp3'
+            cmd = ('%s -i "%s" -vn -y -acodec libmp3lame -f mp3 "%s"'%(ffmpeg, fn, dst))
+#            dst = dstpath + '\\' + paths[0] + '.m4a'
+#            cmd = ('%s -i "%s" -vn -y -acodec copy "%s"'%(ffmpeg, fn, dst))
             print(cmd)
             os.system(cmd)
 

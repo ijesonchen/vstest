@@ -155,6 +155,11 @@
     <ClCompile Include="Advanced\A1018.cpp" />
     <ClCompile Include="Advanced\A1019.cpp" />
     <ClCompile Include="Advanced\A1020.cpp" />
+    <ClCompile Include="Advanced\A1021.cpp" />
+    <ClCompile Include="Advanced\A1022.cpp" />
+    <ClCompile Include="Advanced\A1023.cpp" />
+    <ClCompile Include="Advanced\A1024.cpp" />
+    <ClCompile Include="Advanced\A1025.cpp" />
     <ClCompile Include="Advanced\A1137.cpp" />
     <ClCompile Include="Advanced\A1133.cpp" />
     <ClCompile Include="Basic\B1001.cpp" />
