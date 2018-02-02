@@ -4,6 +4,8 @@
 cost: 17:10
 sln: int64_t循环计算
 	20min 18/25 pt6,8 错误
+snl2: 循环最多100次。每次循环*10，int64_t可能会溢出
+	20min pass
 
 A number that will be the same when it is written forwards or backwards is known as a Palindromic Number. 
 For example, 1234321 is a palindromic number. 
@@ -72,7 +74,6 @@ int64_t A1024RevInt(int64_t n)
 	return atoll(s1.c_str());
 }
 
-
 // rename this to main int PAT
 int A1024Func(void)
 {
@@ -99,11 +100,67 @@ int A1024Func(void)
 }
 
 
+string A1024RevString(string s1)
+{
+	int len = (int)s1.length();
+	for (int i = 0; i < len / 2; ++i)
+	{
+		swap(s1[i], s1[len - 1 - i]);
+	}
+	return s1;
+}
+
+string A1024AddString(string s1, const string& s2)
+{
+	int len = (int)s1.length();
+	if (len != (int)s2.length())
+	{
+		throw 2;
+	}
+	char carry = 0;
+	for (int i = len - 1; i >= 0; --i)
+	{
+		char ch = s1[i] - '0' + s2[i] - '0' + carry;
+		carry = ch / 10;
+		s1[i] = '0' + (ch % 10);
+	}
+	if (carry)
+	{
+		s1.insert(s1.begin(), '0' + carry);
+	}
+	return s1;
+}
+
+int A1024Func2(void)
+{
+	string s1, s2;
+	int m;
+	cin >> s1 >> m;
+	s2 = A1024RevString(s1);
+	if (s1 == s2)
+	{
+		cout << s1 << endl << "0" << endl;
+		return 0;
+	}
+	for (int i = 0; i < m; ++i)
+	{
+		s2 = A1024RevString(s1);
+		if (s1 == s2)
+		{
+			cout << s2 << endl << i << endl;
+			return 0;
+		}
+		s1 = A1024AddString(s1, s2);
+	}
+	cout << s1 << endl << m << endl;
+	return 0;
+}
+
 void A1024(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
-	A1024Func();
+	A1024Func2();
 	cout << endl;
 }
 
@@ -112,5 +169,6 @@ void A1024(void)
 	A1024("data\\A1024-1.txt"); // 
 	A1024("data\\A1024-2.txt"); // 
 	A1024("data\\A1024-3.txt"); // 
+	A1024("data\\A1024-4.txt"); // 
 }
 

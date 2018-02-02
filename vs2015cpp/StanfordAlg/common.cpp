@@ -9,7 +9,7 @@
 #include "common.h"
 
 using namespace std;
-using namespace std::tr2;
+using namespace std::experimental::filesystem;
 
 std::chrono::steady_clock::time_point g_tp;
 
@@ -112,7 +112,7 @@ std::vector<TestCaseInfo> BeaunusTestCase(const std::string tcPath, const std::s
 	string is("input");
 	auto ilen = is.length();
 	string os("output");
-	for (auto it = sys::directory_iterator(root + "\\" + tcPath), end = sys::directory_iterator();
+	for (auto it = directory_iterator(root + "\\" + tcPath), end = directory_iterator();
 		it != end; ++it)
 	{
 		auto ifn = it->path().string();
@@ -125,12 +125,12 @@ std::vector<TestCaseInfo> BeaunusTestCase(const std::string tcPath, const std::s
 		// result file name
 		auto rfn(ifn);
 		rfn.replace(pos, ilen, os);
-		if (!sys::exists(rfn))
+		if (!exists(rfn))
 		{
 			cout << "output file not exist: " << rfn << endl;
 			continue;
 		}
-		auto rlen = sys::file_size(rfn);
+		auto rlen = file_size(rfn);
 		if (rlen == uintmax_t(-1))
 		{
 			cout << "output file size error: " << rfn << endl;
