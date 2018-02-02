@@ -139,12 +139,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\vs2015cpp\StanfordAlg\common.cpp" />
-    <ClCompile Include="Advanced\A1001.cpp" />
-    <ClCompile Include="Advanced\A1002.cpp" />
-    <ClCompile Include="Advanced\A1003.cpp" />
-    <ClCompile Include="Advanced\A1005.cpp" />
-    <ClCompile Include="Advanced\A1009.cpp" />
-    <ClCompile Include="Advanced\A1010.cpp" />
     <ClCompile Include="Advanced\A1011.cpp" />
     <ClCompile Include="Advanced\A1012.cpp" />
     <ClCompile Include="Advanced\A1013.cpp" />
@@ -166,14 +160,10 @@
     <ClCompile Include="Basic\B1003.cpp" />
     <ClCompile Include="Blank.cpp" />
     <ClCompile Include="patMain.cpp" />
-    <ClCompile Include="Advanced\A1004.cpp" />
-    <ClCompile Include="Advanced\A1006.cpp" />
-    <ClCompile Include="Advanced\A1007.cpp" />
     <ClCompile Include="Advanced\A1132.cpp" />
     <ClCompile Include="Advanced\A1136.cpp" />
     <ClCompile Include="Advanced\A1139.cpp" />
     <ClCompile Include="Advanced\A1138.cpp" />
-    <ClCompile Include="Advanced\A1008.cpp" />
     <ClCompile Include="Basic\StartSelfTest.cpp" />
     <ClCompile Include="Template.cpp" />
     <ClCompile Include="Top\T1001.cpp" />
