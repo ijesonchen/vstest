@@ -27,5 +27,7 @@ A1018: 90min，20/30
 A1019: 20min, pass
 A1020: 80min, pass
 A1021: 40min, pass 
+A1022: 40MIN, PASS
+A1023: 20MIN, PASS
 ```
 
