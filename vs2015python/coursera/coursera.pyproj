@@ -26,6 +26,9 @@
     <Compile Include="combText2Doc.py" />
     <Compile Include="docxdemo.py" />
     <Compile Include="extractAudio.py" />
+    <Compile Include="PatGenTestFileName.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PatSrcFromTmpl.py">
       <SubType>Code</SubType>
     </Compile>
