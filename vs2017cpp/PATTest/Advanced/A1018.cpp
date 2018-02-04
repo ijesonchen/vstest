@@ -9,11 +9,16 @@ sln1: shortest path, multiple: least number of bikes
 	record: shortest path, total bike in path, path v<i>
 	90min 20/30 pt5-9错误
 
+sln2: 最短路径相同时，取需要bike最少的。
+	20min pt0,3,4异常退出。 pt5-9错误
+	异常：needBike - totalBike != sendBikes[problemStation]
+	可能是计算 当前路径需要bike的时候出错。
+
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
 One may rent a bike at any station and return it to any other stations in the city.
 
 The Public Bike Management Center (PBMC) keeps monitoring the real-time capacity of all the stations. 
-A station is said to be in perfect condition if it is exactly half-full. 
+A station is said to be in perfect condition if it is exactly half-full.
 If a station is full or empty, PBMC will collect or send bikes to adjust the condition of that station to perfect. 
 And more, all the stations on the way will be adjusted as well.
 
@@ -21,7 +26,19 @@ When a problem station is reported, PBMC will always choose the shortest path to
 If there are more than one shortest path, the one that requires the least number of bikes sent from PBMC will be chosen.
 
 
-Figure 1
+                 PBMC
+              1         1
+	   S1(6)       3       S2(7)
+              1         1
+		         S3(0)
+ BIKE 1:6 2:7 3:0
+ PATH (PBMC IS 0):
+ 0 1 1
+ 0 2 1
+ 0 3 3
+ 1 3 1
+ 2 3 1
+ 
 Figure 1 illustrates an example. 
 The stations are represented by vertices and the roads correspond to the edges. 
 The number on an edge is the time taken to reach one end station from another. 
@@ -106,21 +123,26 @@ protected:
 	int nodes = 0;
 	int edges = 0;
 	int problemStation = 0;
-	int maxcap = 0;
+	int capPerNode = 0;
+	int capPerfect = 0;
 
 	vector<vector<Edge>> adjs;
 	vector<int> nodeBikes;
 
 	vector<bool> visit;
+	// 最短路径
 	vector<int> dist;
+	// 当前路径总数量
 	vector<int> pathBikes;
+	vector<int> sendBikes;
 	vector<vector<int>> paths;
 };
 
 
 void A1018AdjGraph::ReadData(void)
 {
-	cin >> maxcap >> nodes >> problemStation >> edges;
+	cin >> capPerNode >> nodes >> problemStation >> edges;
+	capPerfect = capPerNode / 2;
 	// count PBMC as 0
 	++nodes;
 	adjs.assign(nodes, vector<Edge>());
@@ -138,6 +160,7 @@ void A1018AdjGraph::ReadData(void)
 	}
 	dist.assign(nodes, A1018MaxDist);
 	pathBikes.assign(nodes, A1018MaxDist);
+	sendBikes.assign(nodes, A1018MaxDist);
 	visit.assign(nodes, false);
 	paths.assign(nodes, vector<int>());
 }
@@ -161,10 +184,14 @@ void A1018AdjGraph::Calc(void)
 	auto totalBike = pathBikes[problemStation];
 	auto& procPath = paths[problemStation];
 
-	auto needBike = procPath.size() * maxcap / 2;
+	auto needBike = procPath.size() * capPerfect;
 
 	if (needBike > totalBike)
 	{
+		if (needBike - totalBike != sendBikes[problemStation])
+		{
+			throw 0;
+		}
 		cout << needBike - totalBike << " 0";
 		for (auto n : procPath)
 		{
@@ -216,20 +243,18 @@ void A1018AdjGraph::Update(const int last, const int next)
 	for (auto& e : uEdges)
 	{
 		auto v = e.v;
-		if (visit[v])
-		{
-			continue;
-		}
 		auto distuv = distu + e.d;
 		auto bikeuv = pathBikes[next] + nodeBikes[v];
+		auto bikeSend = capPerfect * (int)paths[v].size() - bikeuv;
 		bool update = false;
 		if (distuv < dist[v] ||
-			(distuv == dist[v] && bikeuv > pathBikes[v]))
+			(distuv == dist[v] && bikeSend < sendBikes[v]))
 		{
 			dist[v] = distuv;
 			pathBikes[v] = bikeuv;
 			paths[v] = paths[next];
 			paths[v].push_back(v);
+			sendBikes[v] = bikeSend;
 		}
 	}
 }
