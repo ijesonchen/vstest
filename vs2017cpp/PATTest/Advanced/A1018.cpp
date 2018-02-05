@@ -9,7 +9,7 @@ sln1: shortest path, multiple: least number of bikes
 	record: shortest path, total bike in path, path v<i>
 	90min 20/30 pt5-9错误
 
-sln2: 最短路径相同时，取需要bike最少的。
+sln2: 最短路径相同时，取send bike最少的。
 	20min pt0,3,4异常退出。 pt5-9错误
 	异常：needBike - totalBike != sendBikes[problemStation]
 	可能是计算 当前路径需要bike的时候出错。
@@ -18,6 +18,12 @@ sln2: 最短路径相同时，取需要bike最少的。
 	14/30 pt1,3,4异常，5-9错误
 	修正：更新时sendBike计算方法
 	20/30 5-9错误
+
+sln3: 最短路径相同时，取take back或send bikes最小
+	25/30 pt5,7错误
+
+sln4: 按照优先级取：最短路径，send bikes最小，take back最小
+	20/30 pt5-9错误
 
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
 One may rent a bike at any station and return it to any other stations in the city.
@@ -82,7 +88,8 @@ Output Specification:
 For each test case, print your results in one line. 
 First output the number of bikes that PBMC must send. 
 Then after one space, output the path in the format: 0->S1->...->Sp. 
-Finally after another space, output the number of bikes that we must take back to PBMC after the condition of Sp is adjusted to perfect.
+Finally after another space, output the number of bikes that 
+we must take back to PBMC after the condition of Sp is adjusted to perfect.
 
 Note that if such a path is not unique, 
 output the one that requires minimum number of bikes that we must take back to PBMC. 
@@ -140,6 +147,8 @@ protected:
 	// 当前路径总数量
 	vector<int> pathBikes;
 	vector<int> sendBikes;
+	vector<int> absBikes;
+	vector<int> takeBikes;
 	vector<vector<int>> paths;
 };
 
@@ -166,6 +175,8 @@ void A1018AdjGraph::ReadData(void)
 	dist.assign(nodes, A1018MaxDist);
 	pathBikes.assign(nodes, A1018MaxDist);
 	sendBikes.assign(nodes, A1018MaxDist);
+	absBikes.assign(nodes, A1018MaxDist);
+	takeBikes.assign(nodes, A1018MaxDist);
 	visit.assign(nodes, false);
 	paths.assign(nodes, vector<int>());
 }
@@ -190,7 +201,7 @@ void A1018AdjGraph::Calc(void)
 	auto& procPath = paths[problemStation];
 
 	auto needBike = procPath.size() * capPerfect;
-
+	
 	if (needBike > totalBike)
 	{
 		if (needBike - totalBike != sendBikes[problemStation])
@@ -250,13 +261,22 @@ void A1018AdjGraph::Update(const int last, const int next)
 		auto v = e.v;
 		auto distuv = distu + e.d;
 		auto bikeuv = pathBikes[next] + nodeBikes[v];
-		auto sendv = capPerfect * (int)(paths[next].size() + 1) - bikeuv;
+		auto totalv = capPerfect * (int)(paths[next].size() + 1);
+		auto sendv = totalv - bikeuv;
+		auto absv = std::abs(totalv - bikeuv);
+		auto takev = bikeuv - totalv;
 		if (distuv < dist[v] ||
-			(distuv == dist[v] && sendv < sendBikes[v]))
+//			(distuv == dist[v] && sendv < sendBikes[v]))
+//			(distuv == dist[v] && absv < absBikes[v]))
+
+			(distuv == dist[v] && sendv < sendBikes[v]) ||
+			(distuv == dist[v] && sendv == sendBikes[v] && absv < absBikes[v]))
 		{
 			dist[v] = distuv;
 			pathBikes[v] = bikeuv;
 			sendBikes[v] = sendv;
+			absBikes[v] = absv;
+			takeBikes[v] = takev;
 			paths[v] = paths[next];
 			paths[v].push_back(v);
 		}
