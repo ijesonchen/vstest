@@ -29,8 +29,12 @@ sln5: 题解：
 	题意有三：1.时间最短 2.送出车辆最少 3.回收车辆最少
 	陷阱有一：调整路径上站点的车辆数目时，不能把后面站点多出来的车辆返补回前面车辆数不够的站点。
 	https://www.cnblogs.com/luojiahu/p/3892608.html
+	分段计算send
 	25/30 pt5,7错误
-	23/30 pt5,6,7错误
+	分段计算send/take
+	25/30 pt5,6,7错误 示例错误。
+	send计算时考虑当前take
+	13/30 pt0,5,7错误。示例错误。
 
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
 One may rent a bike at any station and return it to any other stations in the city.
@@ -133,7 +137,7 @@ public:
 protected:
 	struct Edge
 	{
-		int v = 0; 
+		int v = 0;
 		int d = 0;
 
 		Edge() : v(0), d(0) {};
@@ -196,7 +200,7 @@ void A1018AdjGraph::Calc(void)
 	int last = 0;
 	pathBikes[0] = 0;
 	dist[0] = 0;
-	do 
+	do
 	{
 		int next = FindMinDist();
 		visit[next] = true;
@@ -208,7 +212,7 @@ void A1018AdjGraph::Calc(void)
 	auto& procPath = paths[problemStation];
 
 	auto needBike = procPath.size() * capPerfect;
-	
+
 	if (needBike > totalBike)
 	{
 		if (needBike - totalBike != absBikes[problemStation])
@@ -243,7 +247,7 @@ int A1018AdjGraph::FindMinDist(void) const
 		if (visit[i])
 		{
 			continue;
-		}		
+		}
 		if ((dist[i] < minDist) ||
 			(dist[i] == minDist && pathBikes[i] > maxBile))
 		{
@@ -269,24 +273,28 @@ void A1018AdjGraph::Update(const int last, const int next)
 		auto distuv = distu + e.d;
 		auto bikeuv = pathBikes[next] + nodeBikes[v];
 		auto totalv = capPerfect * (int)(paths[next].size() + 1);
-//		auto sendv = totalv - bikeuv;
 		auto absv = std::abs(totalv - bikeuv);
-//		auto takev = bikeuv - totalv;
 		auto sendv = sendBikes[next];
-		auto takev = takeBikes[v];
+		auto takev = takeBikes[next];
 		auto diffv = capPerfect - nodeBikes[v];
 		if (diffv > 0)
 		{
-			sendv += diffv;
+			if (takev > diffv)
+			{
+				// 上一节点有剩余
+				takev -= diffv;
+			}
+			else
+			{
+				takev = 0;
+				sendv += diffv - takev;
+			}
 		}
 		else
 		{
 			takev -= diffv;
 		}
 		if (distuv < dist[v] ||
-//			(distuv == dist[v] && sendv < sendBikes[v]))
-//			(distuv == dist[v] && absv < absBikes[v]))
-
 			(distuv == dist[v] && sendv > 0 && sendv < sendBikes[v]) ||
 			(distuv == dist[v] && sendv == sendBikes[v] && takev < takeBikes[v]))
 		{
@@ -300,6 +308,7 @@ void A1018AdjGraph::Update(const int last, const int next)
 		}
 	}
 }
+
 // rename this to main int PAT
 int A1018Func(void)
 {
@@ -309,8 +318,6 @@ int A1018Func(void)
 
 	return 0;
 }
-
-
 void A1018(const string& fn)
 {
 	cout << fn << endl;
