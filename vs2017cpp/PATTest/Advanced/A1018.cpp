@@ -25,6 +25,13 @@ sln3: 最短路径相同时，取take back或send bikes最小
 sln4: 按照优先级取：最短路径，send bikes最小，take back最小
 	20/30 pt5-9错误
 
+sln5: 题解：
+	题意有三：1.时间最短 2.送出车辆最少 3.回收车辆最少
+	陷阱有一：调整路径上站点的车辆数目时，不能把后面站点多出来的车辆返补回前面车辆数不够的站点。
+	https://www.cnblogs.com/luojiahu/p/3892608.html
+	25/30 pt5,7错误
+	23/30 pt5,6,7错误
+
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
 One may rent a bike at any station and return it to any other stations in the city.
 
@@ -204,7 +211,7 @@ void A1018AdjGraph::Calc(void)
 	
 	if (needBike > totalBike)
 	{
-		if (needBike - totalBike != sendBikes[problemStation])
+		if (needBike - totalBike != absBikes[problemStation])
 		{
 			throw 0;
 		}
@@ -262,15 +269,26 @@ void A1018AdjGraph::Update(const int last, const int next)
 		auto distuv = distu + e.d;
 		auto bikeuv = pathBikes[next] + nodeBikes[v];
 		auto totalv = capPerfect * (int)(paths[next].size() + 1);
-		auto sendv = totalv - bikeuv;
+//		auto sendv = totalv - bikeuv;
 		auto absv = std::abs(totalv - bikeuv);
-		auto takev = bikeuv - totalv;
+//		auto takev = bikeuv - totalv;
+		auto sendv = sendBikes[next];
+		auto takev = takeBikes[v];
+		auto diffv = capPerfect - nodeBikes[v];
+		if (diffv > 0)
+		{
+			sendv += diffv;
+		}
+		else
+		{
+			takev -= diffv;
+		}
 		if (distuv < dist[v] ||
 //			(distuv == dist[v] && sendv < sendBikes[v]))
 //			(distuv == dist[v] && absv < absBikes[v]))
 
-			(distuv == dist[v] && sendv < sendBikes[v]) ||
-			(distuv == dist[v] && sendv == sendBikes[v] && absv < absBikes[v]))
+			(distuv == dist[v] && sendv > 0 && sendv < sendBikes[v]) ||
+			(distuv == dist[v] && sendv == sendBikes[v] && takev < takeBikes[v]))
 		{
 			dist[v] = distuv;
 			pathBikes[v] = bikeuv;
