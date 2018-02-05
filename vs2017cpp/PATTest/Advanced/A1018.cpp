@@ -14,6 +14,9 @@ sln2: 最短路径相同时，取需要bike最少的。
 	异常：needBike - totalBike != sendBikes[problemStation]
 	可能是计算 当前路径需要bike的时候出错。
 
+	修正：更新时sendBike计算方法
+	14/30 pt1,3,4异常，5-9错误
+
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
 One may rent a bike at any station and return it to any other stations in the city.
 
@@ -238,23 +241,22 @@ int A1018AdjGraph::FindMinDist(void) const
 
 void A1018AdjGraph::Update(const int last, const int next)
 {
-	auto uEdges = adjs[next];
+	auto edgeu = adjs[next];
 	auto distu = dist[next];
-	for (auto& e : uEdges)
+	for (auto& e : edgeu)
 	{
 		auto v = e.v;
 		auto distuv = distu + e.d;
 		auto bikeuv = pathBikes[next] + nodeBikes[v];
-		auto bikeSend = capPerfect * (int)paths[v].size() - bikeuv;
-		bool update = false;
+		auto sendv = capPerfect * (int)(paths[v].size() + 1) - bikeuv;
 		if (distuv < dist[v] ||
-			(distuv == dist[v] && bikeSend < sendBikes[v]))
+			(distuv == dist[v] && sendv < sendBikes[v]))
 		{
 			dist[v] = distuv;
 			pathBikes[v] = bikeuv;
+			sendBikes[v] = sendv;
 			paths[v] = paths[next];
 			paths[v].push_back(v);
-			sendBikes[v] = bikeSend;
 		}
 	}
 }
