@@ -16,6 +16,8 @@ sln2: 最短路径相同时，取需要bike最少的。
 
 	修正：更新时sendBike计算方法
 	14/30 pt1,3,4异常，5-9错误
+	修正：更新时sendBike计算方法
+	20/30 5-9错误
 
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
 One may rent a bike at any station and return it to any other stations in the city.
@@ -248,7 +250,7 @@ void A1018AdjGraph::Update(const int last, const int next)
 		auto v = e.v;
 		auto distuv = distu + e.d;
 		auto bikeuv = pathBikes[next] + nodeBikes[v];
-		auto sendv = capPerfect * (int)(paths[v].size() + 1) - bikeuv;
+		auto sendv = capPerfect * (int)(paths[next].size() + 1) - bikeuv;
 		if (distuv < dist[v] ||
 			(distuv == dist[v] && sendv < sendBikes[v]))
 		{
