@@ -40,6 +40,8 @@ sln5: 题解：
 
 sln6: 修正FindMinDist
 	10min 8/30 pt0,5-9错误。示例正确
+	修正结果输出，使用send/take数组
+	15min 27/30 pt7错误
 
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
 One may rent a bike at any station and return it to any other stations in the city.
@@ -203,8 +205,10 @@ void A1018AdjGraph::Calc(void)
 	dist[0] = 0;
 	int total = nodes;
 	int last = 0;
-	pathBikes[0] = 0;
 	dist[0] = 0;
+	pathBikes[0] = 0;
+	sendBikes[0] = 0;
+	takeBikes[0] = 0;
 	do
 	{
 		int next = FindMinDist();
@@ -213,33 +217,13 @@ void A1018AdjGraph::Calc(void)
 		last = next;
 	} while (--total > 0);
 
-	auto totalBike = pathBikes[problemStation];
 	auto& procPath = paths[problemStation];
-
-	auto needBike = procPath.size() * capPerfect;
-
-	if (needBike > totalBike)
+	cout << sendBikes[problemStation] << " 0";
+	for (auto n : procPath)
 	{
-		if (needBike - totalBike != absBikes[problemStation])
-		{
-			throw 0;
-		}
-		cout << needBike - totalBike << " 0";
-		for (auto n : procPath)
-		{
-			cout << "->" << n;
-		}
-		cout << " 0" << endl;
+		cout << "->" << n;
 	}
-	else
-	{
-		cout << "0 0";
-		for (auto n : procPath)
-		{
-			cout << "->" << n;
-		}
-		cout << " " << totalBike - needBike << endl;
-	}
+	cout << " " << takeBikes[problemStation] << endl;
 }
 
 int A1018AdjGraph::FindMinDist(void) const
@@ -307,7 +291,7 @@ void A1018AdjGraph::Update(const int last, const int next)
 		}
 		else
 		{
-			takev += takeDiff;
+			takev -= takeDiff;
 		}
 		if (distuv < dist[v] ||
 			(distuv == dist[v] && sendv > 0 && sendv < sendBikes[v]) ||
@@ -333,6 +317,7 @@ int A1018Func(void)
 
 	return 0;
 }
+
 void A1018(const string& fn)
 {
 	cout << fn << endl;
