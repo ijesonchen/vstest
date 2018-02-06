@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////////
 /*
 Programming Assignment #4
-
+ans: 1¡£2493893   2¡£4243395
 1¡£
 In this programming problem and the next you'll code up the knapsack 
 algorithm from lecture.

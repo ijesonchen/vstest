@@ -1,6 +1,7 @@
 /*
 Programming Assignment #2
-1。 ans: 106
+ANS: 1。106   2。6118
+1。 ans: 106 
 In this programming problem and the next you'll code up the clustering algorithm from 
 lecture for computing a max-spacing k-clustering.
 
