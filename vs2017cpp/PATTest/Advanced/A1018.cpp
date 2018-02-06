@@ -160,14 +160,10 @@ protected:
 	vector<int> nodeBikes;
 
 	vector<bool> visit;
-	// 最短路径
 	vector<int> dist;
-	// 当前路径总数量
-	vector<int> pathBikes;
-	vector<int> sendBikes;
-	vector<int> absBikes;
-	vector<int> takeBikes;
 	vector<vector<int>> paths;
+	vector<int> sendBikes;
+	vector<int> takeBikes;
 };
 
 
@@ -190,12 +186,10 @@ void A1018AdjGraph::ReadData(void)
 		adjs[u].push_back(Edge(v, t));
 		adjs[v].push_back(Edge(u, t));
 	}
-	dist.assign(nodes, A1018MaxDist);
-	pathBikes.assign(nodes, A1018MaxDist);
-	sendBikes.assign(nodes, A1018MaxDist);
-	absBikes.assign(nodes, A1018MaxDist);
-	takeBikes.assign(nodes, A1018MaxDist);
 	visit.assign(nodes, false);
+	dist.assign(nodes, A1018MaxDist);
+	sendBikes.assign(nodes, A1018MaxDist);
+	takeBikes.assign(nodes, A1018MaxDist);
 	paths.assign(nodes, vector<int>());
 }
 
@@ -206,7 +200,6 @@ void A1018AdjGraph::Calc(void)
 	int total = nodes;
 	int last = 0;
 	dist[0] = 0;
-	pathBikes[0] = 0;
 	sendBikes[0] = 0;
 	takeBikes[0] = 0;
 	do
@@ -230,8 +223,8 @@ int A1018AdjGraph::FindMinDist(void) const
 {
 	int idx = -1;
 	int minDist = A1018MaxDist + 1;
-	int minSend = 0;
-	int minTake = 0;
+	int minSend = A1018MaxDist + 1;
+	int minTake = A1018MaxDist + 1;
 	for (int i = 0; i < nodes; ++i)
 	{
 		if (visit[i])
@@ -270,9 +263,6 @@ void A1018AdjGraph::Update(const int last, const int next)
 	{
 		auto v = e.v;
 		auto distuv = distu + e.d;
-		auto bikeuv = pathBikes[next] + nodeBikes[v];
-		auto totalv = capPerfect * (int)(paths[next].size() + 1);
-		auto absv = std::abs(totalv - bikeuv);
 		auto sendv = sendBikes[next];
 		auto takev = takeBikes[next];
 		auto takeDiff = capPerfect - nodeBikes[v];
@@ -298,9 +288,7 @@ void A1018AdjGraph::Update(const int last, const int next)
 			(distuv == dist[v] && sendv == sendBikes[v] && takev < takeBikes[v]))
 		{
 			dist[v] = distuv;
-			pathBikes[v] = bikeuv;
 			sendBikes[v] = sendv;
-			absBikes[v] = absv;
 			takeBikes[v] = takev;
 			paths[v] = paths[next];
 			paths[v].push_back(v);
