@@ -24,7 +24,6 @@ sln3: 最短路径相同时，取take back或send bikes最小
 
 sln4: 按照优先级取：最短路径，send bikes最小，take back最小
 	5min 20/30 pt5-9错误
-	
 
 sln5: 题解：
 	题意有三：1.时间最短 2.送出车辆最少 3.回收车辆最少
@@ -42,6 +41,7 @@ sln6: 修正FindMinDist
 	10min 8/30 pt0,5-9错误。示例正确
 	修正结果输出，使用send/take数组
 	15min 27/30 pt7错误
+	30min add testcase
 
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
 One may rent a bike at any station and return it to any other stations in the city.
@@ -328,6 +328,8 @@ void A1018(const string& fn)
 
 void A1018(void)
 {
-	A1018("data\\A1018-1.txt"); // 
+	A1018("data\\A1018-1.txt"); // 3 0->2->3 0
+	A1018("data\\A1018-2.txt"); // 2 0->2->4->6->7 0
+	A1018("data\\A1018-3.txt"); // 0 0->2->4->6->7 3
+	A1018("data\\A1018-4.txt"); // 1 0->6->7->8->9->5 2
 }
-
