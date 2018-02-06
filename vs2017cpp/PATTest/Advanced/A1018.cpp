@@ -43,6 +43,10 @@ sln6: 修正FindMinDist
 	15min 27/30 pt7错误
 	30min add testcase
 
+sln7: 参考sln5中的题解，先求最短路径（可多条），后排序输出
+	原因：BFS时同时判断send和take，可能导致错误的贪心逻辑
+	60min pass
+
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
 One may rent a bike at any station and return it to any other stations in the city.
 
@@ -142,6 +146,7 @@ public:
 	int FindMinDist(void) const;
 	void Update(const int u, const int v);
 protected:
+	void RecurPath(int n, vector<int> prev);
 	struct Edge
 	{
 		int v = 0;
@@ -149,6 +154,56 @@ protected:
 
 		Edge() : v(0), d(0) {};
 		Edge(int _v, int _t) : v(_v), d(_t) {}
+	};
+	struct Path
+	{		
+		vector<int> revPath;
+		int send = 0;
+		int take = 0;
+		void Calc(const vector<int>& bikes, int perfect) 
+		{
+			for (auto it = revPath.rbegin(); it != revPath.rend(); ++it)
+			{
+				auto u = *it;
+				auto takeuv = bikes[u] - perfect;
+				if (takeuv > 0)
+				{
+					take += takeuv;
+				}
+				else if (takeuv < 0)
+				{
+					takeuv = -takeuv;
+					if (take > takeuv)
+					{
+						take -= takeuv;
+					}
+					else
+					{
+						send += takeuv - take;
+						take = 0;
+					}
+				}
+			}
+		};
+		bool operator<(const Path& p)
+		{
+			if (send < p.send)
+			{
+				return true;
+			}
+			else if (send == p.send)
+			{
+				if (take == p.take)
+				{
+					throw 0;
+				}
+				return take < p.take;
+			}
+			else
+			{
+				return false;
+			}
+		}
 	};
 	int nodes = 0;
 	int edges = 0;
@@ -161,7 +216,8 @@ protected:
 
 	vector<bool> visit;
 	vector<int> dist;
-	vector<vector<int>> paths;
+	vector<vector<int>> lastHops;
+	vector<Path> paths;
 	vector<int> sendBikes;
 	vector<int> takeBikes;
 };
@@ -188,11 +244,27 @@ void A1018AdjGraph::ReadData(void)
 	}
 	visit.assign(nodes, false);
 	dist.assign(nodes, A1018MaxDist);
-	sendBikes.assign(nodes, A1018MaxDist);
-	takeBikes.assign(nodes, A1018MaxDist);
-	paths.assign(nodes, vector<int>());
+	lastHops.assign(nodes, vector<int>());
 }
 
+void A1018AdjGraph::RecurPath(int n, vector<int> prev)
+{
+	if (n == 0)
+	{
+		Path p;
+		p.revPath = prev;
+
+		p.Calc(nodeBikes, capPerfect);
+		paths.push_back(p);
+
+		return;
+	}
+	prev.push_back(n);
+	for (auto k : lastHops[n])
+	{
+		RecurPath(k, prev);
+	}
+}
 
 void A1018AdjGraph::Calc(void)
 {
@@ -200,8 +272,6 @@ void A1018AdjGraph::Calc(void)
 	int total = nodes;
 	int last = 0;
 	dist[0] = 0;
-	sendBikes[0] = 0;
-	takeBikes[0] = 0;
 	do
 	{
 		int next = FindMinDist();
@@ -209,42 +279,38 @@ void A1018AdjGraph::Calc(void)
 		Update(last, next);
 		last = next;
 	} while (--total > 0);
+	vector<int> vp;
+	RecurPath(problemStation, vp);
 
-	auto& procPath = paths[problemStation];
-	cout << sendBikes[problemStation] << " 0";
-	for (auto n : procPath)
+	auto pmin = paths.front();
+	size_t len = paths.size();
+	for (size_t i = 1; i < len; ++i)
 	{
-		cout << "->" << n;
+		auto& p = paths[i];
+		if (p < pmin)
+		{
+			pmin = p;
+		}
 	}
-	cout << " " << takeBikes[problemStation] << endl;
+
+	cout << pmin.send << " 0";
+
+	for (auto it = pmin.revPath.rbegin(); it != pmin.revPath.rend(); ++it)
+	{
+		cout << "->" << *it;
+	}
+	cout << " " << pmin.take << endl;
 }
 
 int A1018AdjGraph::FindMinDist(void) const
 {
 	int idx = -1;
 	int minDist = A1018MaxDist + 1;
-	int minSend = A1018MaxDist + 1;
-	int minTake = A1018MaxDist + 1;
 	for (int i = 0; i < nodes; ++i)
 	{
-		if (visit[i])
+		if (!visit[i] && dist[i] < minDist)
 		{
-			continue;
-		}
-		auto di = dist[i];
-		if (di > minDist)
-		{
-			continue;
-		}
-		auto si = sendBikes[i];
-		auto ti = takeBikes[i];
-		if ((di < minDist) ||
-			(di == minDist && si < minSend) ||
-			(di == minDist && si == minSend && ti < minTake))
-		{
-			minDist = di;
-			minSend = si;
-			minTake = ti;
+			minDist = dist[i];
 			idx = i;
 		}
 	}
@@ -263,35 +329,15 @@ void A1018AdjGraph::Update(const int last, const int next)
 	{
 		auto v = e.v;
 		auto distuv = distu + e.d;
-		auto sendv = sendBikes[next];
-		auto takev = takeBikes[next];
-		auto takeDiff = capPerfect - nodeBikes[v];
-		if (takeDiff > 0)
-		{
-			if (takev > takeDiff)
-			{
-				// 上一节点有剩余
-				takev -= takeDiff;
-			}
-			else
-			{
-				sendv += takeDiff - takev;
-				takev = 0;
-			}
-		}
-		else
-		{
-			takev -= takeDiff;
-		}
-		if (distuv < dist[v] ||
-			(distuv == dist[v] && sendv > 0 && sendv < sendBikes[v]) ||
-			(distuv == dist[v] && sendv == sendBikes[v] && takev < takeBikes[v]))
+		auto distv = dist[v];
+		if (distuv < distv)
 		{
 			dist[v] = distuv;
-			sendBikes[v] = sendv;
-			takeBikes[v] = takev;
-			paths[v] = paths[next];
-			paths[v].push_back(v);
+			lastHops[v].assign(1, next);
+		}
+		else if (distuv == distv)
+		{
+			lastHops[v].push_back(next);
 		}
 	}
 }
