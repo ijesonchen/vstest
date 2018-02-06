@@ -20,10 +20,11 @@ sln2: 最短路径相同时，取send bike最少的。
 	20/30 5-9错误
 
 sln3: 最短路径相同时，取take back或send bikes最小
-	25/30 pt5,7错误
+	15min 25/30 pt5,7错误
 
 sln4: 按照优先级取：最短路径，send bikes最小，take back最小
-	20/30 pt5-9错误
+	5min 20/30 pt5-9错误
+	
 
 sln5: 题解：
 	题意有三：1.时间最短 2.送出车辆最少 3.回收车辆最少
@@ -35,6 +36,10 @@ sln5: 题解：
 	25/30 pt5,6,7错误 示例错误。
 	send计算时考虑当前take
 	13/30 pt0,5,7错误。示例错误。
+	20min
+
+sln6: 修正FindMinDist
+	10min 8/30 pt0,5-9错误。示例正确
 
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
 One may rent a bike at any station and return it to any other stations in the city.
@@ -241,18 +246,28 @@ int A1018AdjGraph::FindMinDist(void) const
 {
 	int idx = -1;
 	int minDist = A1018MaxDist + 1;
-	int maxBile = 0;
+	int minSend = 0;
+	int minTake = 0;
 	for (int i = 0; i < nodes; ++i)
 	{
 		if (visit[i])
 		{
 			continue;
 		}
-		if ((dist[i] < minDist) ||
-			(dist[i] == minDist && pathBikes[i] > maxBile))
+		auto di = dist[i];
+		if (di > minDist)
 		{
-			maxBile = pathBikes[i];
-			minDist = dist[i];
+			continue;
+		}
+		auto si = sendBikes[i];
+		auto ti = takeBikes[i];
+		if ((di < minDist) ||
+			(di == minDist && si < minSend) ||
+			(di == minDist && si == minSend && ti < minTake))
+		{
+			minDist = di;
+			minSend = si;
+			minTake = ti;
 			idx = i;
 		}
 	}
@@ -276,23 +291,23 @@ void A1018AdjGraph::Update(const int last, const int next)
 		auto absv = std::abs(totalv - bikeuv);
 		auto sendv = sendBikes[next];
 		auto takev = takeBikes[next];
-		auto diffv = capPerfect - nodeBikes[v];
-		if (diffv > 0)
+		auto takeDiff = capPerfect - nodeBikes[v];
+		if (takeDiff > 0)
 		{
-			if (takev > diffv)
+			if (takev > takeDiff)
 			{
 				// 上一节点有剩余
-				takev -= diffv;
+				takev -= takeDiff;
 			}
 			else
 			{
+				sendv += takeDiff - takev;
 				takev = 0;
-				sendv += diffv - takev;
 			}
 		}
 		else
 		{
-			takev -= diffv;
+			takev += takeDiff;
 		}
 		if (distuv < dist[v] ||
 			(distuv == dist[v] && sendv > 0 && sendv < sendBikes[v]) ||
