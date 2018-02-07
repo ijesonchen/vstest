@@ -47,6 +47,11 @@ sln7: 参考sln5中的题解，先求最短路径（可多条），后排序输出
 	原因：BFS时同时判断send和take，可能导致错误的贪心逻辑
 	60min pass
 
+sln7: 参考sln5中题解，先dijkstra，然后bfs减枝遍历CalcByDfs
+	(原算法改为CalcByDijkstra）
+	40min 29/30 pt9异常
+	
+
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
 One may rent a bike at any station and return it to any other stations in the city.
 
@@ -143,11 +148,17 @@ class A1018AdjGraph
 {
 public:
 	void ReadData(void);
-	void Calc(void);
 	int FindMinDist(void) const;
 	void Update(const int u, const int v);
+	void CalcByDijkstra(void);
+	void CalcByDfs(void);
 protected:
-	void RecurPath(int n, vector<int> prev);
+	void Dijkstra(void);
+	void CalcPathByDijkstra(void);
+	void CalcPathByDfsSearch(void);
+	void BuildPathByDijkstra(int n, vector<int> prev);
+	void DfsPath(void);
+	void DfsAllPath(int udist);
 	struct Edge
 	{
 		int v = 0;
@@ -159,52 +170,12 @@ protected:
 	struct Path
 	{		
 		vector<int> revPath;
+		vector<int> directPath;
 		int send = 0;
 		int take = 0;
-		void Calc(const vector<int>& bikes, int perfect) 
-		{
-			for (auto it = revPath.rbegin(); it != revPath.rend(); ++it)
-			{
-				auto u = *it;
-				auto takeuv = bikes[u] - perfect;
-				if (takeuv > 0)
-				{
-					take += takeuv;
-				}
-				else if (takeuv < 0)
-				{
-					takeuv = -takeuv;
-					if (take > takeuv)
-					{
-						take -= takeuv;
-					}
-					else
-					{
-						send += takeuv - take;
-						take = 0;
-					}
-				}
-			}
-		};
-		bool operator<(const Path& p)
-		{
-			if (send < p.send)
-			{
-				return true;
-			}
-			else if (send == p.send)
-			{
-				if (take == p.take)
-				{
-					throw 0;
-				}
-				return take < p.take;
-			}
-			else
-			{
-				return false;
-			}
-		}
+		void CalcRev(const vector<int>& bikes, int perfect);
+		void CalcDirect(const vector<int>& bikes, int perfect);
+		bool operator<(const Path& p);
 	};
 	int nodes = 0;
 	int edges = 0;
@@ -218,10 +189,168 @@ protected:
 	vector<bool> visit;
 	vector<int> dist;
 	vector<vector<int>> lastHops;
-	vector<Path> paths;
-	vector<int> sendBikes;
-	vector<int> takeBikes;
+	vector<Path> allPaths;
+	vector<int> vPath;
 };
+
+
+void A1018AdjGraph::Path::CalcRev(const vector<int>& bikes, int perfect)
+{
+	for (auto it = revPath.rbegin(); it != revPath.rend(); ++it)
+	{
+		auto u = *it;
+		auto takeuv = bikes[u] - perfect;
+		if (takeuv > 0)
+		{
+			take += takeuv;
+		}
+		else if (takeuv < 0)
+		{
+			takeuv = -takeuv;
+			if (take > takeuv)
+			{
+				take -= takeuv;
+			}
+			else
+			{
+				send += takeuv - take;
+				take = 0;
+			}
+		}
+	}
+}
+
+void A1018AdjGraph::Path::CalcDirect(const vector<int>& bikes, int perfect)
+{
+	for (auto it = ++directPath.begin(); it != directPath.end(); ++it)
+	{
+		auto u = *it;
+		auto takeuv = bikes[u] - perfect;
+		if (takeuv > 0)
+		{
+			take += takeuv;
+		}
+		else if (takeuv < 0)
+		{
+			takeuv = -takeuv;
+			if (take > takeuv)
+			{
+				take -= takeuv;
+			}
+			else
+			{
+				send += takeuv - take;
+				take = 0;
+			}
+		}
+	}
+}
+
+bool A1018AdjGraph::Path::operator<(const Path& p)
+{
+	if (send < p.send)
+	{
+		return true;
+	}
+	else if (send == p.send)
+	{
+		if (take == p.take)
+		{
+			throw 0;
+		}
+		return take < p.take;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+void A1018AdjGraph::CalcByDijkstra(void)
+{
+	Dijkstra();
+	CalcPathByDijkstra();
+}
+
+void A1018AdjGraph::CalcByDfs(void)
+{
+	Dijkstra();
+	CalcPathByDfsSearch();
+}
+
+void A1018AdjGraph::CalcPathByDijkstra(void)
+{
+	vector<int> vp;
+	BuildPathByDijkstra(problemStation, vp);
+
+	auto pmin = *min_element(allPaths.begin(), allPaths.end());
+
+	cout << pmin.send << " 0";
+
+	for (auto it = pmin.revPath.rbegin(); it != pmin.revPath.rend(); ++it)
+	{
+		cout << "->" << *it;
+	}
+	cout << " " << pmin.take << endl;
+}
+
+
+void A1018AdjGraph::CalcPathByDfsSearch(void)
+{
+	DfsPath();
+
+	auto pmin = *min_element(allPaths.begin(), allPaths.end());
+
+	cout << pmin.send << " " << pmin.directPath.front();
+
+	for (auto it = ++pmin.directPath.begin(); it != pmin.directPath.end(); ++it)
+	{
+		cout << "->" << *it;
+	}
+	cout << " " << pmin.take << endl;
+
+}
+
+void A1018AdjGraph::DfsPath(void)
+{
+	visit.assign(nodes, false);
+	visit[0] = true;
+	vPath.clear();
+	vPath.push_back(0);
+	DfsAllPath(0);
+}
+
+void A1018AdjGraph::DfsAllPath(int udist)
+{
+	auto u = vPath.back();
+
+	if (u == problemStation)
+	{
+		Path p;
+		p.directPath = vPath;
+		p.CalcDirect(nodeBikes, capPerfect);
+		allPaths.push_back(p);
+		return;
+	}
+
+	auto& vAdju = adjs[u];
+	size_t nv = 0;
+	for (auto ev : vAdju)
+	{
+		auto v = ev.v;
+		auto vdist = udist + ev.d;
+		if (visit[v] || vdist > dist[v])
+		{
+			continue;
+		}
+		visit[v] = true;
+		vPath.push_back(v);
+		DfsAllPath(vdist);
+		visit[v] = false;
+		vPath.pop_back();
+	}
+}
 
 
 void A1018AdjGraph::ReadData(void)
@@ -248,26 +377,26 @@ void A1018AdjGraph::ReadData(void)
 	lastHops.assign(nodes, vector<int>());
 }
 
-void A1018AdjGraph::RecurPath(int n, vector<int> prev)
+void A1018AdjGraph::BuildPathByDijkstra(int n, vector<int> prev)
 {
 	if (n == 0)
 	{
 		Path p;
 		p.revPath = prev;
 
-		p.Calc(nodeBikes, capPerfect);
-		paths.push_back(p);
+		p.CalcRev(nodeBikes, capPerfect);
+		allPaths.push_back(p);
 
 		return;
 	}
 	prev.push_back(n);
 	for (auto k : lastHops[n])
 	{
-		RecurPath(k, prev);
+		BuildPathByDijkstra(k, prev);
 	}
 }
 
-void A1018AdjGraph::Calc(void)
+void A1018AdjGraph::Dijkstra(void)
 {
 	dist[0] = 0;
 	int total = nodes;
@@ -280,19 +409,6 @@ void A1018AdjGraph::Calc(void)
 		Update(last, next);
 		last = next;
 	} while (--total > 0);
-
-	vector<int> vp;
-	RecurPath(problemStation, vp);
-
-	auto pmin = *min_element(paths.begin(), paths.end());
-	
-	cout << pmin.send << " 0";
-
-	for (auto it = pmin.revPath.rbegin(); it != pmin.revPath.rend(); ++it)
-	{
-		cout << "->" << *it;
-	}
-	cout << " " << pmin.take << endl;
 }
 
 int A1018AdjGraph::FindMinDist(void) const
@@ -340,7 +456,7 @@ int A1018Func(void)
 {
 	A1018AdjGraph g;
 	g.ReadData();
-	g.Calc();
+	g.CalcByDfs();
 
 	return 0;
 }
