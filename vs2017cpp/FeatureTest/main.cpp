@@ -1,18 +1,16 @@
 ﻿#include <iostream>
-#include <cstdlib>
+#include <string>
+//#include <cstdlib>
 #include "main.h"
-#include <time.h>
-#include <experimental/coroutine>
 
-
-void TimeTest(void);
-void ConsoleWindowControlTest(void);
 
 
 using namespace std;
 void main(void)
 {
-	ConsoleWindowControlTest();
+	MainTest();
 	cout << "enter to continue" << endl;
-	getchar();
+	string s;
+	getline(cin, s);
+//	getchar();
 }

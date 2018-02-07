@@ -6,13 +6,13 @@
 
 
 using namespace std;
-using namespace std::tr2;
+using namespace std::experimental;
 
 void TestStandard17(void)
 {
 	string dpath("d:\\");
-	sys::path dp(dpath);
-	auto dspace = sys::space(dp);
+	filesystem::path dp(dpath);
+	auto dspace = filesystem::space(dp);
 	cout << dspace.capacity << endl;
 }
 
@@ -24,7 +24,7 @@ void FileSystemTest(void)
 
 	cout << "sys::path operation" << endl;
 
-	sys::path pathSys("C:\\bin\\ss\\test.txt");
+	filesystem::path pathSys("C:\\bin\\ss\\test.txt");
 
 	// path.member                        
 	cout << pathSys.filename() << endl;         // test.txt        
@@ -37,7 +37,7 @@ void FileSystemTest(void)
 	cout << pathSys.relative_path() << endl;    // bin\ss\test.txt     
 	cout << pathSys.parent_path() << endl;      // C:\bin\ss           
 
-	if (sys::is_directory(sysPath))
+	if (filesystem::is_directory(sysPath))
 	{
 		cout << pathSys << " is directory" << endl;
 	}
@@ -52,21 +52,21 @@ void FileSystemTest(void)
 	cout << "********************************" << endl;
 
 	cout << "find items in a path" << endl;
-	for (auto it = sys::directory_iterator(sysPath), end = sys::directory_iterator();
+	for (auto it = filesystem::directory_iterator(sysPath), end = filesystem::directory_iterator();
 		it != end; ++it)
 	{
-		sys::path subpath = it->path();
+		filesystem::path subpath = it->path();
 		cout << subpath.string() << endl;
 	}
 	cout << "********************************" << endl;
 
 	cout << "find all sub items in a path" << endl;
-	for (auto it = sys::recursive_directory_iterator(sysPath),
-		end = sys::recursive_directory_iterator();
+	for (auto it = filesystem::recursive_directory_iterator(sysPath),
+		end = filesystem::recursive_directory_iterator();
 		it != end; ++it)
 	{
 		int level = it.depth();
-		sys::path subpath = it->path();
+		filesystem::path subpath = it->path();
 		cout << level << " " << subpath.string() << endl;
 	}
 	cout << "********************************" << endl;

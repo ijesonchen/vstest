@@ -17,8 +17,17 @@ void LockTest(void);
 void TestStructuredBindingsDeclaration(void);
 void TestRemoveIf(void);
 
+void TimeTest(void);
+void ConsoleWindowControlTest(void);
+void TailRecurTest(void);
+
+#include <numeric>
+
+
 inline void MainTest(void)
 {
-	LockTest();
+
+	auto dmax = std::numeric_limits<double>::max();
+	TailRecurTest();
 }
 
