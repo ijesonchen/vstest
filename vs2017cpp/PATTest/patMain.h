@@ -16,6 +16,8 @@ void Advanced(void);
 #include "patTop.h"
 void Top(void);
 
+void TestMain(void);
+
 void PatMain(void);
 
 

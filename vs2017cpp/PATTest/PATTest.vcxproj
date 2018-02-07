@@ -166,6 +166,8 @@
     <ClCompile Include="Advanced\A1138.cpp" />
     <ClCompile Include="Basic\StartSelfTest.cpp" />
     <ClCompile Include="Template.cpp" />
+    <ClCompile Include="Test\GraphAllPath.cpp" />
+    <ClCompile Include="Test\TestMain.cpp" />
     <ClCompile Include="Top\T1001.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -17,6 +17,9 @@
     <Filter Include="Advanced">
       <UniqueIdentifier>{9e3403e0-abf4-4eb6-ad67-72d37d10b100}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Test">
+      <UniqueIdentifier>{514ac54a-2e6c-43af-af26-7057cfdbd9aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic\B1003.cpp">
@@ -101,6 +104,12 @@
     </ClCompile>
     <ClCompile Include="Advanced\A1021.cpp">
       <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Test\GraphAllPath.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="Test\TestMain.cpp">
+      <Filter>Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

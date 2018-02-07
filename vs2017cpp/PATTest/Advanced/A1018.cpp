@@ -133,6 +133,7 @@ Sample Output:
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -279,20 +280,12 @@ void A1018AdjGraph::Calc(void)
 		Update(last, next);
 		last = next;
 	} while (--total > 0);
+
 	vector<int> vp;
 	RecurPath(problemStation, vp);
 
-	auto pmin = paths.front();
-	size_t len = paths.size();
-	for (size_t i = 1; i < len; ++i)
-	{
-		auto& p = paths[i];
-		if (p < pmin)
-		{
-			pmin = p;
-		}
-	}
-
+	auto pmin = *min_element(paths.begin(), paths.end());
+	
 	cout << pmin.send << " 0";
 
 	for (auto it = pmin.revPath.rbegin(); it != pmin.revPath.rend(); ++it)
