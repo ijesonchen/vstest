@@ -1,6 +1,17 @@
 /*
 1018. Public Bike Management (30)
 
+总结：
+	1. 仔细审题，注意说明陷阱
+		说明部分说相同距离取send最少的
+		输出要求部分又说，前面相同取take最少的
+		所以是：距离最短、send最少，take最少
+		一开始只注意前两个，错误5-9错误
+		后面取绝对值最少，5，7错误
+	2. 注意流程陷阱
+		send或take时，必须一个点一个点算，因为车不能倒回去
+
+
 cost: 16:30
 test: Tij <= 1000000;
 
@@ -50,6 +61,7 @@ sln7: 参考sln5中的题解，先求最短路径（可多条），后排序输出
 sln7: 参考sln5中题解，先dijkstra，然后bfs减枝遍历CalcByDfs
 	(原算法改为CalcByDijkstra）
 	40min 29/30 pt9异常
+	CalcByDfs时，Path::operator< 中可能抛异常，取消后pass
 	
 
 There is a public bike service in Hangzhou City which provides great convenience to the tourists from all over the world. 
@@ -254,10 +266,6 @@ bool A1018AdjGraph::Path::operator<(const Path& p)
 	}
 	else if (send == p.send)
 	{
-		if (take == p.take)
-		{
-			throw 0;
-		}
 		return take < p.take;
 	}
 	else
