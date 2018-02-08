@@ -58,38 +58,8 @@
     <ClCompile Include="..\..\vs2015cpp\StanfordAlg\common.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="Advanced\A1011.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1012.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1013.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1014.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
     <ClCompile Include="patMain.cpp" />
     <ClCompile Include="Blank.cpp" />
-    <ClCompile Include="Advanced\A1015.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1016.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1017.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1018.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1019.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1020.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
     <ClCompile Include="Advanced\A1022.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
@@ -110,6 +80,21 @@
     </ClCompile>
     <ClCompile Include="Test\TestMain.cpp">
       <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1027.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1028.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1029.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1030.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1026.cpp">
+      <Filter>Advanced</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
