@@ -236,7 +236,7 @@ namespace nsA1026
 		return &table;
 	}
 
-	Player* NextPlayer(void)
+	deque<Player*>* EarliestPlayerDeque(void)
 	{
 		if (dqppNorm.empty() && dqppVip.empty())
 		{
@@ -257,21 +257,22 @@ namespace nsA1026
 				}
 			}
 		}
-		return vip ? dqppVip.front() : dqppNorm.front();
+		return vip ? &dqppVip : &dqppNorm;
 	}
 
 	void CheckTable(void)
 	{
-		auto player = NextPlayer();
-		if (!player)
+		auto dqPlayer = EarliestPlayerDeque();
+		if (!dqPlayer)
 		{
 			return;
 		}
+		auto arriveSec = dqPlayer->front()->arriveSec;
 		for (auto& t : vTable)
 		{
-			if (player->arriveSec > t.next)
+			if (arriveSec > t.next)
 			{
-				t.next = player->arriveSec;
+				t.next = arriveSec;
 			}
 		}
 	}
@@ -282,56 +283,35 @@ namespace nsA1026
 		{
 			return nullptr;
 		}
-		Player* p = nullptr;
-		bool vip = false;
-		if (pTable->vip)			
+		deque<Player*>* dqpPlayer = nullptr;
+		Player* pPlayer = nullptr;
+		if (pTable->vip && 
+			!dqppVip.empty() && 
+			dqppVip.front()->arriveSec < pTable->next)
 		{
-			if (!dqppVip.empty() && dqppVip.front()->arriveSec <= pTable->next)
-			{
-				vip = true;
-			}
+			dqpPlayer = &dqppVip;
 		}
 		else
 		{
-			if (!dqppVip.empty())
-			{
-				if (dqppNorm.empty())
-				{
-					vip = true;
-				}
-				else
-				{
-					if (dqppVip.front()->arriveSec < dqppNorm.front()->arriveSec)
-					{
-						vip = true;
-					}
-				}
-			}
+			dqpPlayer = EarliestPlayerDeque();
 		}
-		if (vip)
-		{
-			p = dqppVip.front();
-			dqppVip.pop_front();
-		}
-		else
-		{
-			p = dqppNorm.front();
-			dqppNorm.pop_front();
-		}
-		if (p->arriveSec < pTable->next)
+		pPlayer = dqpPlayer->front();
+		dqpPlayer->pop_front();
+
+		if (pPlayer->arriveSec < pTable->next)
 		{
 			
-			p->waitMinu = (pTable->next - p->arriveSec + 30) / 60;
-			p->strServe = Time2Str(pTable->next);
-			pTable->next += p->costSec;
+			pPlayer->waitMinu = (pTable->next - pPlayer->arriveSec + 30) / 60;
+			pPlayer->strServe = Time2Str(pTable->next);
+			pTable->next += pPlayer->costSec;
 		}
 		else
 		{
-			p->strServe = p->strArrive;
-			pTable->next = p->arriveSec + p->costSec;
+			pPlayer->strServe = pPlayer->strArrive;
+			pTable->next = pPlayer->arriveSec + pPlayer->costSec;
 		}
 		++pTable->served;
-		return p;
+		return pPlayer;
 	}
 	
 }
@@ -345,8 +325,8 @@ int A1026Func(void)
 	Player* pPlayer = nullptr;
 	while ((pTable = NextTable()) && (pPlayer = ServePlayer(pTable)))
 	{
-		CheckTable();
 		cout << *pPlayer << endl;
+		CheckTable();
 	}
 	auto itt = vTable.begin();
 	cout << itt->served;
