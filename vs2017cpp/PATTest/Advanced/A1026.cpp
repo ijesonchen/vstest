@@ -3,9 +3,13 @@
 
 cost: 9:50 100min 14:20 50min
 
+数据：pt3含有21:00:00到达的用户。但是不影响(table <= closeTime)
+
 sln1: 直接计算。注意时序
 	150min 24/30 pt4,5,7错误
-	
+
+sln2: 最大两小时
+	60min 26/30 pt5,7错误
 
 A table tennis club has N tables available to the public. 
 The tables are numbered from 1 to N. 
@@ -86,6 +90,7 @@ Sample Output:
 #include <vector>
 #include <deque>
 #include <algorithm>
+#include <functional>  
 
 using namespace std;
 
@@ -93,6 +98,7 @@ namespace nsA1026
 {
 	const int StartSec = 8 * 3600;
 	const int CloseSec = 21 * 3600;
+	const int MaxCostMinu = 2 * 60;
 
 	int Str2Time(string str)
 	{
@@ -104,24 +110,20 @@ namespace nsA1026
 
 	string Time2Str(int n)
 	{
-		int h = n / 3600;
-		n -= h * 3600;
-		int m = n / 60;
-		n -= m * 60;
-		int s = n;
+		const int ARRLEN = 3;
+		int t[ARRLEN] = { n / 3600 , n % 3600 / 60, n % 60 };
 		string str("00:00:00");
-		str[0] += h / 10;
-		str[1] += h % 10;
-		str[3] += m / 10;
-		str[4] += m % 10;
-		str[6] += s / 10;
-		str[7] += s % 10;
+		for (int i = 0; i < ARRLEN; ++i)
+		{
+			int k = t[i];
+			str[ARRLEN * i + 0] += k / 10;
+			str[ARRLEN * i + 1] += k % 10;
+		}
 		return str;
 	}
 
 	struct Table 
 	{
-		int id = 0;
 		int next = StartSec;
 		bool vip = false;
 		int served = 0;
@@ -131,11 +133,6 @@ namespace nsA1026
 			return next < t.next;
 		}
 	};
-
-	bool LessTable(const Table* p1, const Table* p2)
-	{
-		return p1->next < p2->next;
-	}
 
 	struct Player
 	{
@@ -160,8 +157,6 @@ namespace nsA1026
 	}
 
 	vector<Table> vTable;
-	vector<Table*> vptNorm;
-	vector<Table*> vptVip;
 	vector<Player> vPlayer;
 	deque<Player*> dqppNorm;
 	deque<Player*> dqppVip;
@@ -172,10 +167,15 @@ namespace nsA1026
 		int cost;
 		bool vip;
 		cin >> str >> cost >> vip;
+		if (cost > MaxCostMinu)
+		{
+			cost = MaxCostMinu;
+		}
 		Player p;
 		p.strArrive = str;
 		p.arriveSec = Str2Time(str);
 		p.costSec = cost * 60;
+		
 		p.vip = vip;
 		return p;
 	};
@@ -203,26 +203,10 @@ namespace nsA1026
 		cin >> k >> m;
 		vTable.assign(k, Table());
 
-		for (int i = 0; i < vTable.size(); ++i)
-		{
-			vTable[i].id = i + 1;
-		}
-
 		for (int i = 0; i < m; ++i)
 		{
 			cin >> l;
 			vTable[--l].vip = true;
-		}
-		for (auto& t : vTable)
-		{
-			if (t.vip)
-			{
-				vptVip.push_back(&t);
-			}
-			else
-			{
-				vptNorm.push_back(&t);
-			}
 		}
 	}
 
@@ -312,8 +296,7 @@ namespace nsA1026
 		}
 		++pTable->served;
 		return pPlayer;
-	}
-	
+	}	
 }
 
 // rename this to main int PAT
@@ -339,12 +322,209 @@ int A1026Func(void)
 	return 0;
 }
 
+
+namespace nsA1026ref1
+{
+
+	typedef struct Player
+	{
+		int ArriveTime;
+		int ServeTime;
+		int P;
+	}Player;
+
+	int N, K, M;
+	bool VipTableNum[105] = { false };
+	vector<Player> Ordinary;
+	vector<Player> Vip;
+
+	vector<int> NumOfServeTable;
+
+	bool cmp(Player p1, Player p2)
+	{
+		return (p1.ArriveTime < p2.ArriveTime);
+	}
+
+	void OutPutTime(int tmp)
+	{
+		int hh, mm, ss;
+		ss = tmp % 60;
+		mm = tmp / 60 % 60;
+		hh = tmp / 3600;
+		printf("%02d:%02d:%02d ", hh, mm, ss);
+	}
+
+	void OutPut(Player p)
+	{
+		OutPutTime(p.ArriveTime);
+		OutPutTime(p.ServeTime);
+		cout << (p.ServeTime - p.ArriveTime + 30) / 60 << endl;
+	}
+
+	int main(const string& fn)
+	{
+		freopen(fn.c_str(), "r", stdin);
+		scanf("%d", &N);
+		Player tmp;
+		int i, j;
+		int hh, mm, ss;
+		int flag;
+		for (i = 0; i < N; i++)
+		{
+			scanf("%d:%d:%d %d %d", &hh, &mm, &ss, &tmp.P, &flag);
+
+			if (hh >= 21)
+			{
+				continue;
+			}
+
+			if (tmp.P > 120)
+			{
+				tmp.P = 120;
+			}
+
+			tmp.ArriveTime = hh * 3600 + mm * 60 + ss;
+			if (flag == 0)
+			{
+				Ordinary.push_back(tmp);
+			}
+			else
+				Vip.push_back(tmp);
+		}
+
+		scanf("%d %d", &K, &M);
+		for (i = 0; i < M; i++)
+		{
+			cin >> hh;
+			VipTableNum[hh] = true;
+		}
+
+		NumOfServeTable.resize(K + 1);
+		fill(NumOfServeTable.begin(), NumOfServeTable.end(), 0);
+
+		sort(Ordinary.begin(), Ordinary.end(), cmp);
+		sort(Vip.begin(), Vip.end(), cmp);
+
+		i = 0;
+		j = 0;
+		int CurrTime[105];
+		fill(CurrTime, CurrTime + K + 1, 8 * 3600);
+
+		int ordtime, viptime;
+
+		int MinTime = 21 * 3600;
+		int MinTimeIndex = -1;
+
+		int i1;
+		while (i + j < Ordinary.size() + Vip.size())
+		{
+			MinTime = 21 * 3600;
+			ordtime = 21 * 3600;
+			viptime = 21 * 3600;
+
+			// 最早的table
+			for (i1 = 1; i1 <= K; i1++)
+			{
+				if (CurrTime[i1] < MinTime)
+				{
+					MinTime = CurrTime[i1];
+					MinTimeIndex = i1;
+				}
+			}
+			// 最早的普通用户
+			if (i < Ordinary.size())
+			{
+				ordtime = Ordinary[i].ArriveTime;
+				if (ordtime < MinTime)
+				{
+					ordtime = MinTime;
+				}
+			}
+			// 最早的vip用户
+			if (j < Vip.size())
+			{
+				viptime = Vip[j].ArriveTime;
+				if (viptime < MinTime)
+				{
+					viptime = MinTime;
+				}
+			}
+
+			bool serveVip = true;
+			if (ordtime < viptime && ordtime < 21 * 3600)// serve ordinary player  
+			{
+				serveVip = false;
+			}
+			else if (ordtime > viptime && viptime < 21 * 3600) //vip  
+			{
+				serveVip = true;
+			}
+			else if (ordtime == viptime && viptime < 21 * 3600)
+			{
+				if (VipTableNum[MinTimeIndex] ||
+					(!VipTableNum[MinTimeIndex] && Vip[j].ArriveTime < Ordinary[i].ArriveTime))
+				{
+					//vip  
+					serveVip = true;
+				}
+				else
+				{
+					//ordinary  
+					serveVip = false;
+				}
+			}
+			else if (ordtime == 21 * 3600 && viptime == 21 * 3600)
+			{
+				break;
+			}
+
+			if (serveVip)
+			{
+				//判断当前时间是否有空余的vip窗口  
+				if (VipTableNum[MinTimeIndex] == false)
+				{
+					for (i1 = 1; i1 <= K; i1++)
+					{
+						if (VipTableNum[i1] && CurrTime[i1] == MinTime)
+						{
+							MinTimeIndex = i1;
+						}
+					}
+				}
+
+				Vip[j].ServeTime = viptime;
+				CurrTime[MinTimeIndex] = viptime + Vip[j].P * 60;
+				OutPut(Vip[j]);
+				NumOfServeTable[MinTimeIndex]++;
+				j++;
+			}
+			else
+			{
+				Ordinary[i].ServeTime = ordtime;
+				CurrTime[MinTimeIndex] = ordtime + Ordinary[i].P * 60;
+				OutPut(Ordinary[i]);
+				NumOfServeTable[MinTimeIndex]++;
+				i++;
+			}
+		}
+
+		cout << NumOfServeTable[1];
+		for (i = 2; i <= K; i++)
+		{
+			cout << " " << NumOfServeTable[i];
+		}
+		return 0;
+	}
+}
+
 void A1026(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
 	A1026Func();
-	cout << endl;
+
+// 	nsA1026ref1::main(fn);
+// 	cout << endl;
 }
 
 void A1026(void)
