@@ -8,8 +8,11 @@ cost: 9:50 100min 14:20 50min
 sln1: 直接计算。注意时序
 	150min 24/30 pt4,5,7错误
 
-sln2: 最大两小时
+sln2: 最大2小时
 	60min 26/30 pt5,7错误
+
+snl3: 重写。计算时，取当前空闲桌，最早的vip，最早的norm，然后分支判断。
+	60min 14/30 pt2-8错误
 
 A table tennis club has N tables available to the public. 
 The tables are numbered from 1 to N. 
@@ -98,7 +101,7 @@ namespace nsA1026
 {
 	const int StartSec = 8 * 3600;
 	const int CloseSec = 21 * 3600;
-	const int MaxCostMinu = 2 * 60;
+	const int MaxPlayMinu = 2 * 60;
 
 	int Str2Time(string str)
 	{
@@ -167,9 +170,9 @@ namespace nsA1026
 		int cost;
 		bool vip;
 		cin >> str >> cost >> vip;
-		if (cost > MaxCostMinu)
+		if (cost > MaxPlayMinu)
 		{
-			cost = MaxCostMinu;
+			cost = MaxPlayMinu;
 		}
 		Player p;
 		p.strArrive = str;
@@ -322,6 +325,184 @@ int A1026Func(void)
 	return 0;
 }
 
+namespace nsA1026_1
+{
+	using nsA1026::Str2Time;
+	using nsA1026::Time2Str;
+	using nsA1026::StartSec;
+	using nsA1026::CloseSec;
+	using nsA1026::MaxPlayMinu;
+	// table info
+	vector<bool> vtVip;
+	vector<int> vtNext;
+	vector<int> vtServed;
+
+
+	struct Player
+	{
+		int arriveSec = 0;
+		int costSec = 0;
+		bool vip = false;
+
+		int serveSec = 0;
+
+		bool operator<(const Player& p)
+		{
+			return arriveSec < p.arriveSec;
+		}
+	};
+
+	ostream& operator<<(ostream& os, const Player& p)
+	{
+		auto arv = p.arriveSec;
+		auto srv = p.serveSec;
+		os << Time2Str(arv) << " " << Time2Str(srv) << " " << (srv - arv + 30) / 60;
+		return os;
+	}
+
+	vector<Player> vpPlayer;
+	vector<Player*> vppNorm;
+	vector<Player*> vppVip;
+
+	void ReadData(void)
+	{
+		int n;
+		cin >> n; 
+		for (int i = 0; i < n; ++i)
+		{
+			vpPlayer.emplace_back();
+			auto& p = vpPlayer.back();
+			string s;
+			int c;
+			cin >> s >> c >> p.vip;
+			if (s >= "21:00:00")
+			{
+				vpPlayer.pop_back();
+				continue;
+			}
+			p.arriveSec = Str2Time(s);
+			p.costSec = std::min(c, MaxPlayMinu) * 60;
+		}
+		sort(vpPlayer.begin(), vpPlayer.end());
+		for (auto& p : vpPlayer)
+		{
+			if (p.vip)
+			{
+				vppVip.push_back(&p);
+			}
+			else
+			{
+				vppNorm.push_back(&p);
+			}
+		}
+		int k, m, mi;
+		cin >> k >> m;
+		vtVip.assign(k, false);
+		vtServed.assign(k, 0);
+		vtNext.assign(k, 0);
+		for (int i = 0; i < m; ++i)
+		{
+			cin >> mi;
+			vtVip[mi] = true;
+		}
+	}
+
+	int NextTable(void)
+	{
+		auto p = min_element(vtNext.begin(), vtNext.end());
+		if (*p >= CloseSec)
+		{
+			return -1;
+		}
+		return int(p - vtNext.begin());
+	}
+
+	void ServePlayer(Player* p, int nTable)
+	{
+
+		p->serveSec = vtNext[nTable];
+		vtNext[nTable] += p->costSec;
+		++vtServed[nTable];
+	}
+}
+
+// rename this to main int PAT
+int A1026Func1(void)
+{
+	using namespace nsA1026_1;
+	ReadData();
+	size_t iVip = 0, iNorm = 0, nv = vppVip.size(), nn = vppNorm.size();
+	Player* pServedPlayer = nullptr;
+	while (iVip < nv && iNorm < nn)
+	{
+		auto inext = NextTable();
+		if (inext < 0)
+		{
+			break;
+		}
+		auto tnext = vtNext[inext];
+		if (tnext >= CloseSec)
+		{
+			break;
+		}
+		bool bServeVip = false;
+		bool hasSpare = false;
+		auto pVip = vppVip[iVip];
+		auto pNorm = vppNorm[iNorm];
+		if (pVip->arriveSec <= tnext)
+		{
+			bServeVip = true;
+		}
+		else if (pNorm->arriveSec <= tnext)
+		{
+			bServeVip = false;
+		}
+		else
+		{
+			hasSpare = true;
+			if (pVip->arriveSec < pNorm->arriveSec)
+			{
+				bServeVip = true;
+			}
+			else if (pVip->arriveSec > pNorm->arriveSec)
+			{
+				bServeVip = false;
+			}
+			else { throw 0; }
+		}
+		if (bServeVip)
+		{
+			pServedPlayer = pVip;
+			++iVip;
+		}
+		else
+		{
+			pServedPlayer = pNorm;
+			++iNorm;
+		}
+		if (hasSpare)
+		{
+			for (auto& it : vtNext)
+			{
+				if (it < pServedPlayer->arriveSec)
+				{
+					it = pServedPlayer->arriveSec;
+				}
+			}
+		}
+		ServePlayer(pServedPlayer, NextTable());
+		cout << *pServedPlayer << endl;
+	}
+	auto its = vtServed.begin();
+	cout << *its;
+	for (++its; its != vtServed.end(); ++its)
+	{
+		cout << " " << *its;
+	}
+	cout << endl;
+
+	return 0;
+}
 
 namespace nsA1026ref1
 {
@@ -521,7 +702,7 @@ void A1026(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
-	A1026Func();
+	A1026Func1();
 
 // 	nsA1026ref1::main(fn);
 // 	cout << endl;
