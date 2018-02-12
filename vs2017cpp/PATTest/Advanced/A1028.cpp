@@ -1,16 +1,164 @@
 /*
+1028. List Sorting (25)
 
+cost: 21:20
+
+sln: 直接计算
+	21/25 pt6 超时
+
+Excel can sort records according to any column. 
+Now you are supposed to imitate this function.
+
+Input
+
+Each input file contains one test case. 
+For each case, the first line contains two integers N (<=100000) and C,
+where N is the number of records 
+and C is the column that you are supposed to sort the records with. 
+Then N lines follow, each contains a record of a student. 
+A student's record consists of his or her
+distinct ID (a 6-digit number), 
+name (a string with no more than 8 characters without space),
+and grade (an integer between 0 and 100, inclusive).
+
+Output
+
+For each test case, output the sorting result in N lines.
+That is, if C = 1 then the records must be sorted in increasing order according to ID's; 
+if C = 2 then the records must be sorted in non-decreasing order according to names; 
+and if C = 3 then the records must be sorted in non-decreasing order according to grades. 
+
+If there are several students who have the same name or grade, 
+they must be sorted according to their ID's in increasing order.
+
+Sample Input 1
+3 1
+000007 James 85
+000010 Amy 90
+000001 Zoe 60
+Sample Output 1
+000001 Zoe 60
+000007 James 85
+000010 Amy 90
+Sample Input 2
+4 2
+000007 James 85
+000010 Amy 90
+000001 Zoe 60
+000002 James 98
+Sample Output 2
+000010 Amy 90
+000002 James 98
+000007 James 85
+000001 Zoe 60
+Sample Input 3
+4 3
+000007 James 85
+000010 Amy 90
+000001 Zoe 60
+000002 James 90
+Sample Output 3
+000001 Zoe 60
+000007 James 85
+000002 James 90
+000010 Amy 90
 */
 
 #include "..\patMain.h"
 #include <iostream>
 #include <string>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
+
+namespace nsA1028
+{
+	struct Student
+	{
+		string id;
+		string name;
+		int grade = 0;
+	};
+
+	ostream& operator<<(ostream& os, const Student& stu)
+	{
+		os << stu.id << " " << stu.name << " " << stu.grade;
+		return os;
+	}
+
+	bool Comp1(const Student* p1, const Student* p2)
+	{
+		return p1->id < p2->id;
+	}
+
+	bool Comp2(const Student* p1, const Student* p2)
+	{
+		if (p1->name < p2->name)
+		{
+			return true;
+		}
+		else if (p1->name == p2->name)
+		{
+			return p1->id < p2->id;
+		}
+		return false;
+	}
+
+	bool Comp3(const Student* p1, const Student* p2)
+	{
+		if (p1->grade < p2->grade)
+		{
+			return true;
+		}
+		else if (p1->grade == p2->grade)
+		{
+			return p1->id < p2->id;
+		}
+		return false;
+	}
+}
 
 // rename this to main int PAT
 int A1028Func(void)
 {
+	using namespace nsA1028;
+	int n, c;
+	cin >> n >> c;
+	vector<Student> vtStudent;
+	for (int i = 0; i < n; ++i)
+	{
+		vtStudent.emplace_back();
+		auto& stu = vtStudent.back();
+		cin >> stu.id >> stu.name >> stu.grade;
+	}
+	vector<Student*> vpStudent;
+	for (auto& it : vtStudent)
+	{
+		vpStudent.push_back(&it);
+	}
+
+	switch (c)
+	{
+	case 1:
+		sort(vpStudent.begin(), vpStudent.end(), Comp1);
+		break;
+	case 2:
+		sort(vpStudent.begin(), vpStudent.end(), Comp2);
+		break;
+	case 3:
+		sort(vpStudent.begin(), vpStudent.end(), Comp3);
+		break;
+	default:
+		throw 0;
+		break;
+	}
+
+	for (auto p : vpStudent)
+	{
+		cout << *p << endl;
+	}
+	
 	return 0;
 }
 
@@ -26,5 +174,7 @@ void A1028(const string& fn)
 void A1028(void)
 {
 	A1028("data\\A1028-1.txt"); // 
+	A1028("data\\A1028-2.txt"); // 
+	A1028("data\\A1028-3.txt"); // 
 }
 
