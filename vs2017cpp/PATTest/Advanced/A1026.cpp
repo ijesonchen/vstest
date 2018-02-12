@@ -13,6 +13,10 @@ sln2: 最大2小时
 
 snl3: 重写。计算时，取当前空闲桌，最早的vip，最早的norm，然后分支判断。
 	60min 14/30 pt2-8错误
+	bug-fix: 读取vip桌号时转换0基。
+	重写分支判断
+	60min 15/30 pt2-7错误
+
 
 A table tennis club has N tables available to the public. 
 The tables are numbered from 1 to N. 
@@ -403,7 +407,7 @@ namespace nsA1026_1
 		for (int i = 0; i < m; ++i)
 		{
 			cin >> mi;
-			vtVip[mi] = true;
+			vtVip[--mi] = true;
 		}
 	}
 
@@ -446,29 +450,24 @@ int A1026Func1(void)
 			break;
 		}
 		bool bServeVip = false;
-		bool hasSpare = false;
+		bool vipTable = vtVip[inext];
 		auto pVip = vppVip[iVip];
 		auto pNorm = vppNorm[iNorm];
-		if (pVip->arriveSec <= tnext)
+		bool vipFirst = pVip->arriveSec < pNorm->arriveSec;
+		bool hasVip = pVip->arriveSec <= tnext;
+		auto hasNorm = pNorm->arriveSec <= tnext;
+		auto hasPlayer = hasVip || hasNorm;
+		if (hasPlayer)
 		{
-			bServeVip = true;
-		}
-		else if (pNorm->arriveSec <= tnext)
-		{
-			bServeVip = false;
-		}
-		else
-		{
-			hasSpare = true;
-			if (pVip->arriveSec < pNorm->arriveSec)
+			if ((vipTable && hasVip) ||
+				(!vipTable && vipFirst))
 			{
 				bServeVip = true;
 			}
-			else if (pVip->arriveSec > pNorm->arriveSec)
-			{
-				bServeVip = false;
-			}
-			else { throw 0; }
+		}
+		if (!hasPlayer && vipFirst)
+		{
+			bServeVip = true;
 		}
 		if (bServeVip)
 		{
@@ -480,7 +479,7 @@ int A1026Func1(void)
 			pServedPlayer = pNorm;
 			++iNorm;
 		}
-		if (hasSpare)
+		if (!hasPlayer)
 		{
 			for (auto& it : vtNext)
 			{
