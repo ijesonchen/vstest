@@ -5,6 +5,8 @@ cost: 21:00
 
 sln1: Ö±½Ó¼ÆËã
 	10min 14/20 pt1,2,5´íÎó
+	bug-fix: A-C
+	5min pass
 
 People in Mars represent the colors in their computers in a similar way as the Earth people.
 That is, a color is represented by a 6-digit number, where the first 2 digits are for Red, 
@@ -49,9 +51,21 @@ int A1027Func(void)
 	string str("#000000");
 	for (int i = 0; i < 3; ++i)
 	{
-		auto c = color[i];
-		str[i * 2 + 1] += c / 13;
-		str[i * 2 + 2] += c % 13;
+		int m = i * 2 + 1, n = i * 2 + 2;
+		auto h = color[i] / 13;
+		auto l = color[i] % 13;
+		if (h > 9)
+		{
+			h -= 10;
+			str[m] = 'A';
+		}
+		if (l>9)
+		{
+			l -= 10;
+			str[n] = 'A';
+		}
+		str[m] += h;
+		str[n] += l;
 	}
 	cout << str << endl;
 	return 0;
@@ -68,6 +82,8 @@ void A1027(const string& fn)
 
 void A1027(void)
 {
-	A1027("data\\A1027-1.txt"); // 
+// 	A1027("data\\A1027-1.txt"); // 
+// 	A1027("data\\A1027-2.txt"); // 
+	A1027("data\\A1027-3.txt"); // 
 }
 
