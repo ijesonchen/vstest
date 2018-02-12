@@ -70,3 +70,12 @@ A1018: 40min 方法2 pass
 A1026: 5d6h 题解 pass **复杂流程的模拟
 ```
 
+## 解题报告
+
+```
+Sigmainfy blog
+https://www.sigmainfy.com/blog/pat-1026-table-tennis.html
+柳婼 の blog
+https://www.liuchuo.net/archives/2955
+```
+

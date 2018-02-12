@@ -7,7 +7,7 @@ using namespace std;
 
 int main(void)
 {
-	A1026();
+	A1027();
 	std::cout << "Press enter";
 	std::getchar();
 }
