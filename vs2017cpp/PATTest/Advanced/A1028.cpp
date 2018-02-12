@@ -3,11 +3,17 @@
 
 cost: 21:20
 
+总结：排序超时时，可以考虑是否能将比较中的字串改为数值。
+
 sln: 直接计算
 	10min 21/25 pt6 超时
 	5min 预先分配vector 超时
 	10min 换用qsort 超时
 	5min 直接new指针 超时
+
+sln2: 题解 直接对结构体sort不超时，但是id使用int
+	更改Student::id类型string -> int pass
+	5min pass
 
 Excel can sort records according to any column. 
 Now you are supposed to imitate this function.
@@ -79,7 +85,7 @@ namespace nsA1028
 {
 	struct Student
 	{
-		string id;
+		int id;
 		string name;
 		int grade = 0;
 	};
@@ -88,6 +94,11 @@ namespace nsA1028
 	{
 		os << stu.id << " " << stu.name << " " << stu.grade;
 		return os;
+	}
+
+	void Print(const Student& stu)
+	{
+		printf("%06d %s %d\n", stu.id, stu.name.c_str(), stu.grade);
 	}
 
 	bool Comp1(const Student* p1, const Student* p2)
@@ -161,14 +172,13 @@ int A1028Func(void)
 	using namespace nsA1028;
 	int n, c;
 	cin >> n >> c;
+	vector<Student> vtStudent(n);
 	vector<Student*> vpStudent;
 	for (int i = 0; i < n; ++i)
 	{
-		// memory leakage
-		auto pstu = new Student();
-		auto& stu = *pstu;
+		auto& stu = vtStudent[i];
 		cin >> stu.id >> stu.name >> stu.grade;
-		vpStudent.push_back(pstu);
+		vpStudent.push_back(&stu);
 	}
 
 	switch (c)
@@ -189,7 +199,7 @@ int A1028Func(void)
 
 	for (auto p : vpStudent)
 	{
-		cout << *p << endl;
+		Print(*p);
 	}
 	
 	return 0;
