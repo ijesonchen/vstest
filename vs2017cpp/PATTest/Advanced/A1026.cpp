@@ -1,7 +1,7 @@
 /*
 1026. Table Tennis (30)
 
-cost: 9:50 100min 14:20 50min
+cost: 5d6.5h
 
 数据：pt3含有21:00:00到达的用户。但是不影响(table <= closeTime)
 
@@ -10,12 +10,27 @@ sln1: 直接计算。注意时序
 
 sln2: 最大2小时
 	60min 26/30 pt5,7错误
+	ref：
+	https://www.sigmainfy.com/blog/pat-1026-table-tennis.html
+	https://www.liuchuo.net/archives/2955
+	注意点：
+	这个题目最大的坑点就是:在情况(3)中，当有多个乒乓球桌子空闲时，
+	vip玩家要是到了的话会使用最小标号的vip球桌，而不是最小标号的球台.
+	还有注意每个玩家最多玩两个小时.
 
 snl3: 重写。计算时，取当前空闲桌，最早的vip，最早的norm，然后分支判断。
 	60min 14/30 pt2-8错误
 	bug-fix: 读取vip桌号时转换0基。
 	重写分支判断
 	60min 15/30 pt2-7错误
+	bug: 循环内部为对pPlayer数组边界进行控制，有可能导致越界？
+
+sln4: 重写分支判断。尽量模拟人处理的逻辑，有时候复杂逻辑需要分段简化
+	60min pass
+	下一桌，下一人。有桌没人时，设定桌子时刻到有人。（减少逻辑：有桌一定有人）
+	人是vip时：看有没有vip空桌，有，换桌子。
+	桌是vip时：看有没有vip等着，有，换人。
+	提供服务。
 
 
 A table tennis club has N tables available to the public. 
@@ -98,6 +113,8 @@ Sample Output:
 #include <deque>
 #include <algorithm>
 #include <functional>  
+#include <cstdio>
+#include <cmath>
 
 using namespace std;
 
@@ -329,7 +346,7 @@ int A1026Func(void)
 	return 0;
 }
 
-namespace nsA1026_1
+namespace nsA1026v2
 {
 	using nsA1026::Str2Time;
 	using nsA1026::Time2Str;
@@ -365,8 +382,8 @@ namespace nsA1026_1
 	}
 
 	vector<Player> vpPlayer;
-	vector<Player*> vppNorm;
-	vector<Player*> vppVip;
+	deque<Player*> dqppNorm;
+	deque<Player*> dqppVip;
 
 	void ReadData(void)
 	{
@@ -392,11 +409,11 @@ namespace nsA1026_1
 		{
 			if (p.vip)
 			{
-				vppVip.push_back(&p);
+				dqppVip.push_back(&p);
 			}
 			else
 			{
-				vppNorm.push_back(&p);
+				dqppNorm.push_back(&p);
 			}
 		}
 		int k, m, mi;
@@ -411,19 +428,61 @@ namespace nsA1026_1
 		}
 	}
 
-	int NextTable(void)
-	{
+	int NextTable(void) {
 		auto p = min_element(vtNext.begin(), vtNext.end());
-		if (*p >= CloseSec)
-		{
+		if (*p >= CloseSec) {
 			return -1;
 		}
 		return int(p - vtNext.begin());
 	}
 
-	void ServePlayer(Player* p, int nTable)
-	{
+	int NextVipTable(void) {
+		int k = -1, t = CloseSec;
+		auto len = vtNext.size();
+		for (size_t i = 0; i < len; ++i)
+		{
+			if (vtVip[i] && vtNext[i] < t)
+			{
+				t = vtNext[i];
+				k = (int)i;
+			}
+		}
+		return k;
+	}
 
+	Player* NextPlayer(void) {
+		if (dqppVip.empty() && dqppNorm.empty()) {
+			return nullptr;
+		}
+		if (dqppNorm.empty()) {
+			return dqppVip.front();
+		}
+		if (dqppVip.empty()) {
+			return dqppNorm.front();
+		}
+		if (dqppNorm.front()->arriveSec < dqppVip.front()->arriveSec) {
+			return dqppNorm.front();
+		}
+		else {
+			return dqppVip.front();
+		}
+	}
+
+	Player* NextVipPlayer(void)
+	{
+		return dqppVip.empty() ? nullptr : dqppVip.front();
+	}
+
+	void PopPlayer(Player* p) {
+		if (p->vip) {
+			dqppVip.pop_front();
+		}
+		else {
+			dqppNorm.pop_front();
+		}
+	}
+
+	void ServePlayer(Player* p, int nTable) {
 		p->serveSec = vtNext[nTable];
 		vtNext[nTable] += p->costSec;
 		++vtServed[nTable];
@@ -431,66 +490,53 @@ namespace nsA1026_1
 }
 
 // rename this to main int PAT
-int A1026Func1(void)
+int A1026Func2(void)
 {
-	using namespace nsA1026_1;
+	using namespace nsA1026v2;
 	ReadData();
-	size_t iVip = 0, iNorm = 0, nv = vppVip.size(), nn = vppNorm.size();
-	Player* pServedPlayer = nullptr;
-	while (iVip < nv && iNorm < nn)
+	size_t iVip = 0, iNorm = 0, nv = dqppVip.size(), nn = dqppNorm.size();
+	while (true)
 	{
-		auto inext = NextTable();
-		if (inext < 0)
-		{
+		auto itable = NextTable();
+		if (itable < 0) {
+			// closed
 			break;
 		}
-		auto tnext = vtNext[inext];
-		if (tnext >= CloseSec)
-		{
+		auto tTable = vtNext[itable];
+		auto pNext = NextPlayer();
+		if (!pNext) {
+			// no player
 			break;
 		}
-		bool bServeVip = false;
-		bool vipTable = vtVip[inext];
-		auto pVip = vppVip[iVip];
-		auto pNorm = vppNorm[iNorm];
-		bool vipFirst = pVip->arriveSec < pNorm->arriveSec;
-		bool hasVip = pVip->arriveSec <= tnext;
-		auto hasNorm = pNorm->arriveSec <= tnext;
-		auto hasPlayer = hasVip || hasNorm;
-		if (hasPlayer)
-		{
-			if ((vipTable && hasVip) ||
-				(!vipTable && vipFirst))
-			{
-				bServeVip = true;
+		auto arriveSec = pNext->arriveSec;
+		if (arriveSec > tTable) {
+			// no arrived
+			for (auto& t : vtNext) {
+				if (t < arriveSec) {
+					// till one arrived
+					t = pNext->arriveSec;
+				}
 			}
+			continue;
 		}
-		if (!hasPlayer && vipFirst)
-		{
-			bServeVip = true;
-		}
-		if (bServeVip)
-		{
-			pServedPlayer = pVip;
-			++iVip;
-		}
-		else
-		{
-			pServedPlayer = pNorm;
-			++iNorm;
-		}
-		if (!hasPlayer)
-		{
-			for (auto& it : vtNext)
-			{
-				if (it < pServedPlayer->arriveSec)
+		if (pNext->vip) {
+			if (!vtVip[itable]) {
+				auto iVipTbl = NextVipTable();
+				if (iVipTbl >= 0 && vtNext[iVipTbl] <= pNext->arriveSec)
 				{
-					it = pServedPlayer->arriveSec;
+					itable = iVipTbl;
 				}
 			}
 		}
-		ServePlayer(pServedPlayer, NextTable());
-		cout << *pServedPlayer << endl;
+		if (vtVip[itable]) {
+			auto pvNext = NextVipPlayer();
+			if (pvNext && pvNext->arriveSec < tTable) {
+				pNext = pvNext;
+			}
+		}
+		PopPlayer(pNext);
+		ServePlayer(pNext, itable);
+		cout << *pNext << endl;
 	}
 	auto its = vtServed.begin();
 	cout << *its;
@@ -697,11 +743,150 @@ namespace nsA1026ref1
 	}
 }
 
+namespace nsA1026ref2
+{
+	struct person {
+		int arrive, start, time;
+		bool vip;
+	}tempperson;
+	struct tablenode {
+		int end = 8 * 3600, num;
+		bool vip;
+	};
+	bool cmp1(person a, person b) {
+		return a.arrive < b.arrive;
+	}
+	bool cmp2(person a, person b) {
+		return a.start < b.start;
+	}
+	vector<person> player;
+	vector<tablenode> table;
+	void alloctable(int personid, int tableid) {
+		if (player[personid].arrive <= table[tableid].end)
+			player[personid].start = table[tableid].end;
+		else
+			player[personid].start = player[personid].arrive;
+		table[tableid].end = player[personid].start + player[personid].time;
+		table[tableid].num++;
+	}
+	int findnextvip(int vipid) {
+		vipid++;
+		while (vipid < player.size() && player[vipid].vip == false) {
+			vipid++;
+		}
+		return vipid;
+	}
+	int main() {
+		int n, k, m, viptable;
+		scanf("%d", &n);
+		for (int i = 0; i < n; i++) {
+			int h, m, s, temptime, flag;
+			scanf("%d:%d:%d %d %d", &h, &m, &s, &temptime, &flag);
+			tempperson.arrive = h * 3600 + m * 60 + s;
+			tempperson.start = 21 * 3600;
+			if (tempperson.arrive >= 21 * 3600)
+				continue;
+			tempperson.time = temptime <= 120 ? temptime * 60 : 7200;
+			tempperson.vip = ((flag == 1) ? true : false);
+			player.push_back(tempperson);
+		}
+		scanf("%d%d", &k, &m);
+		table.resize(k + 1);
+		for (int i = 0; i < m; i++) {
+			scanf("%d", &viptable);
+			table[viptable].vip = true;
+		}
+		sort(player.begin(), player.end(), cmp1);
+		int i = 0, vipid = -1;
+		vipid = findnextvip(vipid);
+		while (i < player.size()) {
+			int index = -1, minendtime = 999999999;
+			// 第一个空桌
+			for (int j = 1; j <= k; j++) {
+				if (table[j].end < minendtime) {
+					minendtime = table[j].end;
+					index = j;
+				}
+			}
+			if (table[index].end >= 21 * 3600)
+				break;
+			if (player[i].vip == true && i < vipid) {
+				i++;
+				continue;
+			}
+			if (table[index].vip == true) {
+				// vip桌
+				if (player[i].vip == true) {
+					// vip客
+					alloctable(i, index);
+					if (vipid == i)
+						vipid = findnextvip(vipid);
+					i++;
+				}
+				else {
+					// 非vip客
+					if (vipid < player.size() && player[vipid].arrive <= table[index].end) {
+						// 有vip客
+						alloctable(vipid, index);
+						vipid = findnextvip(vipid);
+					}
+					else {
+						alloctable(i, index);
+						i++;
+					}
+				}
+			}
+			else {
+				if (player[i].vip == false) {
+					// 非vip客
+					alloctable(i, index);
+					i++;
+				}
+				else {
+					// vip客
+					int vipindex = -1, minvipendtime = 999999999;
+					// 下一个vip桌
+					for (int j = 1; j <= k; j++) {
+						if (table[j].vip == true && table[j].end < minvipendtime) {
+							minvipendtime = table[j].end;
+							vipindex = j;
+						}
+					}
+					if (vipindex != -1 && player[i].arrive >= table[vipindex].end) {
+						alloctable(i, vipindex);
+						if (vipid == i)
+							vipid = findnextvip(vipid);
+						i++;
+					}
+					else {
+						alloctable(i, index);
+						if (vipid == i)
+							vipid = findnextvip(vipid);
+						i++;
+					}
+				}
+			}
+		}
+		sort(player.begin(), player.end(), cmp2);
+		for (i = 0; i < player.size() && player[i].start < 21 * 3600; i++) {
+			printf("%02d:%02d:%02d ", player[i].arrive / 3600, player[i].arrive % 3600 / 60, player[i].arrive % 60);
+			printf("%02d:%02d:%02d ", player[i].start / 3600, player[i].start % 3600 / 60, player[i].start % 60);
+			printf("%.0f\n", round((player[i].start - player[i].arrive) / 60.0));
+		}
+		for (int i = 1; i <= k; i++) {
+			if (i != 1)
+				printf(" ");
+			printf("%d", table[i].num);
+		}
+		return 0;
+	}
+}
+
 void A1026(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
-	A1026Func1();
+	A1026Func2();
 
 // 	nsA1026ref1::main(fn);
 // 	cout << endl;
