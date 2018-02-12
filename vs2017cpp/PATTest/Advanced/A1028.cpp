@@ -7,6 +7,7 @@ sln: 直接计算
 	10min 21/25 pt6 超时
 	5min 预先分配vector 超时
 	10min 换用qsort 超时
+	5min 直接new指针 超时
 
 Excel can sort records according to any column. 
 Now you are supposed to imitate this function.
@@ -160,28 +161,26 @@ int A1028Func(void)
 	using namespace nsA1028;
 	int n, c;
 	cin >> n >> c;
-	vector<Student> vtStudent(n);
 	vector<Student*> vpStudent;
 	for (int i = 0; i < n; ++i)
 	{
-		auto& stu = vtStudent[i];
+		// memory leakage
+		auto pstu = new Student();
+		auto& stu = *pstu;
 		cin >> stu.id >> stu.name >> stu.grade;
-		vpStudent.push_back(&stu);
+		vpStudent.push_back(pstu);
 	}
 
 	switch (c)
 	{
 	case 1:
-		qsort(vpStudent.data(), n, sizeof(Student*), Comp1p);
-//		sort(vpStudent.begin(), vpStudent.end(), Comp1);
+		sort(vpStudent.begin(), vpStudent.end(), Comp1);
 		break;
 	case 2:
-		qsort(vpStudent.data(), n, sizeof(Student*), Comp2p);
-//		sort(vpStudent.begin(), vpStudent.end(), Comp2);
+		sort(vpStudent.begin(), vpStudent.end(), Comp2);
 		break;
 	case 3:
-		qsort(vpStudent.data(), n, sizeof(Student*), Comp3p);
-//		sort(vpStudent.begin(), vpStudent.end(), Comp3);
+		sort(vpStudent.begin(), vpStudent.end(), Comp3);
 		break;
 	default:
 		throw 0;
