@@ -4,7 +4,9 @@
 cost: 21:20
 
 sln: 直接计算
-	21/25 pt6 超时
+	10min 21/25 pt6 超时
+	5min 预先分配vector 超时
+	10min 换用qsort 超时
 
 Excel can sort records according to any column. 
 Now you are supposed to imitate this function.
@@ -92,6 +94,17 @@ namespace nsA1028
 		return p1->id < p2->id;
 	}
 
+	int Comp1p(const void* pp1, const void* pp2)
+	{
+		Student* p1 = *(Student**)pp1;
+		Student* p2 = *(Student**)pp2;
+		if (p1->id < p2->id)
+		{
+			return -1;
+		}
+		return 1;
+	}
+
 	bool Comp2(const Student* p1, const Student* p2)
 	{
 		if (p1->name < p2->name)
@@ -103,6 +116,17 @@ namespace nsA1028
 			return p1->id < p2->id;
 		}
 		return false;
+	}
+
+	int Comp2p(const void* pp1, const void* pp2)
+	{
+		Student* p1 = *(Student**)pp1;
+		Student* p2 = *(Student**)pp2;
+		if (Comp2(p1, p2))
+		{
+			return -1;
+		}
+		return 1;
 	}
 
 	bool Comp3(const Student* p1, const Student* p2)
@@ -117,6 +141,17 @@ namespace nsA1028
 		}
 		return false;
 	}
+
+	int Comp3p(const void* pp1, const void* pp2)
+	{
+		Student* p1 = *(Student**)pp1;
+		Student* p2 = *(Student**)pp2;
+		if (Comp3(p1, p2))
+		{
+			return -1;
+		}
+		return 1;
+	}
 }
 
 // rename this to main int PAT
@@ -125,29 +160,28 @@ int A1028Func(void)
 	using namespace nsA1028;
 	int n, c;
 	cin >> n >> c;
-	vector<Student> vtStudent;
+	vector<Student> vtStudent(n);
+	vector<Student*> vpStudent;
 	for (int i = 0; i < n; ++i)
 	{
-		vtStudent.emplace_back();
-		auto& stu = vtStudent.back();
+		auto& stu = vtStudent[i];
 		cin >> stu.id >> stu.name >> stu.grade;
-	}
-	vector<Student*> vpStudent;
-	for (auto& it : vtStudent)
-	{
-		vpStudent.push_back(&it);
+		vpStudent.push_back(&stu);
 	}
 
 	switch (c)
 	{
 	case 1:
-		sort(vpStudent.begin(), vpStudent.end(), Comp1);
+		qsort(vpStudent.data(), n, sizeof(Student*), Comp1p);
+//		sort(vpStudent.begin(), vpStudent.end(), Comp1);
 		break;
 	case 2:
-		sort(vpStudent.begin(), vpStudent.end(), Comp2);
+		qsort(vpStudent.data(), n, sizeof(Student*), Comp2p);
+//		sort(vpStudent.begin(), vpStudent.end(), Comp2);
 		break;
 	case 3:
-		sort(vpStudent.begin(), vpStudent.end(), Comp3);
+		qsort(vpStudent.data(), n, sizeof(Student*), Comp3p);
+//		sort(vpStudent.begin(), vpStudent.end(), Comp3);
 		break;
 	default:
 		throw 0;
