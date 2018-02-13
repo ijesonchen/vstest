@@ -11,6 +11,10 @@ sln1: Dijkstra sp
 sln2: 利用Dijkstra中间数据重建最短路径
 	30min 18/30 pt1 WA pt2 TLE
 
+sln3: 检查代码，DFS递归调用，不需要for循环！！
+	20min dfs遍历减枝pass， rebuild pt1 WA
+
+
 A traveler's map gives the distances between cities along the highways, 
 together with the cost of each highway. 
 Now you are supposed to write a program to help a traveler to
@@ -60,12 +64,12 @@ namespace nsA1030
 	{
 	public:
 		void ReadData(void);
-		int Dijkstra(void);
+		void Dijkstra(void);
 		void SearchPath(void);
 		void RebuildPath(void);
+	private:
 		void Dfs(int u);
 		void DfsRebuild(int u);
-	private:
 		struct Edge
 		{
 			int u = 0;
@@ -111,7 +115,7 @@ namespace nsA1030
 		}
 	}
 
-	int Graph::Dijkstra(void)
+	void Graph::Dijkstra(void)
 	{
 		vVisit.assign(node, false);
 		vDist.assign(node, MAXDIST);
@@ -153,35 +157,34 @@ namespace nsA1030
 				}
 			}
 		}
-		return vDist[dst];
 	}
 	
 	void Graph::Dfs(int u)
 	{
-		if (u == dst && cost < dstCost)
+		if (u == dst)
 		{
-			dstPath = path;
-			dstCost = cost;
+			if (cost < dstCost)
+			{
+				dstPath = path;
+				dstCost = cost;
+			}
 			return;
 		}
-		for (int i = 0; i < node; ++i)
+		auto& uAdj = vAdj[u];
+		auto ud = vDist[u];
+		for (auto& e : uAdj)
 		{
-			auto& uAdj = vAdj[u];
-			auto ud = vDist[u];
-			for (auto& e : uAdj)
+			if (vVisit[e.v] || ud + e.d > vDist[e.v])
 			{
-				if (vVisit[e.v] || ud + e.d > vDist[e.v])
-				{
-					continue;
-				}
-				vVisit[e.v] = true;
-				path.push_back(e.v);
-				cost += e.c;
-				Dfs(e.v);
-				vVisit[e.v] = false;
-				path.pop_back();
-				cost -= e.c;
+				continue;
 			}
+			vVisit[e.v] = true;
+			path.push_back(e.v);
+			cost += e.c;
+			Dfs(e.v);
+			vVisit[e.v] = false;
+			path.pop_back();
+			cost -= e.c;
 		}
 	}
 
@@ -201,30 +204,30 @@ namespace nsA1030
 
 	void Graph::DfsRebuild(int u)
 	{
-		if (u == start && cost < dstCost)
+		if (u == start)
 		{
-			dstPath = path;
-			dstCost = cost;
+			if (cost < dstCost)
+			{
+				dstPath = path;
+				dstCost = cost;
+			}
 			return;
 		}
-		for (int i = 0; i < node; ++i)
+		auto& uAdj = vDijk[u];
+		auto ud = vDist[u];
+		for (auto& e : uAdj)
 		{
-			auto& uAdj = vDijk[u];
-			auto ud = vDist[u];
-			for (auto& e : uAdj)
+			if (vVisit[e.v])
 			{
-				if (vVisit[e.v])
-				{
-					continue;
-				}
-				vVisit[e.v] = true;
-				path.push_back(e.v);
-				cost += e.c;
-				DfsRebuild(e.v);
-				vVisit[e.v] = false;
-				path.pop_back();
-				cost -= e.c;
+				continue;
 			}
+			vVisit[e.v] = true;
+			path.push_back(e.v);
+			cost += e.c;
+			DfsRebuild(e.v);
+			vVisit[e.v] = false;
+			path.pop_back();
+			cost -= e.c;
 		}
 	}
 
@@ -250,7 +253,7 @@ int A1030Func(void)
 	Graph g;
 	g.ReadData();
 	g.Dijkstra();
-	g.RebuildPath();
+	g.SearchPath();
 	return 0;
 }
 
