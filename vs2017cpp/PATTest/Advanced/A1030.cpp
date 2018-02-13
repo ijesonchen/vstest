@@ -14,6 +14,7 @@ sln2: 利用Dijkstra中间数据重建最短路径
 sln3: 检查代码，DFS递归调用，不需要for循环！！
 	20min dfs遍历减枝pass， rebuild pt1 WA
 
+sln4: 检查rebuild算法 20min
 
 A traveler's map gives the distances between cities along the highways, 
 together with the cost of each highway. 
@@ -108,7 +109,7 @@ namespace nsA1030
 		{
 			Edge e;
 			cin >> e.u >> e.v >> e.d >> e.c;
-			if (e.Circle()) { continue; }
+			if (e.Circle()) { throw 0; }
 			vAdj[e.u].push_back(e);
 			e.Reverse();
 			vAdj[e.u].push_back(e);			
@@ -214,18 +215,11 @@ namespace nsA1030
 			return;
 		}
 		auto& uAdj = vDijk[u];
-		auto ud = vDist[u];
 		for (auto& e : uAdj)
 		{
-			if (vVisit[e.v])
-			{
-				continue;
-			}
-			vVisit[e.v] = true;
 			path.push_back(e.v);
 			cost += e.c;
 			DfsRebuild(e.v);
-			vVisit[e.v] = false;
 			path.pop_back();
 			cost -= e.c;
 		}
@@ -233,8 +227,6 @@ namespace nsA1030
 
 	void Graph::RebuildPath(void)
 	{
-		vVisit.assign(node, false);
-		vVisit[dst] = true;
 		path.push_back(dst);
 		cost = 0;
 		DfsRebuild(dst);
@@ -253,7 +245,7 @@ int A1030Func(void)
 	Graph g;
 	g.ReadData();
 	g.Dijkstra();
-	g.SearchPath();
+	g.RebuildPath();
 	return 0;
 }
 
