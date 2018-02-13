@@ -147,8 +147,9 @@ namespace nsA1030
 				}
 				if (duv <= vDist[v])
 				{
-					e.Reverse();
-					vDijk[v].push_back(e);
+					auto e2 = e;
+					e2.Reverse();
+					vDijk[v].push_back(e2);
 				}
 			}
 		}
