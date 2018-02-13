@@ -1,12 +1,15 @@
 /*
 1030. Travel Plan (30)
 
-cost 10:55
+cost 10:55 60min 15:55
+	
 
 sln1: Dijkstra sp
 	dfs遍历所有可能路径，利用SP减枝，找到最小cost
 	60min 24/30 pt2 TLE
 
+sln2: 利用Dijkstra中间数据重建最短路径
+	30min 18/30 pt1 WA pt2 TLE
 
 A traveler's map gives the distances between cities along the highways, 
 together with the cost of each highway. 
@@ -59,7 +62,9 @@ namespace nsA1030
 		void ReadData(void);
 		int Dijkstra(void);
 		void SearchPath(void);
+		void RebuildPath(void);
 		void Dfs(int u);
+		void DfsRebuild(int u);
 	private:
 		struct Edge
 		{
@@ -85,6 +90,9 @@ namespace nsA1030
 		int cost = 0;
 		vector<int> dstPath;
 		int dstCost = MAXDIST;
+
+		// rebuild path by Dijkstra
+		vector<vector<Edge>> vDijk;
 	};
 	
 	void Graph::ReadData(void)
@@ -107,6 +115,7 @@ namespace nsA1030
 	{
 		vVisit.assign(node, false);
 		vDist.assign(node, MAXDIST);
+		vDijk.assign(node, vector<Edge>());
 		vDist[start] = 0;
 		for (int i = 0; i < node; ++i)
 		{
@@ -125,14 +134,21 @@ namespace nsA1030
 			auto& uAdj = vAdj[u];
 			for (auto& e : uAdj)
 			{
-				if (vVisit[e.v])
+				auto v = e.v;
+				if (vVisit[v])
 				{
 					continue;
 				}
 				auto duv = du + e.d;
-				if (duv < vDist[e.v])
+				if (duv < vDist[v])
 				{
-					vDist[e.v] = duv;
+					vDist[v] = duv;
+					vDijk[v].clear();
+				}
+				if (duv <= vDist[v])
+				{
+					e.Reverse();
+					vDijk[v].push_back(e);
 				}
 			}
 		}
@@ -181,6 +197,49 @@ namespace nsA1030
 		}
 		cout << vDist[dst] << " " << dstCost << endl;
 	}
+
+	void Graph::DfsRebuild(int u)
+	{
+		if (u == start && cost < dstCost)
+		{
+			dstPath = path;
+			dstCost = cost;
+			return;
+		}
+		for (int i = 0; i < node; ++i)
+		{
+			auto& uAdj = vDijk[u];
+			auto ud = vDist[u];
+			for (auto& e : uAdj)
+			{
+				if (vVisit[e.v])
+				{
+					continue;
+				}
+				vVisit[e.v] = true;
+				path.push_back(e.v);
+				cost += e.c;
+				DfsRebuild(e.v);
+				vVisit[e.v] = false;
+				path.pop_back();
+				cost -= e.c;
+			}
+		}
+	}
+
+	void Graph::RebuildPath(void)
+	{
+		vVisit.assign(node, false);
+		vVisit[dst] = true;
+		path.push_back(dst);
+		cost = 0;
+		DfsRebuild(dst);
+		for (auto it = dstPath.rbegin(); it != dstPath.rend(); ++it)
+		{
+			cout << *it << " ";
+		}
+		cout << vDist[dst] << " " << dstCost << endl;
+	}
 }
 
 // rename this to main int PAT
@@ -190,7 +249,7 @@ int A1030Func(void)
 	Graph g;
 	g.ReadData();
 	g.Dijkstra();
-	g.SearchPath();
+	g.RebuildPath();
 	return 0;
 }
 
