@@ -2,7 +2,8 @@
 1030. Travel Plan (30)
 
 cost 10:55 60min 15:55
-	
+
+输入：无自环	
 
 sln1: Dijkstra sp
 	dfs遍历所有可能路径，利用SP减枝，找到最小cost
@@ -68,9 +69,11 @@ namespace nsA1030
 		void Dijkstra(void);
 		void SearchPath(void);
 		void RebuildPath(void);
+		void RebuildPath2(void);
 	private:
 		void Dfs(int u);
 		void DfsRebuild(int u);
+		void DfsRebuild2(int u, vector<int> p);
 		struct Edge
 		{
 			int u = 0;
@@ -78,7 +81,6 @@ namespace nsA1030
 			int d = 0;
 			int c = 0;
 			void Reverse(void) { swap(u, v); };
-			bool Circle(void) { return u == v; };
 		};
 		const int MAXDIST = 1000000;
 		// graph info
@@ -109,7 +111,6 @@ namespace nsA1030
 		{
 			Edge e;
 			cin >> e.u >> e.v >> e.d >> e.c;
-			if (e.Circle()) { throw 0; }
 			vAdj[e.u].push_back(e);
 			e.Reverse();
 			vAdj[e.u].push_back(e);			
@@ -236,6 +237,42 @@ namespace nsA1030
 		}
 		cout << vDist[dst] << " " << dstCost << endl;
 	}
+
+	void Graph::DfsRebuild2(int u, vector<int> p)
+	{
+		p.push_back(u);
+		if (u == start)
+		{
+			if (cost < dstCost)
+			{
+				dstPath = p;
+				dstCost = cost;
+			}
+			return;
+		}
+		auto& uAdj = vDijk[u];
+		for (auto& e : uAdj)
+		{
+			path.push_back(e.v);
+			cost += e.c;
+			DfsRebuild2(e.v, p);
+			path.pop_back();
+			cost -= e.c;
+		}
+	}
+
+	void Graph::RebuildPath2(void)
+	{
+		path.push_back(dst);
+		cost = 0;
+		vector<int> p;
+		DfsRebuild2(dst, p);
+		for (auto it = dstPath.rbegin(); it != dstPath.rend(); ++it)
+		{
+			cout << *it << " ";
+		}
+		cout << vDist[dst] << " " << dstCost << endl;
+	}
 }
 
 // rename this to main int PAT
@@ -245,7 +282,7 @@ int A1030Func(void)
 	Graph g;
 	g.ReadData();
 	g.Dijkstra();
-	g.RebuildPath();
+	g.RebuildPath2();
 	return 0;
 }
 

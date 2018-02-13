@@ -2,7 +2,7 @@
 
 ## 已处理列表
 
-A1001-A1028
+A1001-A1030
 
 A1132-A1133
 
@@ -11,7 +11,7 @@ A1136-A1138
 ## 未处理列表
 
 ```
-
+A1030：diskstra rebuild shortest path， pt1 WA
 ```
 
 
@@ -72,6 +72,7 @@ A1027: 15min pass
 A1028: 10min 21/25 pt6 TLE. 题解，pass **排序比较优先考虑整形而非字串
 	**02.13
 A1029：15min pass 数组长度为偶数时，0基中间位置为(n-1)/2
+A1030：2h pass **Dijkstra rebuild算法存在问题。DFS不需要循环。
 ```
 
 ## 解题报告
