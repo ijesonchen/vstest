@@ -60,40 +60,43 @@
     </ClCompile>
     <ClCompile Include="patMain.cpp" />
     <ClCompile Include="Blank.cpp" />
-    <ClCompile Include="Advanced\A1022.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1023.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1024.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1025.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1021.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
     <ClCompile Include="Test\GraphAllPath.cpp">
       <Filter>Test</Filter>
     </ClCompile>
     <ClCompile Include="Test\TestMain.cpp">
       <Filter>Test</Filter>
     </ClCompile>
-    <ClCompile Include="Advanced\A1027.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1028.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
-    <ClCompile Include="Advanced\A1029.cpp">
-      <Filter>Advanced</Filter>
-    </ClCompile>
     <ClCompile Include="Advanced\A1030.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
-    <ClCompile Include="Advanced\A1026.cpp">
+    <ClCompile Include="Advanced\A1034.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1035.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1036.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1037.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1038.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1039.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1040.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1031.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1032.cpp">
+      <Filter>Advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="Advanced\A1033.cpp">
       <Filter>Advanced</Filter>
     </ClCompile>
   </ItemGroup>
