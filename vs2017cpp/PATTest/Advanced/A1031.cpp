@@ -12,6 +12,9 @@ sln3: n1 + n2 + n3 - 2 = N.
 sln3: 根据n1 + n2 + n3 - 2 = N.重新计算n1,n2
 	5min 0/20
 
+sln3: bug-fix
+	10min 18/20 pt3 WA
+
 Given any string of N (>=5) characters,
 you are asked to form the characters into the shape of U.
 For example, "helloworld" can be printed as:
@@ -96,9 +99,9 @@ int A1031Func2(void)
 	cin >> s;
 	int n1, n2, k, len, len2;
 	len = (int)s.length();
-	len2 = len + 2;
+	len2 = len - 2;
 	n1 = len2 / 3;
-	n2 = len2 - n1 * 2;
+	n2 = len - n1 * 2;
 	k = n2 - 2;
 	for (int i = 0; i < n1; ++i)
 	{
@@ -127,5 +130,7 @@ void A1031(void)
 	A1031("data\\A1031-2.txt"); // 
 	A1031("data\\A1031-3.txt"); // 
 	A1031("data\\A1031-4.txt"); // 
+	A1031("data\\A1031-5.txt"); // 
+	A1031("data\\A1031-6.txt"); // 
 }
 
