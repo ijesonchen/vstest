@@ -3,12 +3,20 @@
 
 cost: 19:30
 
+总结：理解题目中：n1表示竖着的包括角，n2是横着的中间部分(A1031Func3)
+		这种方式不方便打印
+	A1031Func/A1031Func2中的n2表示横着的整个包括角，k则为题意中的n2
+		这种方式方便打印但是和题目中含义不一致，容易导致错误
+	计算时注意n1 + n2 + n3 - 2 = N的限制
+
+A1031Func
 sln1: 15min 16/20 pt2,5 WA
 sln2: n2 >= 3
 	5min  18/20 pt5 WA
 sln3: n1 + n2 + n3 - 2 = N.
 	5min pass
 
+A1031Func2
 sln3: 根据n1 + n2 + n3 - 2 = N.重新计算n1,n2
 	5min 0/20
 
@@ -17,6 +25,9 @@ sln4: bug-fix
 
 sln5: 题解 n1 = (len+2)/3-1 
 	10min pass
+
+A1031Func3
+sln6: 按照题意中的n1,n2,n3重写
 
 Given any string of N (>=5) characters,
 you are asked to form the characters into the shape of U.
@@ -119,11 +130,35 @@ int A1031Func2(void)
 	return 0;
 }
 
+
+int A1031Func3(void)
+{
+	string s;
+	cin >> s;
+	int n1, n2, k, len, len2;
+	len = (int)s.length();
+	len2 = len + 2;
+	n1 = len2 / 3;
+	n2 = len - n1 * 2;
+	k = n2;
+	for (int i = 0; i < n1 - 1; ++i)
+	{
+		cout << s[i];
+		for (int j = 0; j < k; ++j)
+		{
+			cout << " ";
+		}
+		cout << s[len - 1 - i] << endl;
+	}
+	cout << s.substr(n1-1, n2+2) << endl;
+	return 0;
+}
+
 void A1031(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
-	A1031Func2();
+	A1031Func3();
 	cout << endl;
 }
 
