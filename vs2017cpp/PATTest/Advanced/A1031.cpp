@@ -6,6 +6,8 @@ cost: 19:30
 sln1: 15min 16/20 pt2,5 WA
 sln2: n2 >= 3
 	5min  18/20 pt5 WA
+sln3: n1 < n2
+	5min pass
 
 Given any string of N (>=5) characters,
 you are asked to form the characters into the shape of U.
@@ -64,6 +66,12 @@ int A1031Func(void)
 		n1 = (len - n2) / 2;
 		n2 = len - n1 * 2;
 	}
+	if (n2 <= n1)
+	{
+		++n2;
+		n1 = (len - n2) / 2;
+		n2 = len - n1 * 2;
+	}
 	k = n2 - 2;
 	for (int i  = 0; i < n1; ++i)
 	{
@@ -89,8 +97,9 @@ void A1031(const string& fn)
 
 void A1031(void)
 {
-	A1031("data\\A1031-1.txt"); // 
-	A1031("data\\A1031-2.txt"); // 
-	A1031("data\\A1031-3.txt"); // 
+// 	A1031("data\\A1031-1.txt"); // 
+// 	A1031("data\\A1031-2.txt"); // 
+// 	A1031("data\\A1031-3.txt"); // 
+	A1031("data\\A1031-4.txt"); // 
 }
 
