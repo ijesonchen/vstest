@@ -17,11 +17,16 @@ tip: id可能是0开头的字串，但不为0；（测试输入数据）
 	同性别是否需要去重？
 	不需要，去重后pt5错误
 
+nsA1139B:
+
 sln4:题解： http://blog.csdn.net/gl486546/article/details/78816363
 	重写 24/30 pt3-5 WA
 	结果去重 24/30 pt3-5 WA
 	推测：应该没有环？
 	cost 2h
+
+sln5: A-C-A-B? A-B-D-B?
+	cost 10min PASS
 
 Unlike in nowadays, the way that boys and girls expressing their feelings of love was quite subtle in the early years. 
 When a boy A had a crush on a girl B, he would usually not contact her directly in the first place. 
@@ -451,19 +456,33 @@ namespace nsA1139B {
 	{
 		int indA = NodeInd(a);
 		int indB = NodeInd(b);
+		int indC, indD;
 		Node& nodeA = vNodes[indA], nodeB = vNodes[indB];
 		// A-C-D-B
 		set<Result> vRes;
 		vector<int>& vc = RelationVec(nodeA.name, nodeA.girl);
 		size_t lenc = vc.size();
+		
 		for (size_t i = 0; i < lenc; ++i)
 		{
-			Node& nodeC = vNodes[vc[i]];
+			indC = vc[i];
+			// A-B-D-B?
+			if (indC == indB)
+			{
+				continue;
+			}
+			Node& nodeC = vNodes[indC];
 			vector<int>& vd = RelationVec(nodeC.name, nodeB.girl);
 			size_t lend = vd.size();
 			for (size_t j = 0; j < lend; ++j)
 			{
-				Node& nodeD = vNodes[vd[j]];
+				int indD = vd[j];
+				// A-C-A-B? 
+				if (indD == indA)
+				{
+					continue;
+				}
+				Node& nodeD = vNodes[indD];
 				vector<int>& vb = RelationVec(nodeD.name, nodeD.girl);
 				if (vb.end() != find(vb.begin(), vb.end(), indB))
 				{
