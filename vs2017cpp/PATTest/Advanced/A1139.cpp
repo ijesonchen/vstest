@@ -17,6 +17,8 @@ tip: id可能是0开头的字串，但不为0；（测试输入数据）
 	同性别是否需要去重？
 	不需要，去重后pt5错误
 
+nsA1139仍然未通过。推测原因应该是0000和-0000导致的。
+
 nsA1139B:
 
 sln4:题解： http://blog.csdn.net/gl486546/article/details/78816363
@@ -27,6 +29,13 @@ sln4:题解： http://blog.csdn.net/gl486546/article/details/78816363
 
 sln5: A-C-A-B? A-B-D-B?
 	cost 10min PASS
+
+ANS2:
+1
+1002 2002
+2
+1002 1003
+1003 1002
 
 Unlike in nowadays, the way that boys and girls expressing their feelings of love was quite subtle in the early years. 
 When a boy A had a crush on a girl B, he would usually not contact her directly in the first place. 
@@ -476,7 +485,7 @@ namespace nsA1139B {
 			size_t lend = vd.size();
 			for (size_t j = 0; j < lend; ++j)
 			{
-				int indD = vd[j];
+				indD = vd[j];
 				// A-C-A-B? 
 				if (indD == indA)
 				{

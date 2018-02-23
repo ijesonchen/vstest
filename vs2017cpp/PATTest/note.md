@@ -12,6 +12,7 @@ A1136-A1138
 
 ```
 A1030：diskstra rebuild shortest path， pt1 WA
+A1139: nsA1139 pt2WA 未修正。做题太慢，参考题解看是不是算法有问题。
 ```
 
 
@@ -73,6 +74,7 @@ A1028: 10min 21/25 pt6 TLE. 题解，pass **排序比较优先考虑整形而非
 	**02.13
 A1029：15min pass 数组长度为偶数时，0基中间位置为(n-1)/2
 A1030：2h pass **Dijkstra rebuild算法存在问题。DFS不需要循环。
+A1139：2h pass
 ```
 
 ## 解题报告
