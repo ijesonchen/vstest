@@ -37,6 +37,7 @@ SLN6:
 
 SLN7:
 	解决TLE问题
+	1. 20min 使用unordered_map/set 存储中间结果，然后排序。 TLE
 
 ANS2:
 1
@@ -421,7 +422,7 @@ namespace nsA1139Refectored
 		void Search(const string& sa, const string& st)
 		{
 			// a(sa) - c - d - b(st)
-			map<string, set<string>> res;
+			unordered_map<string, unordered_set<string>> res;
 			int ia = Get(sa);
 			Node& na = v[ia];
 			int it = Get(st);
@@ -462,28 +463,45 @@ namespace nsA1139Refectored
 			Output(res);
 		}
 
-		void Output(map<string, set<string>> &res)
+		void Output(unordered_map<string, unordered_set<string>> &res)
 		{
 			int total = 0;
-			for (map<string, set<string>>::iterator it = res.begin();
+			vector<string> v1;
+			for (auto it = res.begin();
 				it != res.end();
 				++it)
 			{
+				v1.push_back(it->first);
 				total += (int)it->second.size();
 			}
 			cout << total << endl;
-			for (map<string, set<string>>::iterator it = res.begin();
-				it != res.end();
-				++it)
+			sort(v1.begin(), v1.end());
+			for (auto& s1 : v1)
 			{
-				set<string>& s = it->second;
-				for (set<string>::iterator its = s.begin();
-					its != s.end();
-					++its)
+				vector<string> v2;
+				auto& set2 = res[s1];
+				for (auto& s2 : set2)
 				{
-					cout << it->first << " " << *its << endl;
+					v2.push_back(s2);
+				}
+				sort(v2.begin(), v2.end());
+				for (auto& s2 : v2)
+				{
+					cout << s1 << " " << s2 << endl;
 				}
 			}
+// 			for (map<string, set<string>>::iterator it = res.begin();
+// 				it != res.end();
+// 				++it)
+// 			{
+// 				set<string>& s = it->second;
+// 				for (set<string>::iterator its = s.begin();
+// 					its != s.end();
+// 					++its)
+// 				{
+// 					cout << it->first << " " << *its << endl;
+// 				}
+// 			}
 		}
 
 	private:
