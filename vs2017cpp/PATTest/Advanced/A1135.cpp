@@ -7,6 +7,8 @@ sln1: 仅前序无法唯一确定一棵树。应该是前序和RB树有关系。
 	看题目，猜测如下关系：
 	BRBBRRBBRR...
 	25min 21/30 PT2,3 WA
+	猜测末尾应为 BR
+	5min 21/30 pt2,3 wa
 
 There is a kind of balanced binary search tree named red-black tree in the data structure. 
 It has the following 5 properties:
@@ -84,9 +86,16 @@ namespace nsA1135
 			return false;
 		}
 		int len = (int)vNode.size();
-		if (len >= 2 && vNode[1] > 0)
+		if (len >= 2)
 		{
-			return false;
+			if (vNode[1] > 0 || vNode.back() > 0)
+			{
+				return false;
+			}
+			if (vNode[len - 2] < 0)
+			{
+				return false;
+			}
 		}
 		for (int i = 2; i < len; ++i)
 		{
