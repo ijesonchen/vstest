@@ -20,7 +20,6 @@ tip: id可能是0开头的字串，但不为0；（测试输入数据）
 nsA1139仍然未通过。推测原因应该是0000和-0000导致的。
 
 nsA1139B:
-
 sln4:题解： http://blog.csdn.net/gl486546/article/details/78816363
 	重写 24/30 pt3-5 WA
 	结果去重 24/30 pt3-5 WA
@@ -29,6 +28,15 @@ sln4:题解： http://blog.csdn.net/gl486546/article/details/78816363
 
 sln5: A-C-A-B? A-B-D-B?
 	cost 10min PASS
+
+nsA1139Refactored:
+SLN6:
+	重构nsA1139，尝试解决PT2 WA
+	判断是否boy时，通过 s[0] != '-'而非 atoi(s) < 0
+	10min 26/30 PT5 TLE
+
+SLN7:
+	解决TLE问题
 
 ANS2:
 1
@@ -123,14 +131,10 @@ Sample Output:
 #include <string>
 #include <vector>
 #include <map>
-#include <unordered_map>
 #include <set>
-
-#include <algorithm>
-#include <vector>
-#include <string>
 #include <unordered_map>
-#include <map>
+#include <unordered_set>
+#include <algorithm>
 
 using namespace std;
 
@@ -366,6 +370,181 @@ namespace nsA1139
 	}
 }
 
+// refactor of nsA1139
+namespace nsA1139Refectored
+{
+	bool HasData(const vector<int>& v, int k)
+	{
+		int n = (int)v.size();
+		for (int i = 0; i < n; ++i)
+		{
+			if (v[i] == k)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	class A1139Graph
+	{
+	public:
+		void Read()
+		{
+			int n, m;
+			cin >> n >> m;
+			string sa, sb;
+			for (int i = 0; i < m; ++i)
+			{
+				cin >> sa >> sb;
+				if (sa == sb) // self loop
+				{
+					continue;
+				}
+				int ia = Get(sa);
+				int ib = Get(sb);
+				if (!HasData(v[ia].adjs, ib))
+				{
+					v[ia].adjs.push_back(ib);
+				}
+				if (!HasData(v[ib].adjs, ia))
+				{
+					v[ib].adjs.push_back(ia);
+				}
+			}
+			if (v.size() > n)
+			{
+				abort();
+			}
+		}
+
+		void Search(const string& sa, const string& st)
+		{
+			// a(sa) - c - d - b(st)
+			map<string, set<string>> res;
+			int ia = Get(sa);
+			Node& na = v[ia];
+			int it = Get(st);
+			Node& nt = v[it];
+			vector<int>& va = na.adjs;
+			for (int i = 0; i < va.size(); ++i)
+			{
+				Node& nc = v[va[i]];
+				if (nc.boy != na.boy ||
+					nc.id == st) // a-b
+				{
+					continue;
+				}
+				vector<int>& vb = nc.adjs;
+				for (int j = 0; j < vb.size(); ++j)
+				{
+					Node& nd = v[vb[j]];
+					if (nd.boy != nt.boy ||
+						nd.id == sa || // a-c-a
+						nd.id == st) // a-c-b
+					{
+						continue;;
+					}
+					vector<int>& vc = nd.adjs;
+					for (int k = 0; k < vc.size(); ++k)
+					{
+						Node& ndd = v[vc[k]];
+						if (ndd.id == st)
+						{
+							res[nc.pid].insert(nd.pid);
+						}
+					}
+				}
+			}
+
+			// dedup will not pass pt5
+
+			Output(res);
+		}
+
+		void Output(map<string, set<string>> &res)
+		{
+			int total = 0;
+			for (map<string, set<string>>::iterator it = res.begin();
+				it != res.end();
+				++it)
+			{
+				total += (int)it->second.size();
+			}
+			cout << total << endl;
+			for (map<string, set<string>>::iterator it = res.begin();
+				it != res.end();
+				++it)
+			{
+				set<string>& s = it->second;
+				for (set<string>::iterator its = s.begin();
+					its != s.end();
+					++its)
+				{
+					cout << it->first << " " << *its << endl;
+				}
+			}
+		}
+
+	private:
+		struct Node
+		{
+			string id;
+			string pid; // id for print
+			bool boy;
+			// adjacent index in v
+			vector<int> adjs;
+
+			Node(string s)
+				: id(s)
+				, pid(s)
+			{
+				boy = (id[0] != '-');
+				if (!boy)
+				{
+					pid.erase(0, 1);
+				}
+			}
+		};
+
+		int Get(const string& s)
+		{
+			int i = r[s];
+			if (i == 0)
+			{
+				if (!v.empty() && v[i].id == s)
+				{
+					return 0;
+				}
+				v.push_back(s);
+				i = (int)v.size() - 1;
+				r[s] = i;
+			}
+			return i;
+		}
+
+		// nodes;
+		vector<Node> v;
+		// id to node
+		unordered_map<string, int> r;
+	};
+
+	int A1139Func(void)
+	{
+		A1139Graph g;
+		g.Read();
+		int k = 0;
+		string sa, st;
+		cin >> k;
+		for (int i = 0; i < k; ++i)
+		{
+			cin >> sa >> st;
+			g.Search(sa, st);
+		}
+		return 0;
+	}
+}
+
 namespace nsA1139B {
 	typedef map<string, int> MapStrInt;
 
@@ -550,8 +729,9 @@ void A1139(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
-	nsA1139B::Reset();
-	nsA1139B::A1139Func();
+// 	nsA1139B::Reset();
+// 	nsA1139B::A1139Func();
+	nsA1139Refectored::A1139Func();
 }
 
 void A1139(void)
