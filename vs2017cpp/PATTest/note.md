@@ -12,7 +12,7 @@ A1136-A1139
 
 ```
 A1030：diskstra rebuild shortest path， pt1 WA
-A1139: nsA1139 pt2WA 未修正。做题太慢，参考题解看是不是算法有问题。
+
 ```
 
 
@@ -23,6 +23,8 @@ A1139: nsA1139 pt2WA 未修正。做题太慢，参考题解看是不是算法�
 A1014: func1未通过，使用timeout标记。
 A1016: A1016PrintCharge未通过。分段计算费用相加
 A1018：题解使用BFS+DFS处理，逻辑？
+A1139: nsA1139 pt2WA 未修正。做题太慢，参考题解看是不是算法有问题。
+A1135：nsA1135B::BlackNodes判断采取只要有一个为NULL即遇到叶子节点的方式判断路径黑节点数？
 ```
 
 ## 日志
@@ -78,6 +80,7 @@ A1030：2h pass **Dijkstra rebuild算法存在问题。DFS不需要循环。
 A1139：2h pass
 	**02.24
 A1134: 25min pass. 注意输出结果中的大小写。
+A1135: 2H PASS. 红黑树叶子节点定义为NULL节点。需要据此判断黑节点数。
 ```
 
 ## 解题报告

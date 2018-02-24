@@ -14,7 +14,13 @@ SLN2: 搜索红黑树 前序遍历，介绍红黑树的资料提到：红黑树是二叉搜索树
 	因此，满足搜索树的条件
 	前序： 根 左 右
 	二叉树前序： 根 小 大
-	70min 21/30 pt2,3 wa
+	14:50 70min 21/30 pt2,3 wa
+
+SLN3：Every leaf (NULL) is black。根据leaf定义重新判断5 
+	LeafBlackNodes
+	(BlackNodes和SetBlackNodes函数错误，废弃)
+	20min pass
+	
 
 There is a kind of balanced binary search tree named red-black tree in the data structure. 
 It has the following 5 properties:
@@ -162,6 +168,7 @@ namespace nsA1135B
 
 	vector<int> vPreOrcer;
 	vector<Node> vNode;
+	int nBlack = -1;
 
 	// [first, last]. return last + 1 if not found.
 	int RightLeftIndex(int first, int last)
@@ -262,6 +269,37 @@ namespace nsA1135B
 		return true;
 	}
 
+	bool LeafBlackNodes(Node* p, int nb)
+	{
+		if (!p)
+		{
+			if (nBlack == -1)
+			{
+				nBlack = nb;
+				return true;
+			}
+			else
+			{
+				return nBlack == nb;
+			}
+		}
+		p->black = nb;
+		if (p->Black())
+		{
+			++p->black;
+		}
+
+		if (!LeafBlackNodes(p->left, p->black))
+		{
+			return false;
+		}
+		if (!LeafBlackNodes(p->right, p->black))
+		{
+			return false;
+		}
+		return true;
+	}
+
 	bool IsRbTree(Node* pRoot)
 	{
 		if (!pRoot->Black())
@@ -272,7 +310,7 @@ namespace nsA1135B
 		{
 			return false;
 		}
-		if (!BlackNodes(pRoot))
+		if (!LeafBlackNodes(pRoot, 0))
 		{
 			return false;
 		}
@@ -283,6 +321,7 @@ namespace nsA1135B
 	{
 		vPreOrcer.clear();
 		vNode.assign(nNode, Node(0));
+		nBlack = -1;
 		for (int i = 0; i < nNode; ++i)
 		{
 			int t;
