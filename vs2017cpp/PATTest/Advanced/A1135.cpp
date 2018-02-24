@@ -18,8 +18,12 @@ SLN2: 搜索红黑树 前序遍历，介绍红黑树的资料提到：红黑树是二叉搜索树
 
 SLN3：Every leaf (NULL) is black。根据leaf定义重新判断5 
 	LeafBlackNodes
-	(BlackNodes和SetBlackNodes函数错误，废弃)
+	(BlackNodes和SetBlackNodes函数错误，sln4中修正)
 	20min pass
+
+sln4: 根据leaf定义, 修正BlackNodes：只要子节点有一个为NULL，即比较路径黑节点数
+	LeafBlackNodes 和 BlackNodes都可以正确判断
+	5min pass
 	
 
 There is a kind of balanced binary search tree named red-black tree in the data structure. 
@@ -159,7 +163,7 @@ namespace nsA1135B
 
 		int black = 0;
 
-		bool IsLeaf(void) const { return !left && !right; };
+		bool IsLeaf(void) const { return !left || !right; };
 		bool Red(void) const { return val < 0; };
 		bool Black(void) const { return val > 0; };
 
@@ -310,7 +314,11 @@ namespace nsA1135B
 		{
 			return false;
 		}
-		if (!LeafBlackNodes(pRoot, 0))
+// 		if (!LeafBlackNodes(pRoot, 0))
+// 		{
+// 			return false;
+// 		}
+		if (!BlackNodes(pRoot))
 		{
 			return false;
 		}
