@@ -1,6 +1,13 @@
 /*
 1139. First Contact (30)
 
+总结：
+	1.尽量使用题目中的要求直接判断处理（比如性别就判断字串是否有'-'，不要转为整数判断正负）
+	2.搜索路径时有性别问题，可以考虑一开始就分组保存，可以提升速度
+	3.灵活运用图的矩阵和链表表示。关系用矩阵，同性用链表，大大简化流程。
+	nsA1139Refactored改进了搜索部分，仍然TLE。估计真个流程都有问题，优化要大改。
+
+
 test: 无自环 s1!=s2
 	有 0000 PT1
 	有 -0000 PT2
@@ -28,6 +35,8 @@ sln4:题解： http://blog.csdn.net/gl486546/article/details/78816363
 
 sln5: A-C-A-B? A-B-D-B?
 	cost 10min PASS
+	A1139-2.txt中有重复结果，所以用set去重。
+	实际测试中，没有重复结果，直接vector然后排序即可。
 
 nsA1139Refactored:
 SLN6:
@@ -38,6 +47,17 @@ SLN6:
 SLN7:
 	解决TLE问题
 	1. 20min 使用unordered_map/set 存储中间结果，然后排序。 TLE
+	2. 20min 使用nsA1139B::Result结构体存储中间结果。 TLE
+	推测可能原因：读取数据太罗嗦，读取时就应该男女分组。
+
+SLN8: nsA1139Liuchuo
+	ref: https://www.liuchuo.net/archives/4210
+	题目：a person is represented by a 4-digit ID. '-' for girl
+	表明：每个人的id唯一，不超过10000. 女生id含'-'
+	1. 使用矩阵表示关系
+	2. 使用链表表示同性关系
+	3. printf格式化id
+	20min pass
 
 ANS2:
 1
@@ -601,15 +621,16 @@ namespace nsA1139B {
 
 		bool operator<(const Result& a) const
 		{
-			if (namec < a.namec)
-			{
-				return true;
-			}
-			else if (namec == a.namec)
-			{
-				return named < a.named;
-			}
-			return false;
+			return namec != a.namec ? (namec < a.namec) : (named < a.named);
+// 			if (namec < a.namec)
+// 			{
+// 				return true;
+// 			}
+// 			else if (namec == a.namec)
+// 			{
+// 				return named < a.named;
+// 			}
+// 			return false;
 		}
 
 		void Print(void) const
@@ -665,6 +686,7 @@ namespace nsA1139B {
 		int indC, indD;
 		Node& nodeA = vNodes[indA], nodeB = vNodes[indB];
 		// A-C-D-B
+//		vector<Result> vRes;
 		set<Result> vRes;
 		vector<int>& vc = RelationVec(nodeA.name, nodeA.girl);
 		size_t lenc = vc.size();
@@ -695,6 +717,7 @@ namespace nsA1139B {
 					Result res;
 					res.namec = nodeC.name;
 					res.named = nodeD.name;
+//					vRes.push_back(res);
 					vRes.insert(res);
 				}
 			}
@@ -707,10 +730,6 @@ namespace nsA1139B {
 		{
 			it.Print();
 		}
-// 		for (size_t i = 0; i < lenRes; ++i)
-// 		{
-// 			vRes[i].Print();
-// 		}
 	}
 
 
@@ -742,6 +761,153 @@ namespace nsA1139B {
 
 }
 
+// ref; https://www.liuchuo.net/archives/4210
+
+namespace nsA1139LiuchuoRef
+{
+	// 放全局。函数内部的话会爆栈
+	// 所有的关系
+	bool arr[10000][10000];
+
+	struct node 
+	{
+		int a, b;
+	};
+
+	bool cmp(node x, node y)
+	{
+		// 注意这种多级比较写法
+		return x.a != y.a ? x.a < y.a : x.b < y.b;
+	}
+
+	int main() 
+	{
+		int n, m, k;
+		scanf("%d%d", &n, &m);
+		// 同性关系邻接链表(vector<int>的数组)
+		vector<int> v[10000];
+		for (int i = 0; i < m; i++)
+		{
+			string a, b;
+			cin >> a >> b;
+			// 可以先求出abs(stoi(a))备用
+			if (a.length() == b.length()) 
+			{
+				// 同性朋友
+				v[abs(stoi(a))].push_back(abs(stoi(b)));
+				v[abs(stoi(b))].push_back(abs(stoi(a)));
+			}
+			arr[abs(stoi(a))][abs(stoi(b))] = arr[abs(stoi(b))][abs(stoi(a))] = true;
+		}
+		scanf("%d", &k);
+		for (int i = 0; i < k; i++) 
+		{
+			int c, d;
+			cin >> c >> d;
+			vector<node> ans;
+			for (int j = 0; j < v[abs(c)].size(); j++) 
+			{
+				for (int k = 0; k < v[abs(d)].size(); k++) 
+				{
+					if (v[abs(c)][j] == abs(d) || abs(c) == v[abs(d)][k])
+					{
+						// 直接关系 跳过
+						continue;
+					}
+					if (arr[v[abs(c)][j]][v[abs(d)][k]] == true)
+					{
+						ans.push_back(node{ v[abs(c)][j], v[abs(d)][k] });
+					}
+				}
+			}
+			sort(ans.begin(), ans.end(), cmp);
+			printf("%d\n", int(ans.size()));
+			for (int j = 0; j < ans.size(); j++)
+			{
+				printf("%04d %04d\n", ans[j].a, ans[j].b);
+			}
+		}
+		return 0;
+	}
+}
+
+namespace nsA1139Liuchuo
+{
+	const int MAXID = 10000;
+
+	struct Relation
+	{
+		int nc = 0;
+		int nd = 0;
+
+		Relation(int c, int d) : nc(c), nd(d) {};
+
+		bool operator<(const Relation& r)
+		{
+			return nc != r.nc ? nc < r.nc : nd < r.nd;
+		}
+	};
+
+	void A1139Func(void)
+	{
+		// 二维数组的vector声明，避免爆栈
+		vector<vector<bool>> vFriendMatrix(MAXID, vector<bool>(MAXID, false));
+		vector<vector<int>> vGenderAdjecent(MAXID, vector<int>());
+
+		// read data
+		int n, m;
+		cin >> n >> m;
+		for (int i = 0; i < m; ++i)
+		{
+			string s1, s2;
+			cin >> s1 >> s2;
+			int n1 = abs(stoi(s1)), n2 = abs(stoi(s2));
+			if (s1.length() == s2.length())
+			{
+				vGenderAdjecent[n1].push_back(n2);
+				vGenderAdjecent[n2].push_back(n1);
+			}
+			vFriendMatrix[n1][n2] = true;
+			vFriendMatrix[n2][n1] = true;
+		}
+
+		// search
+		int k;
+		cin >> k;
+		for (int i = 0; i < k; ++i)
+		{
+			vector<Relation> vRelation;
+			int na, nb;
+			cin >> na >> nb;
+			na = abs(na);
+			nb = abs(nb);
+			auto& vc = vGenderAdjecent[na];
+			auto& vd = vGenderAdjecent[nb];
+			for (auto nc : vc)
+			{
+				for (auto nd : vd)
+				{
+					if (nc == nb || na == nd)
+					{
+						continue;
+					}
+					if (vFriendMatrix[nc][nd])
+					{
+						vRelation.emplace_back(nc, nd);
+					}
+				}
+			}
+
+			sort(vRelation.begin(), vRelation.end());
+
+			cout << vRelation.size() << endl;
+			for (auto& r : vRelation)
+			{
+				printf("%04d %04d\n", r.nc, r.nd);
+			}
+		}
+	}
+}
 
 void A1139(const string& fn)
 {
@@ -749,7 +915,8 @@ void A1139(const string& fn)
 	RedirCin(fn);
 // 	nsA1139B::Reset();
 // 	nsA1139B::A1139Func();
-	nsA1139Refectored::A1139Func();
+//	nsA1139Refectored::A1139Func();
+	nsA1139Liuchuo::A1139Func();
 }
 
 void A1139(void)
