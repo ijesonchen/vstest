@@ -28,6 +28,10 @@ sln: ref: luochuo
 	nsA1131RefOneDfs
 	10min 7/30 pt0,2,3 WA
 	
+	bug-fix: Â·¾¶ÅĞ¶ÏÌõ¼ş´íÎó
+	dist < minDist ||
+	(dist == minDist && trans < minTrans)
+	10min pass
 
 In the big cities, the subway systems always look so complex to the visitors. 
 To give you some sense, the following figure shows the map of Beijing subway.
@@ -337,10 +341,6 @@ namespace nsA1131RefOneDfs
 
 	void Dfs(int from, int dist, int trans, int line)
 	{
-// 		if (dist > vDist[from])
-// 		{
-// 			return;
-// 		}
 		if (dist > minDist)
 		{
 			return;
@@ -348,7 +348,8 @@ namespace nsA1131RefOneDfs
 		if (from == dstNode)
 		{
 			// found path
-			if (dist <= minDist && trans < minTrans)
+			if (dist < minDist ||
+				(dist == minDist && trans < minTrans))
 			{
 				minDist = dist;
 				minTrans = trans;
