@@ -150,6 +150,7 @@
     <ClCompile Include="Advanced\A1038.cpp" />
     <ClCompile Include="Advanced\A1039.cpp" />
     <ClCompile Include="Advanced\A1040.cpp" />
+    <ClCompile Include="Advanced\A1131.cpp" />
     <ClCompile Include="Advanced\A1134.cpp" />
     <ClCompile Include="Advanced\A1135.cpp" />
     <ClCompile Include="Advanced\A1137.cpp" />
