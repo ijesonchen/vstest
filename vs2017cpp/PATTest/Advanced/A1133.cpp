@@ -1,5 +1,8 @@
 void A1133(void);
 /*
+
+重做：cost：30min
+
 PT2不过 原因：只有1个点时，不能正确打印结果。
 
 测试：有数据，地址除-1外为正
@@ -166,12 +169,97 @@ int A1133Func(void)
 	return 0;
 }
 
+// 重做
+namespace nsA1133B
+{
+	void main(void)
+	{
+		const int MAXNODE = 100000;
+		int start, n, k, addr, data, next;
+		cin >> start >> n >> k;
+		vector<int> vData(MAXNODE);
+		vector<int> vNext(MAXNODE);
+		for (int i = 0; i < n; ++i)
+		{			
+			cin >> addr;
+			cin >> vData[addr] >> vNext[addr];
+		}
+		vector<int> v1, v2, v3;
+		addr = start;
+		data = vData[addr];
+		next = vNext[addr];
+		while (next != -1)
+		{
+			if (data < 0)
+			{
+				v1.push_back(addr);
+			}
+			else if (data <= k)
+			{ 
+				v2.push_back(addr);
+			}
+			else
+			{
+				v3.push_back(addr);
+			}
+			addr = next;
+			data = vData[addr];
+			next = vNext[next];
+		}
+		if (data < 0)
+		{
+			v1.push_back(addr);
+		}
+		else if (data <= k)
+		{
+			v2.push_back(addr);
+		}
+		else
+		{
+			v3.push_back(addr);
+		}
+		vector<int> vAddrRes;
+		vector<int> vDataRes;
+		for (auto v : v1)
+		{
+			vAddrRes.push_back(v);
+			vDataRes.push_back(vData[v]);
+		}
+		for (auto v : v2)
+		{
+			vAddrRes.push_back(v);
+			vDataRes.push_back(vData[v]);
+		}
+		for (auto v : v3)
+		{
+			vAddrRes.push_back(v);
+			vDataRes.push_back(vData[v]);
+		}
+		size_t len = vAddrRes.size();
+		addr = vAddrRes[0];
+		data = vDataRes[0];
+		next = len > 1 ? vAddrRes[1] : -1;
+		for (size_t i = 1; i < len; ++i)
+		{
+			printf("%05d %d %05d\n", addr, data, next);
+			addr = next;
+			data = vDataRes[i];
+			next = (i == len - 1) ? -1 : vAddrRes[i + 1];
+		}
+		printf("%05d %d -1\n", addr, data);
+	}
+}
+
+
+
+
 void A1133(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
 
-	A1133Func();
+	nsA1133B::main();
+//	A1133Func();
 }
 
 void A1133(void)

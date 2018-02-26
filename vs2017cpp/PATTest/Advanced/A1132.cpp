@@ -1,5 +1,12 @@
 void A1132(void);
 /*
+
+cost: 16:10
+
+ÖØ×ö£º15min pass
+
+
+
 tips:if A/B is zero? e.g. z=10
 
 1132. Cut Integer (20)
@@ -39,42 +46,71 @@ No
 
 using namespace std;
 
-string A1132n2s(unsigned n)
+namespace nsA1132A
 {
-	stringstream ss;
-	ss << n;
-	return ss.str();
+	string A1132n2s(unsigned n)
+	{
+		stringstream ss;
+		ss << n;
+		return ss.str();
+	}
+
+	unsigned A1132s2n(const string& s)
+	{
+		unsigned n;
+		stringstream ss(s);
+		ss >> n;
+		return n;
+	}
+
+	void A1132Func(unsigned n0)
+	{
+		string s0 = A1132n2s(n0);
+		int len = (int)s0.length() / 2;
+		string s1 = s0.substr(0, len);
+		string s2 = s0.substr(len, -1);
+		unsigned n1 = A1132s2n(s1);
+		unsigned n2 = A1132s2n(s2);
+		unsigned n3 = n1 * n2;
+		if (!n3)
+		{
+			cout << "No" << endl;
+			return;
+		}
+		if ((n0 % (n1 * n2)) == 0)
+		{
+			cout << "Yes" << endl;
+		}
+		else
+		{
+			cout << "No" << endl;
+		}
+	}
 }
 
-unsigned A1132s2n(const string& s)
+namespace nsA1132B
 {
-	unsigned n;
-	stringstream ss(s);
-	ss >> n;
-	return n;
-}
 
-void A1132Func(unsigned n0)
-{
-	string s0 = A1132n2s(n0);
-	int len = (int)s0.length() / 2;
-	string s1 = s0.substr(0, len);
-	string s2 = s0.substr(len, -1);
-	unsigned n1 = A1132s2n(s1);
-	unsigned n2 = A1132s2n(s2);
-	unsigned n3 = n1 * n2;
-	if (!n3)
+	void A1132Func(unsigned long  n)
 	{
-		cout << "No" << endl;
-		return;
-	}
-	if ((n0 % (n1 * n2)) == 0)
-	{
-		cout << "Yes" << endl;
-	}
-	else
-	{
-		cout << "No" << endl;
+		stringstream ss;
+		ss << n;
+		string s = ss.str();
+		size_t len = s.length() / 2;
+		string s1, s2;
+		s1 = s.substr(0, len);
+		s2 = s.substr(len, len);
+		unsigned long  n1 = stoi(s1);
+		unsigned long  n2 = stoi(s2);
+		unsigned long  n3 = n1 * n2;
+		if (n3 && n % n3 == 0)
+		{
+			cout << "Yes" << endl;
+		}
+		else
+		{
+			cout << "No" << endl;
+		}
 	}
 }
 
@@ -83,16 +119,16 @@ void A1132(const string& fn)
 	cout << fn << endl;
 	RedirCin(fn);
 
-	unsigned cnt, n;
+	unsigned long cnt, n;
 	cin >> cnt;
 	while (cin >> n)
 	{
-		A1132Func(n);
+		nsA1132B::A1132Func(n);
 	}
 }
 
 void A1132(void)
 {
 	A1132("data\\A1132-1.TXT"); // Yes No No
-	A1132("data\\A1132-2.TXT"); // No
+	A1132("data\\A1132-2.TXT"); // No No
 }
