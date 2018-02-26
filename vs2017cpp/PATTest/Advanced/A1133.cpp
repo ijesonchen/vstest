@@ -1,7 +1,22 @@
 void A1133(void);
 /*
 
-重做：cost：30min
+重做nsA1133B：cost：30min
+优化naA1133C: cost: 20min pass
+	参考https://www.liuchuo.net/archives/4092
+	结果打印部分
+	a1 v1 a2
+	a2 v2 a3
+	...
+	拆分为
+	a1,v1
+	a2,a2,v2
+	...
+	an,an,vn
+	-1
+
+data\a1133-2:
+00100 18 -1
 
 PT2不过 原因：只有1个点时，不能正确打印结果。
 
@@ -250,15 +265,106 @@ namespace nsA1133B
 	}
 }
 
+// ref https://www.liuchuo.net/archives/4092
+// 优化
+namespace nsA1133C
+{
+	void main(void)
+	{
+		const int MAXNODE = 100000;
+		int start, n, k, addr, data;
+		cin >> start >> n >> k;
+		vector<int> vData(MAXNODE);
+		vector<int> vNext(MAXNODE);
+		for (int i = 0; i < n; ++i)
+		{
+			cin >> addr;
+			cin >> vData[addr] >> vNext[addr];
+		}
+		// result address
+		vector<vector<int>> vv(3);
+		addr = start;
+		while (addr != -1)
+		{
+			data = vData[addr];
+			if (data < 0) { vv[0].push_back(addr); }
+			else if (data <= k) { vv[1].push_back(addr); }
+			else { vv[2].push_back(addr); }
+			addr = vNext[addr];
+		}
+
+		bool first = true;
+		for (int i = 0; i < 3; ++i)
+		{
+			for (size_t j = 0; j < vv[i].size(); ++j)
+			{
+				addr = vv[i][j];
+				data = vData[addr];
+				if (first)
+				{
+					printf("%05d %d ", addr, data);
+					first = false;
+				}
+				else
+				{
+					printf("%05d\n%05d %d ", addr, addr, data);
+				}
+			}
+		}
+		printf("-1\n");
+	}
+}
 
 
+// ref https://www.liuchuo.net/archives/4092
+namespace nsA1133Liuchuo
+{
+	using namespace std;
+	struct node {
+		int data, next;
+	}list[100000];
+	vector<int> v[3];
+	int main() {
+		int start, n, k, a;
+		scanf("%d%d%d", &start, &n, &k);
+		for (int i = 0; i < n; i++) {
+			scanf("%d", &a);
+			scanf("%d%d", &list[a].data, &list[a].next);
+		}
+		int p = start;
+		while (p != -1) {
+			int data = list[p].data;
+			if (data < 0)
+				v[0].push_back(p);
+			else if (data >= 0 && data <= k)
+				v[1].push_back(p);
+			else
+				v[2].push_back(p);
+			p = list[p].next;
+		}
+		int flag = 0;
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < v[i].size(); j++) {
+				if (flag == 0) {
+					printf("%05d %d ", v[i][j], list[v[i][j]].data);
+					flag = 1;
+				}
+				else {
+					printf("%05d\n%05d %d ", v[i][j], v[i][j], list[v[i][j]].data);
+				}
+			}
+		}
+		printf("-1");
+		return 0;
+	}
+}
 
 void A1133(const string& fn)
 {
 	cout << fn << endl;
 	RedirCin(fn);
 
-	nsA1133B::main();
+	nsA1133C::main();
 //	A1133Func();
 }
 
