@@ -33,6 +33,11 @@ sln: ref: luochuo
 	(dist == minDist && trans < minTrans)
 	10min pass
 
+sln3: nsA1131B
+	根据liuchuo的代码重写
+	一遍dfs，函数判断trans
+	40min 1/30 pt0,1,2,3,5 WA
+
 In the big cities, the subway systems always look so complex to the visitors. 
 To give you some sense, the following figure shows the map of Beijing subway.
 Now you are supposed to help people with your computer skills! 
@@ -292,7 +297,7 @@ namespace nsA1131A
 	}
 }
 
-// ref: luochuo
+// ref: liuchuo
 // 修改为只用一遍DFS搜索路径
 namespace nsA1131RefOneDfs
 {
@@ -443,6 +448,330 @@ namespace nsA1131RefOneDfs
 	}
 }
 
+// ref: liuchuo
+// dfs one pass, trans with function
+namespace nsA1131RefOneDfsTransFunc
+{
+	typedef unordered_map<int, int> MapIntInt;
+
+	const int MAXNODE = 10000;
+	vector<vector<int>> vAdjencents;
+	MapIntInt mapEdge2Line;
+
+	// for search
+	int dstNode = 0;
+	int minDist = MAXNODE;
+	int minTrans = MAXNODE;
+	vector<int> vPathNode;
+	vector<int> vPathTemp;
+	vector<bool> vVisit;
+
+	int EdgeId(int s1, int s2) { return (s1 << 16) + s2; }
+	int EdgeSrc(int e) { return e >> 16; }
+	int EdgeDst(int e) { return e & 0xFFFF; }
+
+	int TransCount(vector<int>& vPath)
+	{
+		int trans = 0;
+		int from = vPath[0];
+		int to = vPath[1];
+		int line = mapEdge2Line[EdgeId(from, to)];
+		from = to;
+		size_t len = vPath.size();
+		for (size_t i = 2; i < len; ++i)
+		{
+			to = vPath[i];
+			int next = mapEdge2Line[EdgeId(from, to)];
+			if (next != line)
+			{
+				line = next;
+				++trans;
+			}
+			from = to;
+		}
+		return trans;
+	}
+
+	void Read()
+	{
+		vAdjencents.assign(MAXNODE, vector<int>());
+		mapEdge2Line.clear();
+
+		int n, m;
+		cin >> n;
+		for (int i = 0; i < n; ++i)
+		{
+			int line = i + 1;
+			int s1, s2;
+			cin >> m >> s1;
+			for (int j = 1; j < m; ++j)
+			{
+				cin >> s2;
+				vAdjencents[s1].push_back(s2);
+				vAdjencents[s2].push_back(s1);
+				mapEdge2Line[EdgeId(s1, s2)] = line;
+				mapEdge2Line[EdgeId(s2, s1)] = line;
+				s1 = s2;
+			}
+		}
+	}
+
+	void Dfs(int from, int dist)
+	{
+		if (dist > minDist)
+		{
+			return;
+		}
+		if (from == dstNode)
+		{
+			// found path
+			int trans = TransCount(vPathTemp);
+			if (dist < minDist ||
+				(dist == minDist && trans < minTrans))
+			{
+				minDist = dist;
+				minTrans = trans;
+				vPathNode = vPathTemp;
+			}
+			return;
+		}
+		vector<int>& vAdj = vAdjencents[from];
+		for (auto next : vAdj)
+		{
+			if (vVisit[next])
+			{
+				continue;
+			}
+			vVisit[next] = true;
+			vPathTemp.push_back(next);
+			Dfs(next, dist + 1);
+			vVisit[next] = false;
+			vPathTemp.pop_back();
+		}
+	}
+
+	void PrintLine(int line, int from, int to)
+	{
+		// Take Line#3 from 3011 to 3013.
+		printf("Take Line#%d from %04d to %04d.\n", line, from, to);
+	}
+
+	void PrintPath(void)
+	{
+		size_t len = vPathNode.size();
+		cout << len - 1 << endl;
+		int from = vPathNode[0];
+		int to = vPathNode[1];
+		int line1 = mapEdge2Line[EdgeId(from, to)];
+		for (int i = 2; i < len; ++i)
+		{
+			int next = vPathNode[i];
+			int line2 = mapEdge2Line[EdgeId(to, next)];
+			if (line2 != line1)
+			{
+				PrintLine(line1, from, to);
+				from = to;
+				line1 = line2;
+			}
+			to = next;
+		}
+		PrintLine(line1, from, to);
+	}
+
+	void ResetDfs(int src, int dst)
+	{
+		dstNode = dst;
+		minDist = MAXNODE;
+		minTrans = MAXNODE;
+		vPathNode.clear();
+		vPathTemp.clear();
+		vVisit.assign(MAXNODE, false);
+		vVisit[src] = true;
+		vPathTemp.push_back(src);
+	}
+
+	void Search(int s1, int s2)
+	{
+		ResetDfs(s1, s2);
+		Dfs(s1, 0);
+		PrintPath();
+	}
+
+	void Query(void)
+	{
+		int k, s1, s2;
+		cin >> k;
+		for (int i = 0; i < k; ++i)
+		{
+			cin >> s1 >> s2;
+			Search(s1, s2);
+		}
+	}
+
+	void main(void)
+	{
+		Read();
+		Query();
+	}
+}
+
+// ref https://www.liuchuo.net/archives/3850
+// rewrite 14:30 40min
+namespace nsA1131B 
+{
+	const int MAXNODE = 10000;
+	// adjacent list
+	vector<vector<int>> vvAdj;
+	unordered_map<int, int> mapLine;
+	int Edge(int u, int v) { return (u << 16) + v; };
+
+//	vector<vector<char>> vvLine;
+
+	// for dfs search
+	vector<bool> vVisit;
+	
+	// for search result
+	int destNode = 0;
+	vector<int> vPathRes;
+	int minDist = MAXNODE;
+	int minTrans = MAXNODE;
+	vector<int> vPathTemp;
+	
+	void Read(void)
+	{
+		vvAdj.assign(MAXNODE, vector<int>());
+//		vvLine.assign(MAXNODE, vector<char>(MAXNODE, 0));
+		int n, m, s1, s2;
+		cin >> n;
+		for (int i = 0; i < n; ++i)
+		{
+			cin >> m >> s1;
+			char line = (char)i + 1;
+			for (int j = 1; j < m; ++j)
+			{
+				cin >> s2;
+				vvAdj[s1].push_back(s2);
+				vvAdj[s2].push_back(s1);
+				mapLine[Edge(s1, s2)] = line;
+				mapLine[Edge(s2, s1)] = line;
+// 				vvLine[s1][s2] = line;
+// 				vvLine[s2][s1] = line;
+				s1 = s2;
+			}
+		}
+	}
+
+	void PrintLine(int line, int from, int to)
+	{
+		printf("Take Line#%d from %04d to %04d.\n", line, from, to);
+	}
+
+	void PrintPath(void)
+	{		
+		cout << vPathRes.size() - 1 << endl;
+		int start = vPathRes[0];
+		int from = vPathRes[1];
+		int to = vPathRes[1];
+//		int line = vvLine[start][to];
+		int line = mapLine[Edge(start, to)];
+		for (size_t i = 2; i < vPathRes.size(); ++i)
+		{
+			int to = vPathRes[i];
+//			int next = vvLine[from][to];
+			int next = mapLine[Edge(from, to)];
+			if (line != next)
+			{
+				PrintLine(line, start, to);
+				line = next;
+				start = to;
+			}
+			from = to;
+		}
+		PrintLine(line, start, to);
+	}
+
+	int Trans(vector<int>& vPath)
+	{
+		int trans = 0;
+		int from = vPath[1];
+//		int line = vvLine[vPath[0]][from];
+		int line = mapLine[Edge(vPath[0], from)];
+		size_t len = vPath.size();
+		for (size_t i = 2; i < len; ++i)
+		{
+			int to = vPath[i];
+//			int next = vvLine[from][to];
+			int next = mapLine[Edge(from, to)];;
+			if (line != next)
+			{
+				line = next;
+				++trans;
+			}
+			from = to;
+		}
+		return trans;
+	}
+
+	void Dfs(int from, int dist)
+	{
+		// stop
+		if (dist > minDist)
+		{
+			return;
+		}
+		if (from == destNode)
+		{
+			int trans = Trans(vPathTemp);
+			if (dist < minDist || // shorter path
+				(dist == minDist && trans < minTrans)) // less trans
+			{
+				vPathRes = vPathTemp;
+				minDist = dist;
+				minTrans = trans;
+			}
+			return;
+		}
+		for (auto to : vvAdj[from])
+		{
+			if (!vVisit[to])
+			{
+				vVisit[to] = true;
+				vPathTemp.push_back(to);
+				Dfs(to, dist + 1);
+				vPathTemp.pop_back();
+				vVisit[to] = false;
+			}
+		}
+	}
+
+	void Search(int from, int to)
+	{
+		// reset, dfs, print
+		vVisit.assign(MAXNODE, false);
+		destNode = to;
+		vPathRes.clear();
+		minTrans = MAXNODE;
+		minDist = MAXNODE;
+		vPathTemp.assign(1, from);
+		Dfs(from, 0);
+		PrintPath();
+	}
+
+
+	int main(void)
+	{
+		Read();
+		int k, from, to;
+		cin >> k;
+		for (int i = 0; i < k; ++i)
+		{
+			cin >> from >> to;
+			Search(from, to);
+		}
+		return 0;
+	}
+}
+
 // https://www.liuchuo.net/archives/3850
 // 通过一边DFS减枝实现路径搜索。
 namespace nsA1131LiuchuoRef
@@ -453,8 +782,8 @@ namespace nsA1131LiuchuoRef
 	// 边-线路映射
 	int line[10000][10000];
 	int	visit[10000], 
-		minCnt, 
-		minTransfer, 
+		minCnt, // 最短路径
+		minTransfer, // 最小换成
 		start, 
 		end1;
 	vector<int> path, tempPath;
@@ -475,6 +804,7 @@ namespace nsA1131LiuchuoRef
 
 	void dfs(int node, int cnt) 
 	{
+		// 可增加： cnt > minCnt提早结束
 		if (node == end1 && 
 			(cnt < minCnt || 
 				(cnt == minCnt && 
@@ -550,7 +880,7 @@ namespace nsA1131LiuchuoRef
 // rename this to main int PAT
 int A1131Func(void)
 {
-	nsA1131RefOneDfs::main();
+	nsA1131B::main();
 	return 0;
 }
 
