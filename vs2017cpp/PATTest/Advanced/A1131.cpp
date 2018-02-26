@@ -5,6 +5,8 @@ cost: 11:00 2h
 
 总结：不熟悉多最短路径搜索，导致编码慢，并且有bug
 	打印路径编码较慢。
+	熟悉题目后，编码时间大约40min
+	要仔细！
 
 test: m > 0
 
@@ -38,8 +40,10 @@ sln3: nsA1131B
 	一遍dfs，函数判断trans
 	vector<vector<char>> vvLine会导致内存超限。改用map
 	40min 1/30 pt0,1,2,3,5 WA
-	bug-fix PrintPath
+	bug-fix PrintPath to
 	10min 4/30 pt0,2,3,5 WA
+	bug-fix PrintPath from
+	10min pass 
 
 In the big cities, the subway systems always look so complex to the visitors. 
 To give you some sense, the following figure shows the map of Beijing subway.
@@ -668,25 +672,24 @@ namespace nsA1131B
 	{		
 		cout << vPathRes.size() - 1 << endl;
 		int start = vPathRes[0];
-		int from = vPathRes[1];
-		int to = vPathRes[1];
-		int line = mapLine[Edge(start, to)];
+		int end = vPathRes[1];
+		int line = mapLine[Edge(start, end)];
 		for (size_t i = 2; i < vPathRes.size(); ++i)
 		{
-			to = vPathRes[i];
-			int next = mapLine[Edge(from, to)];
+			int to = vPathRes[i];
+			int next = mapLine[Edge(end, to)];
 			if (line != next)
 			{
-				PrintLine(line, start, to);
+				PrintLine(line, start, end);
 				line = next;
-				start = to;
+				start = end;
 			}
-			from = to;
+			end = to;
 		}
-		PrintLine(line, start, to);
+		PrintLine(line, start, end);
 	}
 
-	int Trans(vector<int>& vPath)
+	int Trans(const vector<int>& vPath)
 	{
 		int trans = 0;
 		int from = vPath[1];
@@ -718,7 +721,7 @@ namespace nsA1131B
 			int trans = Trans(vPathTemp);
 			if (dist < minDist || // shorter path
 				(dist == minDist && trans < minTrans)) // less trans
-			{
+			{	// path found
 				vPathRes = vPathTemp;
 				minDist = dist;
 				minTrans = trans;
@@ -777,7 +780,7 @@ namespace nsA1131LiuchuoRef
 	int line[10000][10000];
 	int	visit[10000], 
 		minCnt, // 最短路径
-		minTransfer, // 最小换成
+		minTransfer, // 最小换乘数
 		start, 
 		end1;
 	vector<int> path, tempPath;
