@@ -36,7 +36,10 @@ sln: ref: luochuo
 sln3: nsA1131B
 	根据liuchuo的代码重写
 	一遍dfs，函数判断trans
+	vector<vector<char>> vvLine会导致内存超限。改用map
 	40min 1/30 pt0,1,2,3,5 WA
+	bug-fix PrintPath
+	10min 4/30 pt0,2,3,5 WA
 
 In the big cities, the subway systems always look so complex to the visitors. 
 To give you some sense, the following figure shows the map of Beijing subway.
@@ -624,9 +627,7 @@ namespace nsA1131B
 	vector<vector<int>> vvAdj;
 	unordered_map<int, int> mapLine;
 	int Edge(int u, int v) { return (u << 16) + v; };
-
-//	vector<vector<char>> vvLine;
-
+	
 	// for dfs search
 	vector<bool> vVisit;
 	
@@ -640,7 +641,6 @@ namespace nsA1131B
 	void Read(void)
 	{
 		vvAdj.assign(MAXNODE, vector<int>());
-//		vvLine.assign(MAXNODE, vector<char>(MAXNODE, 0));
 		int n, m, s1, s2;
 		cin >> n;
 		for (int i = 0; i < n; ++i)
@@ -654,8 +654,6 @@ namespace nsA1131B
 				vvAdj[s2].push_back(s1);
 				mapLine[Edge(s1, s2)] = line;
 				mapLine[Edge(s2, s1)] = line;
-// 				vvLine[s1][s2] = line;
-// 				vvLine[s2][s1] = line;
 				s1 = s2;
 			}
 		}
@@ -672,12 +670,10 @@ namespace nsA1131B
 		int start = vPathRes[0];
 		int from = vPathRes[1];
 		int to = vPathRes[1];
-//		int line = vvLine[start][to];
 		int line = mapLine[Edge(start, to)];
 		for (size_t i = 2; i < vPathRes.size(); ++i)
 		{
-			int to = vPathRes[i];
-//			int next = vvLine[from][to];
+			to = vPathRes[i];
 			int next = mapLine[Edge(from, to)];
 			if (line != next)
 			{
@@ -694,13 +690,11 @@ namespace nsA1131B
 	{
 		int trans = 0;
 		int from = vPath[1];
-//		int line = vvLine[vPath[0]][from];
 		int line = mapLine[Edge(vPath[0], from)];
 		size_t len = vPath.size();
 		for (size_t i = 2; i < len; ++i)
 		{
 			int to = vPath[i];
-//			int next = vvLine[from][to];
 			int next = mapLine[Edge(from, to)];;
 			if (line != next)
 			{
