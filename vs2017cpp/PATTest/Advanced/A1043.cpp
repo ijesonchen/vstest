@@ -63,6 +63,12 @@ using namespace std;
 	2. 是否合法？
 	3. 后序输出
 21:20 20/25 pt4,6wa
+
+	增加BST验证
+21:25 20/25 pt4,6 wa
+
+	bug-fix1: 大序时inRoot判定
+21:35 23/30 pt6 wa
 */
 
 namespace nsA1043A
@@ -111,7 +117,8 @@ namespace nsA1043A
 			inRoot = in1 + len - 1;
 			while (inOrder[inRoot--] != p->data)
 			{
-				if (inRoot <= in1)
+				// bug-fix1
+				if (inRoot < in1)
 				{
 					bValid = false;
 					return;
@@ -129,6 +136,28 @@ namespace nsA1043A
 		{
 			BuildTree(p->right, pre1 + 1 + nLeft, inRoot + 1, nRight);
 		}
+	}
+
+	bool ValidTreeLt(Node* p)
+	{
+		if (!p) { return true; }
+		if (p->left && p->left->data >= p->data ||
+			p->right && p->right->data < p->data)
+		{
+			return false;
+		}
+		return ValidTreeLt(p->left) && ValidTreeLt(p->right);
+	}
+
+	bool ValidTreeGte(Node* p)
+	{
+		if (!p) { return true; }
+		if (p->left && p->left->data < p->data ||
+			p->right && p->right->data >= p->data)
+		{
+			return false;
+		}
+		return ValidTreeGte(p->left) && ValidTreeGte(p->right);
 	}
 
 	void PostOrder(Node* p)
@@ -150,6 +179,7 @@ namespace nsA1043A
 		{
 			cout << " " << postOrder[i];
 		}
+		cout << endl;
 	}
 
 	int main(void)
@@ -177,7 +207,7 @@ namespace nsA1043A
 		sort(inOrder.begin(), inOrder.end());
 		bValid = true;
 		BuildTree(pRoot, 0, 0, n);
-		if (bValid)
+		if (bValid && ValidTreeLt(pRoot))
 		{
 			cout << "YES" << endl;
 			PrintPostOrder();
@@ -189,7 +219,7 @@ namespace nsA1043A
 			{ swap(inOrder[i], inOrder[n - 1 - i]); }
 		bValid = true;
 		BuildTree(pRoot, 0, 0, n);
-		if (bValid)
+		if (bValid && ValidTreeGte(pRoot))
 		{
 			cout << "YES" << endl;
 			PrintPostOrder();
@@ -221,5 +251,6 @@ void A1043(void)
 	A1043("data\\A1043-1.txt"); // 
 	A1043("data\\A1043-2.txt"); // 
 	A1043("data\\A1043-3.txt"); // 
+	A1043("data\\A1043-4.txt"); // YES 8 9 8
 }
 
