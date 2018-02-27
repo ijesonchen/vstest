@@ -1,28 +1,34 @@
-/*
+ï»¿/*
 1135. Is It A Red-Black Tree (30)
+
+reviewï¼šref Liuchuo è¾“å…¥å¯èƒ½ä¸æ˜¯BSTï¼Ÿ
+	éªŒè¯ï¼šBSTä¸­åºä¸ºé€’å¢åºåˆ—
+
+å…³äºäºŒå‰æ ‘çš„éå†ä¸é‡å»ºï¼šæ¶‰åŠä»€ä¹ˆæƒ…å†µä¸‹å¯ä»¥æ ¹æ®éå†é‡å»ºäºŒå‰æ ‘
+refï¼šhttps://zhuanlan.zhihu.com/p/26418233
 
 cost: 10:40
 
-sln1: ½öÇ°ĞòÎŞ·¨Î¨Ò»È·¶¨Ò»¿ÃÊ÷¡£Ó¦¸ÃÊÇÇ°ĞòºÍRBÊ÷ÓĞ¹ØÏµ¡£
-	¿´ÌâÄ¿£¬²Â²âÈçÏÂ¹ØÏµ£º
+sln1: ä»…å‰åºæ— æ³•å”¯ä¸€ç¡®å®šä¸€æ£µæ ‘ã€‚åº”è¯¥æ˜¯å‰åºå’ŒRBæ ‘æœ‰å…³ç³»ã€‚
+	çœ‹é¢˜ç›®ï¼ŒçŒœæµ‹å¦‚ä¸‹å…³ç³»ï¼š
 	BRBBRRBBRR...
 	25min 21/30 PT2,3 WA
-	²Â²âÄ©Î²Ó¦Îª BR
+	çŒœæµ‹æœ«å°¾åº”ä¸º BR
 	5min 21/30 pt2,3 wa
 
-SLN2: ËÑË÷ºìºÚÊ÷ Ç°Ğò±éÀú£¬½éÉÜºìºÚÊ÷µÄ×ÊÁÏÌáµ½£ººìºÚÊ÷ÊÇ¶ş²æËÑË÷Ê÷
-	Òò´Ë£¬Âú×ãËÑË÷Ê÷µÄÌõ¼ş
-	Ç°Ğò£º ¸ù ×ó ÓÒ
-	¶ş²æÊ÷Ç°Ğò£º ¸ù Ğ¡ ´ó
+SLN2: æœç´¢çº¢é»‘æ ‘ å‰åºéå†ï¼Œä»‹ç»çº¢é»‘æ ‘çš„èµ„æ–™æåˆ°ï¼šçº¢é»‘æ ‘æ˜¯äºŒå‰æœç´¢æ ‘
+	å› æ­¤ï¼Œæ»¡è¶³æœç´¢æ ‘çš„æ¡ä»¶
+	å‰åºï¼š æ ¹ å·¦ å³
+	äºŒå‰æ ‘å‰åºï¼š æ ¹ å° å¤§
 	14:50 70min 21/30 pt2,3 wa
 
-SLN3£ºEvery leaf (NULL) is black¡£¸ù¾İleaf¶¨ÒåÖØĞÂÅĞ¶Ï5 
+SLN3ï¼šEvery leaf (NULL) is blackã€‚æ ¹æ®leafå®šä¹‰é‡æ–°åˆ¤æ–­5 
 	LeafBlackNodes
-	(BlackNodesºÍSetBlackNodesº¯Êı´íÎó£¬sln4ÖĞĞŞÕı)
+	(BlackNodeså’ŒSetBlackNodeså‡½æ•°é”™è¯¯ï¼Œsln4ä¸­ä¿®æ­£)
 	20min pass
 
-sln4: ¸ù¾İleaf¶¨Òå, ĞŞÕıBlackNodes£ºÖ»Òª×Ó½ÚµãÓĞÒ»¸öÎªNULL£¬¼´±È½ÏÂ·¾¶ºÚ½ÚµãÊı
-	LeafBlackNodes ºÍ BlackNodes¶¼¿ÉÒÔÕıÈ·ÅĞ¶Ï
+sln4: æ ¹æ®leafå®šä¹‰, ä¿®æ­£BlackNodesï¼šåªè¦å­èŠ‚ç‚¹æœ‰ä¸€ä¸ªä¸ºNULLï¼Œå³æ¯”è¾ƒè·¯å¾„é»‘èŠ‚ç‚¹æ•°
+	LeafBlackNodes å’Œ BlackNodeséƒ½å¯ä»¥æ­£ç¡®åˆ¤æ–­
 	5min pass
 	
 
@@ -83,6 +89,8 @@ No
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <deque>
 
 using namespace std;
 
@@ -362,11 +370,267 @@ namespace nsA1135B
 	}
 }
 
+// ref https://www.liuchuo.net/archives/4099
+namespace nsA1135Liuchuo
+{
+	vector<int> pre, post, arr;
+
+	struct node 
+	{
+		int val;
+		struct node *left, 
+					*right;
+	};
+
+	node* build(node *root, int v) 
+	{
+		if (root == NULL) {
+			root = new node();
+			root->val = v;
+			root->left = root->right = NULL;
+		}
+		else if (abs(v) <= abs(root->val))
+		{
+			root->left = build(root->left, v);
+		}
+		else
+		{
+			root->right = build(root->right, v);
+		}
+		return root;
+	}
+
+	void getPost(int root, int end)
+	{
+		if (root > end) {return;}
+		int i = root + 1, 
+			j = end;
+		while (i <= end && pre[root] > pre[i]) {i++;}
+		while (j >= root + 1 && pre[root] <= pre[j]) {j--;}
+		if (i != j + 1) {return;}
+		getPost(root + 1, j);
+		getPost(i, end);
+		post.push_back(pre[root]);
+	}
+
+	bool judge1(node *root) 
+	{
+		if (root == NULL) {return true;}
+		if (root->val < 0) 
+		{
+			if (root->left != NULL && root->left->val < 0) {return false;}
+			if (root->right != NULL && root->right->val < 0) {return false;}
+		}
+		return judge1(root->left) && judge1(root->right);
+	}
+
+	int getNum(node *root) 
+	{
+		if (root == NULL) {return 0;}
+		int l = getNum(root->left);
+		int r = getNum(root->right);
+		return root->val > 0 ? std::max(l, r) + 1 : std::max(l, r);
+	}
+
+	bool judge2(node *root) 
+	{
+		if (root == NULL) {return true;}
+		int l = getNum(root->left);
+		int r = getNum(root->right);
+		if (l != r) {return false;}
+		return judge2(root->left) && judge2(root->right);
+	}
+
+	int main() {
+		int k, n;
+		scanf("%d", &k);
+		for (int i = 0; i < k; i++) 
+		{
+			scanf("%d", &n);
+			arr.resize(n);
+			pre.resize(n);
+			node *root = NULL;
+			for (int j = 0; j < n; j++) 
+			{
+				scanf("%d", &arr[j]);
+				root = build(root, arr[j]);
+				pre[j] = abs(arr[j]);
+			}
+			post.clear();
+			getPost(0, n - 1);
+			if (post.size() != n || arr[0] < 0 || judge1(root) == false || judge2(root) == false)
+				{printf("No\n");}
+			else
+				{printf("Yes\n");}
+		}
+		return 0;
+	}
+}
+
+namespace nsA1135BstValid
+{
+	struct Node 
+	{
+		int d;
+		Node* left = nullptr;
+		Node* right = nullptr;
+
+		Node(int i) :d(i) {};
+	};
+
+	vector<int> preOrder;
+	vector<int> inOrder;
+	vector<Node> vPreNode;
+	Node* pRoot = nullptr;
+	vector<bool> redColor;
+
+	void PrintTree(Node* pNode, int indent)
+	{
+		if (pNode)
+		{
+			for (int i = 0; i < indent; ++i)
+			{
+				cout << " .";
+			}
+			cout << "-+" << pNode->d << endl;
+			if (pNode->left || pNode->right)
+			{
+				PrintTree(pNode->left, indent + 1);
+				PrintTree(pNode->right, indent + 1);
+			}
+		}
+		else
+		{
+			for (int i = 0; i < indent; ++i)
+			{
+				cout << " .";
+			}
+			cout << "-+*" << endl;
+		}
+	}
+	
+	Node* BuildTreePreIn(vector<int>& preOrder, vector<int>& inOrder, int pre0, int in0, int len)
+	{
+		if (len <= 0) { return nullptr; }
+		int root = preOrder[pre0];
+		Node* pRoot = new Node(root);
+		int iRootIn = in0;
+		while (inOrder[iRootIn++] != root) {}
+		int nLeft = iRootIn - in0 - 1;
+		pRoot->left = BuildTreePreIn(preOrder, inOrder, pre0 + 1, in0, nLeft);
+		pRoot->right = BuildTreePreIn(preOrder, inOrder, pre0 + 1 + nLeft, in0 + nLeft + 1, len - 1 - nLeft);
+		return pRoot;
+	}
+
+	bool BuildTreePreIn(Node*& pRoot, int pre1, int in1, int len)
+	{
+		pRoot = &vPreNode[pre1];
+		int root = preOrder[pre1];
+		int iRootIn = in1;
+		int in2 = in1 + len;
+		while (inOrder[iRootIn] != root)
+		{
+			++iRootIn;
+			if (iRootIn >= in2)
+			{
+				// not a BST tree;
+				return false;
+			}
+		}
+		int inLeft = iRootIn - in1;
+		if (inLeft > 0)
+		{
+			BuildTreePreIn(pRoot->left, pre1 + 1, in1, inLeft);
+		}
+		int inRight = len - inLeft - 1;
+		if (inRight > 0)
+		{
+			BuildTreePreIn(pRoot->right, pre1 + 1 + inLeft, iRootIn + 1, inRight);
+		}
+	}
+
+	bool IsBst(Node* p)
+	{
+		int root = p->d;
+		if (p->left)
+		{
+			if (p->left->d > root || !IsBst(p->left))
+			{
+				return false;
+			}
+		}
+		if (p->right)
+		{
+			if (p->right->d < root || !IsBst(p->right))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	void ReadTree(void)
+	{
+		int m, k;
+		cin >> m;
+		redColor.assign(m, false);
+		preOrder.assign(m, 0);
+		for (int i = 0; i < m; ++i)
+		{
+			cin >> k;
+			if (k < 0)
+			{
+				redColor[i] = true;
+				k = -k;
+			}
+			preOrder[i] = k;
+			vPreNode.push_back(k);
+		}
+		inOrder = preOrder;
+		sort(inOrder.begin(), inOrder.end());
+	}
+
+	int main(void)
+	{
+		int n;
+		cin >> n;
+		for (int i = 0; i < n; ++i)
+		{
+			preOrder.clear();
+			inOrder.clear();
+			vPreNode.clear();
+			pRoot = nullptr;
+			redColor.clear();
+			ReadTree();
+			auto p = BuildTreePreIn(preOrder, inOrder, 0, 0, (int)preOrder.size());
+			PrintTree(p, 0);
+			cout << endl;
+// 			if (!BuildTreePreIn(pRoot, 0, 0, (int)preOrder.size()))
+// 			{
+// 				cout << "No" << endl;
+// 			}
+// 			if (!IsBst(pRoot))
+// 			{
+// 				throw 0;
+// 			}
+		}
+
+		return 0;
+	}
+}
+
+namespace nsA1135BuildTree
+{
+	using nsA1135BstValid::Node;
+
+}
+
 
 // rename this to main int PAT
 int A1135Func(void)
 {
-	nsA1135B::Read();
+//	nsA1135B::Read();
+	nsA1135BstValid::main();
 	return 0;
 }
 
@@ -382,5 +646,6 @@ void A1135(const string& fn)
 void A1135(void)
 {
 	A1135("data\\A1135-1.txt"); // 
+	A1135("data\\A1135-2.txt"); // 
 }
 
