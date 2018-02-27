@@ -96,6 +96,8 @@ A1131: ref 1H PASS
 A1132: REWRITE 15min pass
 A1133: rewrite 30min pass ref 20min pass
 A1032: 15MIN pass
+	**02.27
+A1035: rewrite 70min
 ```
 
 ## 解题报告

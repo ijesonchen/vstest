@@ -1,11 +1,34 @@
 ﻿/*
 1135. Is It A Red-Black Tree (30)
 
+总结：1. 题目中未说明输入一定是BST（PT2）
+	2. 先序+中序构造树的算法不熟悉
+	3. 二叉树的层次递归算法不熟悉（判断红黑点，黑点数）
+	4. 递归时，可以通过全局变量来传递错误（验证是否合法）
+	二叉树算法不熟悉，导致即使看过题解，自己写仍然花掉70min才完成。
+	
+
 review：ref Liuchuo 输入可能不是BST？
 	验证：BST中序为递增序列
 
 关于二叉树的遍历与重建：涉及什么情况下可以根据遍历重建二叉树
 ref：https://zhuanlan.zhihu.com/p/26418233
+	一棵二叉树能够被重建，如果满足下面三个条件之一：
+		a1. 已知先序遍历；或
+		a2. 已知后序遍历；或
+		a3. 已知层序遍历；
+	且满足下面三个条件之一：
+		b1. 前面已知的那种遍历包含了空指针；或
+		b2. 已知中序遍历，且树中不含重复元素；或
+		b3. 树是二叉搜索树，且不含重复元素。
+
+revisit: nsA1135Revisit	70min
+	1. 读取前序，记录red点，排序的中序
+	2. 重建树
+	3. 判断根
+	4. 递归：红黑孩子，黑节点数
+	pass
+
 
 cost: 10:40
 
@@ -484,13 +507,45 @@ namespace nsA1135BstValid
 	Node* pRoot = nullptr;
 	vector<bool> redColor;
 
+
+	int level = 0;
+	void PrintTree2(Node* pNode, int indent)
+	{
+		bool tag = level - 1 > 0;
+		if (pNode)
+		{
+			for (int i = 0; i < indent; ++i)
+			{
+				if (tag) { cout << " ."; }
+				else { cout << "  "; }
+			}
+			cout << "-+" << pNode->d << endl;
+			if (pNode->left || pNode->right)
+			{
+				++level;
+				PrintTree2(pNode->left, indent + 1);
+				PrintTree2(pNode->right, indent + 1);
+				--level;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < indent; ++i)
+			{
+				if (tag) { cout << " ."; }
+				else { cout << "  "; }
+			}
+			cout << "-+*" << endl;
+		}
+	}
+
 	void PrintTree(Node* pNode, int indent)
 	{
 		if (pNode)
 		{
 			for (int i = 0; i < indent; ++i)
 			{
-				cout << " .";
+				cout << "  ";
 			}
 			cout << "-+" << pNode->d << endl;
 			if (pNode->left || pNode->right)
@@ -503,12 +558,19 @@ namespace nsA1135BstValid
 		{
 			for (int i = 0; i < indent; ++i)
 			{
-				cout << " .";
+				cout << "  ";
 			}
 			cout << "-+*" << endl;
 		}
 	}
+
+	void Print(Node* p)
+	{
+		level = 0;
+		PrintTree2(p, 0);
+	}
 	
+	// 通过pre/in order不断分割树为左右部分
 	Node* BuildTreePreIn(vector<int>& preOrder, vector<int>& inOrder, int pre0, int in0, int len)
 	{
 		if (len <= 0) { return nullptr; }
@@ -522,6 +584,7 @@ namespace nsA1135BstValid
 		return pRoot;
 	}
 
+	// 通过pre/in order不断分割树为左右部分
 	bool BuildTreePreIn(Node*& pRoot, int pre1, int in1, int len)
 	{
 		pRoot = &vPreNode[pre1];
@@ -540,13 +603,20 @@ namespace nsA1135BstValid
 		int inLeft = iRootIn - in1;
 		if (inLeft > 0)
 		{
-			BuildTreePreIn(pRoot->left, pre1 + 1, in1, inLeft);
+			if (!BuildTreePreIn(pRoot->left, pre1 + 1, in1, inLeft))
+			{
+				return false;
+			}
 		}
 		int inRight = len - inLeft - 1;
 		if (inRight > 0)
 		{
-			BuildTreePreIn(pRoot->right, pre1 + 1 + inLeft, iRootIn + 1, inRight);
+			if (!BuildTreePreIn(pRoot->right, pre1 + 1 + inLeft, iRootIn + 1, inRight))
+			{
+				return false;
+			}
 		}
+		return true;
 	}
 
 	bool IsBst(Node* p)
@@ -603,7 +673,7 @@ namespace nsA1135BstValid
 			redColor.clear();
 			ReadTree();
 			auto p = BuildTreePreIn(preOrder, inOrder, 0, 0, (int)preOrder.size());
-			PrintTree(p, 0);
+			Print(p);
 			cout << endl;
 // 			if (!BuildTreePreIn(pRoot, 0, 0, (int)preOrder.size()))
 // 			{
@@ -619,10 +689,141 @@ namespace nsA1135BstValid
 	}
 }
 
-namespace nsA1135BuildTree
+namespace nsA1135Revisit
 {
-	using nsA1135BstValid::Node;
+	struct Node 
+	{
+		int data = 0;
+		bool red = false;
+		int black = 0;
 
+		Node* left = nullptr;
+		Node* right = nullptr;
+
+		Node(int v) : data(abs(v)), red(v < 0) {};
+	};
+
+	vector<int> preOrder;
+	vector<int> inOrder;
+	vector<Node> vNode;
+	Node* pRoot = nullptr;
+	bool bValid = false;
+	
+	void Read(void)
+	{
+		int m, k;
+		cin >> m;
+		for (int i = 0; i < m; ++i)
+		{
+			cin >> k;
+			vNode.push_back(k);
+			preOrder.push_back(abs(k));
+		}
+		inOrder = preOrder;
+		sort(inOrder.begin(), inOrder.end());
+	}
+
+	void BuildTree(Node*& p, int pre1, int in1, int len)
+	{
+		if (len <= 0) { throw 0; }
+		if (!bValid) { return; }
+		p = &vNode[pre1];
+		int inRoot = in1;
+		int in2 = in1 + len;
+		while (inOrder[inRoot++] != p->data)
+		{
+			if (inRoot == in2)
+			{
+				bValid = false;
+				return;
+			}
+		}
+		int nLeft = --inRoot - in1;
+		if (nLeft)
+		{
+			BuildTree(p->left, pre1 + 1, in1, nLeft);
+		}
+		int nRight = len - nLeft - 1;
+		if (nRight)
+		{
+			BuildTree(p->right, pre1 + 1 + nLeft, inRoot + 1, nRight);
+		}
+	}
+
+	int nBlack = 0;
+	void ValidTree(Node* p, int parentBlack)
+	{
+		if (!bValid) { return; }
+		if (p)
+		{
+			p->black = parentBlack;
+			if (p->red)
+			{
+				if (p->left && p->left->red || p->right && p->right->red)
+				{
+					bValid = false;
+					return;
+				}
+			}
+			else
+			{
+				++p->black;
+			}
+			ValidTree(p->left, p->black);
+			ValidTree(p->right, p->black);
+		}
+		else
+		{
+			if (!nBlack)
+			{
+				nBlack = parentBlack;
+			}
+			else if (nBlack != parentBlack)
+			{
+				bValid = false;
+				return;
+			}
+		}
+	}
+
+	void ValidTree(Node* p)
+	{
+		if (!bValid) { return; }
+		ValidTree(p->left, p->black);
+		ValidTree(p->right, p->black);
+	}
+
+	int main(void)
+	{
+		int n;
+		cin >> n;
+		for (int i = 0; i < n; ++i)
+		{
+			preOrder.clear();
+			inOrder.clear();
+			vNode.clear();
+			pRoot = nullptr;
+			Read();
+			bValid = true;
+			BuildTree(pRoot, 0, 0, (int)preOrder.size());
+			if (!bValid || pRoot->red)
+			{
+				cout << "No" << endl;
+				continue;
+			}
+			nBlack = 0;
+			bValid = true;
+			pRoot->black = 1;
+			ValidTree(pRoot);
+			if (!bValid)
+			{
+				cout << "No" << endl;
+				continue;
+			}
+			cout << "Yes" << endl;
+		}
+		return 0;
+	}
 }
 
 
@@ -630,7 +831,7 @@ namespace nsA1135BuildTree
 int A1135Func(void)
 {
 //	nsA1135B::Read();
-	nsA1135BstValid::main();
+	nsA1135Revisit::main();
 	return 0;
 }
 
