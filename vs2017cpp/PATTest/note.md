@@ -100,6 +100,8 @@ A1133: rewrite 30min pass ref 20min pass
 A1032: 15MIN pass
 	**02.27
 A1035: rewrite 70min
+A1043: 70min pass. 注意输出格式和大小写！！！
+	rewrite: preOrder to postOrder not finished!!!
 ```
 
 ## 解题报告
