@@ -1,7 +1,9 @@
 /*
 1043. Is It a Binary Search Tree (25)
 
-cost: 20:40
+cost: 70min
+
+总结：一定要注意输出格式（大小写之类）
 
 A Binary Search Tree (BST) is recursively defined as a binary tree which has the following properties:
 
@@ -69,7 +71,45 @@ using namespace std;
 
 	bug-fix1: 大序时inRoot判定
 21:35 23/30 pt6 wa
+
+	bug-fix2: 输出Yes -> YES
+	不需BST验证
+21:50 pass
 */
+
+namespace nsA1043Deprecated
+{
+	struct Node
+	{
+		int data = 0;
+		Node* left = nullptr;
+		Node* right = nullptr;
+
+		Node(int d) :data(d) {};
+	};
+
+	bool ValidTreeLt(Node* p)
+	{
+		if (!p) { return true; }
+		if (p->left && p->left->data >= p->data ||
+			p->right && p->right->data < p->data)
+		{
+			return false;
+		}
+		return ValidTreeLt(p->left) && ValidTreeLt(p->right);
+	}
+
+	bool ValidTreeGte(Node* p)
+	{
+		if (!p) { return true; }
+		if (p->left && p->left->data < p->data ||
+			p->right && p->right->data >= p->data)
+		{
+			return false;
+		}
+		return ValidTreeGte(p->left) && ValidTreeGte(p->right);
+	}
+}
 
 namespace nsA1043A
 {
@@ -138,28 +178,6 @@ namespace nsA1043A
 		}
 	}
 
-	bool ValidTreeLt(Node* p)
-	{
-		if (!p) { return true; }
-		if (p->left && p->left->data >= p->data ||
-			p->right && p->right->data < p->data)
-		{
-			return false;
-		}
-		return ValidTreeLt(p->left) && ValidTreeLt(p->right);
-	}
-
-	bool ValidTreeGte(Node* p)
-	{
-		if (!p) { return true; }
-		if (p->left && p->left->data < p->data ||
-			p->right && p->right->data >= p->data)
-		{
-			return false;
-		}
-		return ValidTreeGte(p->left) && ValidTreeGte(p->right);
-	}
-
 	void PostOrder(Node* p)
 	{
 		if (p)
@@ -198,7 +216,8 @@ namespace nsA1043A
 		}
 		if (n == 1)
 		{
-			cout << "Yes" << endl << preOrder.front() << endl;
+			// bug-fix 2
+			cout << "YES" << endl << preOrder.front() << endl;
 			return 0;
 		}
 		inOrder = preOrder;
@@ -207,7 +226,7 @@ namespace nsA1043A
 		sort(inOrder.begin(), inOrder.end());
 		bValid = true;
 		BuildTree(pRoot, 0, 0, n);
-		if (bValid && ValidTreeLt(pRoot))
+		if (bValid)
 		{
 			cout << "YES" << endl;
 			PrintPostOrder();
@@ -219,7 +238,7 @@ namespace nsA1043A
 			{ swap(inOrder[i], inOrder[n - 1 - i]); }
 		bValid = true;
 		BuildTree(pRoot, 0, 0, n);
-		if (bValid && ValidTreeGte(pRoot))
+		if (bValid)
 		{
 			cout << "YES" << endl;
 			PrintPostOrder();
@@ -230,6 +249,7 @@ namespace nsA1043A
 	}
 
 }
+
 
 // rename this to main int PAT
 int A1043Func(void)
