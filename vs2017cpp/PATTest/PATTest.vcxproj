@@ -139,35 +139,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\vs2015cpp\StanfordAlg\common.cpp" />
-    <ClCompile Include="Advanced\A1030.cpp" />
-    <ClCompile Include="Advanced\A1031.cpp" />
-    <ClCompile Include="Advanced\A1032.cpp" />
-    <ClCompile Include="Advanced\A1033.cpp" />
-    <ClCompile Include="Advanced\A1034.cpp" />
-    <ClCompile Include="Advanced\A1035.cpp" />
-    <ClCompile Include="Advanced\A1036.cpp" />
-    <ClCompile Include="Advanced\A1037.cpp" />
-    <ClCompile Include="Advanced\A1038.cpp" />
-    <ClCompile Include="Advanced\A1039.cpp" />
-    <ClCompile Include="Advanced\A1040.cpp" />
-    <ClCompile Include="Advanced\A1131.cpp" />
-    <ClCompile Include="Advanced\A1134.cpp" />
-    <ClCompile Include="Advanced\A1135.cpp" />
-    <ClCompile Include="Advanced\A1137.cpp" />
-    <ClCompile Include="Advanced\A1133.cpp" />
-    <ClCompile Include="Basic\B1001.cpp" />
-    <ClCompile Include="Basic\B1003.cpp" />
+    <ClCompile Include="Advanced\A1043.cpp" />
     <ClCompile Include="Blank.cpp" />
     <ClCompile Include="patMain.cpp" />
-    <ClCompile Include="Advanced\A1132.cpp" />
-    <ClCompile Include="Advanced\A1136.cpp" />
-    <ClCompile Include="Advanced\A1139.cpp" />
-    <ClCompile Include="Advanced\A1138.cpp" />
-    <ClCompile Include="Basic\StartSelfTest.cpp" />
     <ClCompile Include="Template.cpp" />
-    <ClCompile Include="Test\GraphAllPath.cpp" />
-    <ClCompile Include="Test\TestMain.cpp" />
-    <ClCompile Include="Top\T1001.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\vs2015cpp\StanfordAlg\common.h" />
