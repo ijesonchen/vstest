@@ -247,14 +247,157 @@ namespace nsA1043A
 		cout << "NO" << endl;
 		return 0;
 	}
-
 }
 
+// ref https://www.liuchuo.net/archives/2153
+/*
+21:44
+根据前序直接生成后序
+小序/大序各一遍
+*/
+
+namespace nsA1043Liuchuo
+{
+	using namespace std;
+	bool isMirror;
+	vector<int> pre, post;
+	void getpost(int root, int tail) 
+	{
+		if (root > tail) return;
+		int i = root + 1, 
+			j = tail;
+		if (!isMirror)
+		{
+			while (i <= tail && pre[root] > pre[i]) i++;
+			while (j > root && pre[root] <= pre[j]) j--;
+		}
+		else 
+		{
+			while (i <= tail && pre[root] <= pre[i]) i++;
+			while (j > root && pre[root] > pre[j]) j--;
+		}
+		if (i - j != 1) return;
+		getpost(root + 1, j);
+		getpost(i, tail);
+		post.push_back(pre[root]);
+	}
+
+	int main() 
+	{
+		int n;
+		scanf("%d", &n);
+		pre.resize(n);
+		for (int i = 0; i < n; i++)
+			scanf("%d", &pre[i]);
+
+		getpost(0, n - 1);
+		if (post.size() != n) 
+		{
+			isMirror = true;
+			post.clear();
+			getpost(0, n - 1);
+		}
+
+		if (post.size() == n) 
+		{
+			printf("YES\n%d", post[0]);
+			for (int i = 1; i < n; i++)
+				printf(" %d", post[i]);
+		}
+		else 
+		{
+			printf("NO");
+		}
+		return 0;
+	}
+}
+
+namespace nsA1043RefPre2Post
+{
+	vector<int> pre;
+	vector<int> post;
+	bool mirror = false;
+
+	void GetPost(int left, int right)
+	{
+		int root = pre[left];
+		if (left == right)
+		{
+			post.push_back(root);
+			return;
+		}
+		int i = left + 1, j = right;
+		int t = 0;
+		if (!mirror)
+		{
+			while (i <= right && pre[i++] < root) {}
+			while (j >= left && pre[j--] >= root) {}
+			if (j + 3 != i) { return; }
+		}
+		else
+		{
+			while (i <= right && pre[i++] >= root) {}
+			while (j >= left && pre[j--] < root ) {}
+			if (j + 3 != i) { return; }
+		}
+		--i , ++j;
+		GetPost(left + 1, j);
+		GetPost(i, right);
+	}
+
+	void PrintPost(void)
+	{
+		cout << post.front();
+		for (size_t i = 1; i < post.size(); ++i)
+		{
+			cout << " " << post[i];
+		}
+		cout << endl;
+	}
+
+	int main(void)
+	{
+		int n;
+		cin >> n;
+		pre.resize(n);
+		for (int i = 0; i < n; ++i)
+		{
+			cin >> pre[i];
+		}
+		if (n==1)
+		{
+			cout << "YES" << endl
+				<< pre.front() << endl;
+			return 0;
+		}
+		mirror = false;
+		post.clear();
+		GetPost(0, n-1);
+		if (post.size() == pre.size())
+		{
+			cout << "YES" << endl;
+			PrintPost();
+			return 0;
+		}
+		mirror = true;
+		post.clear();
+		GetPost(0, n-1);
+		if (post.size() == pre.size())
+		{
+			cout << "YES" << endl;
+			PrintPost();
+			return 0;
+		}
+		cout << "NO" << endl;
+
+		return 0;
+	}
+}
 
 // rename this to main int PAT
 int A1043Func(void)
 {
-	return nsA1043A::main();
+	return nsA1043RefPre2Post::main();
 }
 
 
