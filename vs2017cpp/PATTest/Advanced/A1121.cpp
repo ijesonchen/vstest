@@ -48,11 +48,15 @@ using namespace std;
 
 /*
 14:45 15min 23/25 pt1 wa
+test: 没有自环，结果不为0
+
+bug-fix: short最大值65535/2，范围不够
+15min pt1 段错误
 */
 namespace nsA1121A
 {
 	const int MAXNODE = 100000;
-	vector<short> vCouples;
+	vector<int> vCouples;
 
 	int main(void)
 	{
@@ -72,45 +76,34 @@ namespace nsA1121A
 		{
 			int m;
 			cin >> m;
+			if (m < 0)
+			{
+				throw 0;
+			}
 			vGuest.push_back(m);
 		}
-		vector<bool> vVisit(k, false);
 		vector<int> vSingle;
 		for (int i = 0; i < k; ++i)
 		{
-			if (vVisit[i])
-			{
-				continue;
-			}
 			a = vGuest[i];
 			b = vCouples[a];
-			bool bFound = false;
-			for (int j = i + 1; j < k; ++j)
-			{
-				if (vGuest[j] == b)
-				{
-					bFound = true;
-					vVisit[j] = true;
-					break;
-				}
-			}
-			if (!bFound)
+			if (b < 0 ||
+				(find(vGuest.begin(), vGuest.end(), b) == vGuest.end()))
 			{
 				vSingle.push_back(a);
 			}
 		}
+
 		sort(vSingle.begin(), vSingle.end());
 		size_t len = vSingle.size();
 		cout << len << endl;
-		if (len)
+
+		printf("%05d", vSingle.front());
+		for (size_t i = 1; i < len; ++i)
 		{
-			printf("%05d", vSingle.front());
-			for (size_t i = 1; i < len; ++i)
-			{
-				printf(" %05d", vSingle[i]);
-			}
-			cout << endl;
+			printf(" %05d", vSingle[i]);
 		}
+		cout << endl;
 		return 0;
 	}
 }
