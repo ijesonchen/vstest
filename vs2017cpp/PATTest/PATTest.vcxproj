@@ -140,6 +140,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\vs2015cpp\StanfordAlg\common.cpp" />
     <ClCompile Include="Advanced\A1043.cpp" />
+    <ClCompile Include="Advanced\A1120.cpp" />
+    <ClCompile Include="Advanced\A1121.cpp" />
+    <ClCompile Include="Advanced\A1122.cpp" />
+    <ClCompile Include="Advanced\A1123.cpp" />
     <ClCompile Include="Blank.cpp" />
     <ClCompile Include="patMain.cpp" />
     <ClCompile Include="Template.cpp" />
