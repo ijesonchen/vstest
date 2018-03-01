@@ -102,6 +102,14 @@ A1032: 15MIN pass
 A1035: rewrite 70min
 A1043: 70min pass. 注意输出格式和大小写！！！
 	rewrite: preOrder to postOrder not finished!!!
+	**02.28
+A1043: rewrite
+	**03.01
+A1020: 10MIN PASS
+A1021: 15MIN 23/25, PT1 段错误 15MIN 23/25
+A1022: 20MIN PASS
+A1023: 2H 22/30 PT2,3 WA
+	模拟测试：见A1023总结。	
 ```
 
 ## 解题报告

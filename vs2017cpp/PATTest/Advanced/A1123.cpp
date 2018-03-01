@@ -1,6 +1,13 @@
 /*
 1123. Is It a Complete AVL Tree (30)
 
+模拟测试：A1020-A1023: 20 23 25 0 = 68
+	总结：
+		1. 不要过早优化。发现错误时，不要耗费过多时间检查，优先做下一题。
+		2. 熟悉常见算法的实现（AVL）
+		A1021一开始就应该用int而非short存储数据（不要过早优化！！）
+			第一次23分时，不应该再次检查，耗费15分钟，否则A1023有机会提交得22分
+		A1023 AVL树算法不了解，凭猜测做题，方法复杂，容易出错，并且部分结果不对。
 
 An AVL tree is a self-balancing binary search tree. 
 In an AVL tree, the heights of the two child subtrees of any node differ by at most one; 
@@ -44,6 +51,7 @@ NO
 #include <algorithm>
 #include <vector>
 #include <deque>
+#include <queue>
 
 using namespace std;
 
@@ -52,6 +60,8 @@ using namespace std;
 根据题目情况旋转，
 2h 22/30 pt2,3 wa
 
+虽然是平衡BST，但是不是avl树（再平衡算法不对），因此结果不正确。
+并且，逻辑太复杂。
 */
 namespace nsA1123A
 {
@@ -265,12 +275,20 @@ namespace nsA1123A
 		for (int i = 0; i < n; ++i)
 		{
 			cin >> k;
-//			cout << endl << k << endl;
-			pRoot = Insert(pRoot, k);
-//			PrintTree(pRoot, 0); cout << endl;
+// 			cout << endl << k << endl;
+ 			pRoot = Insert(pRoot, k);
+//			PrintTree(pRoot, 0); cout << Level(pRoot->left) << " " << Level(pRoot->right) << endl;
 			pRoot = Rebalance(pRoot);
 //			PrintTree(pRoot, 0); cout << endl;
 		}
+
+		int nLeft = Level(pRoot->left);
+		int nRight = Level(pRoot->right);
+		if (abs(nLeft - nRight) > 1)
+		{
+			throw 0;
+		}
+
 		vLevel.clear();
 
 
@@ -307,6 +325,163 @@ namespace nsA1123A
 	}
 }
 
+// ref https://www.liuchuo.net/archives/2732
+/*
+BST插入时，一定是插入到叶子节点（最后一层）
+BST平衡原则：不平衡时，将对应子树压缩1，必要时调整父节点再平衡
+	插入左子树引起不平衡为例：根p，左子pl，右子pr
+		前提：插入前肯定左侧高1
+		插入后不平衡，可能行有2种：
+	1. 插入到左左（lll/llr)
+		向右旋，p1作为新根：
+			左侧高度-1，右侧高度+1，重新平衡
+	2. 插入到左右(lrl/lrr)，
+		先pl部分参照1左旋：
+			pll高度+1，plr高度-1，变为情况1
+		整体右旋
+			同1：重新平衡
+	插入到右子树引起不平衡类似。
+
+	整体调整不平衡，不要局限在示例局部类型。否则调整后顺序不同。
+*/
+namespace nsA1123RefLiuchuo
+{
+	struct Node 
+	{
+		int val;
+		Node *left, 
+			*right;
+	};
+
+	Node* leftRotate(Node *tree) 
+	{
+		struct Node *temp = tree->right;
+		tree->right = temp->left;
+		temp->left = tree;
+		return temp;
+	}
+
+	Node* rightRotate(Node *tree) 
+	{
+		struct Node *temp = tree->left;
+		tree->left = temp->right;
+		temp->right = tree;
+		return temp;
+	}
+
+	int getHeight(Node *tree) 
+	{
+		if (tree == NULL) return 0;
+		int l = getHeight(tree->left);
+		int r = getHeight(tree->right);
+		return l > r ? l + 1 : r + 1;
+	}
+
+	Node* leftRightRotate(Node *tree) 
+	{
+		tree->left = leftRotate(tree->left);
+		tree = rightRotate(tree);
+		return tree;
+	}
+
+	Node* rightLeftRotate(Node *tree) 
+	{
+		tree->right = rightRotate(tree->right);
+		tree = leftRotate(tree);
+		return tree;
+	}
+
+	Node* insert(Node *tree, int val) 
+	{
+		if (tree == NULL) {
+			tree = new struct Node();
+			tree->val = val;
+			return tree;
+		}
+
+		if (tree->val > val)
+		{
+			tree->left = insert(tree->left, val);
+			int l = getHeight(tree->left);
+			int r = getHeight(tree->right);
+			if (l - r >= 2) {
+				if (val < tree->left->val)
+					tree = rightRotate(tree);
+				else
+					tree = leftRightRotate(tree);
+			}
+		}
+		else 
+		{
+			tree->right = insert(tree->right, val);
+			int l = getHeight(tree->left), 
+				r = getHeight(tree->right);
+			if (r - l >= 2) 
+			{
+				if (val > tree->right->val)
+					tree = leftRotate(tree);
+				else
+					tree = rightLeftRotate(tree);
+			}
+		}
+		return tree;
+	}
+
+	int isComplete = 1, after = 0;
+	vector<int> levelOrder(struct Node *tree) 
+	{
+		vector<int> v;
+		queue<Node *> queue;
+		queue.push(tree);
+		while (queue.size() != 0) 
+		{
+			struct Node *temp = queue.front();
+			queue.pop();
+			v.push_back(temp->val);
+			if (temp->left != NULL) 
+			{
+				if (after) isComplete = 0;
+				queue.push(temp->left);
+			}
+			else 
+			{
+				after = 1;
+			}
+			if (temp->right != NULL) 
+			{
+				if (after) isComplete = 0;
+				queue.push(temp->right);
+			}
+			else 
+			{
+				after = 1;
+			}
+		}
+		return v;
+	}
+
+	int main() 
+	{
+		int n = 0;
+		scanf("%d", &n);
+		Node *tree = NULL;
+		for (int i = 0; i < n; i++) 
+		{
+			int temp = 0;
+			scanf("%d", &temp);
+			tree = insert(tree, temp);
+		}
+		vector<int> v = levelOrder(tree);
+		for (int i = 0; i < v.size(); i++)
+		{
+			if (i != 0) printf(" ");
+			printf("%d", v[i]);
+		}
+		printf("\n%s", isComplete ? "YES" : "NO");
+		return 0;
+	}
+}
+
 // rename this to main int PAT
 int A1123Func(void)
 {
@@ -326,7 +501,7 @@ void A1123(const string& fn)
 
 void A1123(void)
 {
-	A1123("data\\A1123-1.txt"); // 
+//	A1123("data\\A1123-1.txt"); // 
  	A1123("data\\A1123-2.txt"); // 
 
 }
