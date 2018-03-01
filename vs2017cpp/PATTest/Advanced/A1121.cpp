@@ -50,6 +50,8 @@ using namespace std;
 14:45 15min 23/25 pt1 wa
 test: 没有自环，结果不为0
 
+提前优化容易导致错误
+
 bug-fix: short最大值65535/2，范围不够
 15min pt1 段错误
 */
