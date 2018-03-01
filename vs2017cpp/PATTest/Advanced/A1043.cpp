@@ -251,9 +251,9 @@ namespace nsA1043A
 
 // ref https://www.liuchuo.net/archives/2153
 /*
-21:44
 根据前序直接生成后序
 小序/大序各一遍
+2H 22/25 pt3 wa
 */
 
 namespace nsA1043Liuchuo
@@ -320,6 +320,10 @@ namespace nsA1043RefPre2Post
 
 	void GetPost(int left, int right)
 	{
+		if (left > right)
+		{
+			return;
+		}
 		int root = pre[left];
 		if (left == right)
 		{
@@ -330,19 +334,20 @@ namespace nsA1043RefPre2Post
 		int t = 0;
 		if (!mirror)
 		{
-			while (i <= right && pre[i++] < root) {}
-			while (j >= left && pre[j--] >= root) {}
-			if (j + 3 != i) { return; }
+			while (i <= right && pre[i] < root) { ++i; }
+			while (j >= left && pre[j] >= root) { --j; }
+			if (j + 1 != i) { return; }
 		}
 		else
 		{
-			while (i <= right && pre[i++] >= root) {}
-			while (j >= left && pre[j--] < root ) {}
-			if (j + 3 != i) { return; }
+			while (i <= right && pre[i] >= root) { ++i; }
+			while (j >= left && pre[j] < root) { --j; }
+			if (j + 1 != i) { return; }
 		}
 		--i , ++j;
-		GetPost(left + 1, j);
-		GetPost(i, right);
+		GetPost(left + 1, i);
+		GetPost(j, right);
+		post.push_back(root);
 	}
 
 	void PrintPost(void)
