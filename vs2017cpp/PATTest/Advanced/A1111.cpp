@@ -103,8 +103,12 @@ using namespace std;
 
 保存DFS中间结果(Dijkstra数组)，进一步减枝
 17:00 TLE
+此时应该放弃该题目
 
 改进：合并两次搜索
+17:20 18/30 PT0 错误 PT4 TLE
+
+改进：使用Dijkstra改进？
 */
 
 namespace nsA111A
@@ -127,11 +131,61 @@ namespace nsA111A
 
 	int minDist = MAXVALUE;
 	int minDistTime = MAXVALUE;
+	vector<int> vDist;
 	vector<int> pathDist;
 
 	int minTime = MAXVALUE;
 	int minTimeTrans = MAXVALUE;
+	vector<int> vTime;
 	vector<int> pathTime;
+
+
+	void Dfs(int u, int distTime, int trans)
+	{
+		if (u == dstNode)
+		{
+			int dist = vDist[u];
+			if (dist < minDist ||
+				(dist == minDist && distTime < minDistTime))
+			{
+				pathDist = pathTemp;
+				minDist = dist;
+				minDistTime = distTime;
+			}
+			int t = vTime[u];
+			if (t < minTime ||
+				(t == minTime && trans < minTimeTrans))
+			{
+				pathTime = pathTemp;
+				minTime = t;
+				minTimeTrans = trans;
+			}
+			return;
+		}
+
+		vector<int>& vAdjDist = vvDist[u];
+		vector<int>& vAdjTime = vvTime[u];
+		for (size_t i = 0; i < vAdjDist.size(); ++i)
+		{
+			if (!vVisit[i] && vAdjDist[i])
+			{
+				int iDist = vDist[u] + vAdjDist[i];
+				int iTime = vTime[u] + vAdjTime[i];
+				if (iDist > vDist[i] && iTime > vTime[i])
+				{
+					continue;
+				}
+				if (iDist < vDist[i]) { vDist[i] = iDist; }
+				if (iTime < vTime[i]) { vTime[i] = iTime; }
+
+				vVisit[i] = true;
+				pathTemp.push_back(i);
+				Dfs(i, distTime + vAdjTime[i], trans + 1);
+				vVisit[i] = false;
+				pathTemp.pop_back();
+			}
+		}
+	}
 	
 	void DfsDist(int u, int dist, int distTime)
 	{
@@ -161,39 +215,6 @@ namespace nsA111A
 				vVisit[i] = true;
 				pathTemp.push_back(i);
 				DfsDist(i, iDist, distTime + vvTime[u][i]);
-				vVisit[i] = false;
-				pathTemp.pop_back();
-			}
-		}
-	}
-	
-	void Dfs(int u, int distTime, int trans)
-	{
-		if (u == dstNode)
-		{
-			if (t < minTime ||
-				(t == minTime && trans < minTimeTrans))
-			{
-				pathTime = pathTemp;
-				minTime = t;
-				minTimeTrans = trans;
-			}
-			return;
-		}
-		vector<int>& vAdj = vvTime[u];
-		for (size_t i = 0; i < vAdj.size(); ++i)
-		{
-			if (!vVisit[i] && vAdj[i])
-			{
-				int iTime = t + vAdj[i];
-				if (iTime > vAssist[i])
-				{
-					continue;
-				}
-				vAssist[i] = iTime;
-				vVisit[i] = true;
-				pathTemp.push_back(i);
-				DfsTime(i, iTime, trans + 1);
 				vVisit[i] = false;
 				pathTemp.pop_back();
 			}
@@ -266,26 +287,16 @@ namespace nsA111A
 
 		pathTemp.clear();
 		vVisit.assign(n, false);
-		vAssist.assign(n, MAXVALUE);
+		vDist.assign(n, MAXVALUE);
+		vTime.assign(n, MAXVALUE);
 		minDist = MAXVALUE;
 		minDistTime = MAXVALUE;
-
-		vVisit[srcNode] = true;
-		vAssist[srcNode] = 0;
-		pathTemp.push_back(srcNode);
-		DfsDist(srcNode, 0, 0);
-
-
-		pathTemp.clear();
-		vVisit.assign(n, false);
-		vAssist.assign(n, MAXVALUE);
 		minTime = MAXVALUE;
 		minTimeTrans = MAXVALUE;
 
 		vVisit[srcNode] = true;
-		vAssist[srcNode] = 0;
 		pathTemp.push_back(srcNode);
-		DfsTime(srcNode, 0, 0);
+		Dfs(srcNode, 0, 0);
 
 		if (pathDist == pathTime)
 		{
@@ -302,10 +313,146 @@ namespace nsA111A
 	}
 } 
 
+
+namespace nsA111B
+{
+	const int MAXVALUE = 0x7fffffff;
+	vector<vector<int>> vvDist;
+	vector<vector<int>> vvTime;
+
+	void Reset(int n)
+	{
+		vvDist.assign(n, vector<int>(n));
+		vvTime.assign(n, vector<int>(n));
+	}
+
+	int srcNode, dstNode;
+
+	vector<int> pathTemp;
+	vector<bool> vVisit;
+
+	int minDist = MAXVALUE;
+	int minDistTime = MAXVALUE;
+	vector<int> vDist;
+	vector<int> pathDist;
+
+	int minTime = MAXVALUE;
+	int minTimeTrans = MAXVALUE;
+	vector<int> vTime;
+	vector<int> pathTime;
+
+
+	void Dfs(int u, int distTime, int trans)
+	{
+		if (u == dstNode)
+		{
+			int dist = vDist[u];
+			if (dist < minDist ||
+				(dist == minDist && distTime < minDistTime))
+			{
+				pathDist = pathTemp;
+				minDist = dist;
+				minDistTime = distTime;
+			}
+			int t = vTime[u];
+			if (t < minTime ||
+				(t == minTime && trans < minTimeTrans))
+			{
+				pathTime = pathTemp;
+				minTime = t;
+				minTimeTrans = trans;
+			}
+			return;
+		}
+
+		vector<int>& vAdjDist = vvDist[u];
+		vector<int>& vAdjTime = vvTime[u];
+		for (size_t i = 0; i < vAdjDist.size(); ++i)
+		{
+			if (!vVisit[i] && vAdjDist[i])
+			{
+				int iDist = vDist[u] + vAdjDist[i];
+				int iTime = vTime[u] + vAdjTime[i];
+				if (iDist > vDist[i] && iTime > vTime[i])
+				{
+					continue;
+				}
+				if (iDist < vDist[i]) { vDist[i] = iDist; }
+				if (iTime < vTime[i]) { vTime[i] = iTime; }
+
+				vVisit[i] = true;
+				pathTemp.push_back(i);
+				Dfs(i, distTime + vAdjTime[i], trans + 1);
+				vVisit[i] = false;
+				pathTemp.pop_back();
+			}
+		}
+	}
+	
+	void PrintPath(const vector<int>& vPath)
+	{
+		cout << vPath.front();
+		for (size_t i = 1; i < vPath.size(); ++i)
+		{
+			cout << " -> " << vPath[i];
+		}
+		cout << endl;
+	}
+
+	void main(void)
+	{
+		int n, m;
+		cin >> n >> m;
+		Reset(n);
+		for (int i = 0; i < m; ++i)
+		{
+			int u, v, tag, dist, t;
+			cin >> u >> v >> tag >> dist >> t;
+			vvDist[u][v] = dist;
+			vvTime[u][v] = t;
+			if (!tag)
+			{
+				vvDist[v][u] = dist;
+				vvTime[v][u] = t;
+			}
+		}
+
+		cin >> srcNode >> dstNode;
+
+		pathTemp.clear();
+		vVisit.assign(n, false);
+		vDist.assign(n, MAXVALUE);
+		vTime.assign(n, MAXVALUE);
+		minDist = MAXVALUE;
+		minDistTime = MAXVALUE;
+		minTime = MAXVALUE;
+		minTimeTrans = MAXVALUE;
+
+		vVisit[srcNode] = true;
+		vDist[srcNode] = 0;
+		vTime[srcNode] = 0;
+		pathTemp.push_back(srcNode);
+		Dfs(srcNode, 0, 0);
+
+		if (pathDist == pathTime)
+		{
+			// Distance = 3; Time = 4: 3 -> 2 -> 5
+			cout << "Distance = " << minDist << "; Time = " << minTime << ": ";
+		}
+		else
+		{
+			cout << "Distance = " << minDist << ": ";
+			PrintPath(pathDist);
+			cout << "Time = " << minTime << ": ";
+		}
+		PrintPath(pathTime);
+	}
+}
+
 // rename this to main int PAT
 int A1111Func(void)
 {
-	nsA111A::main();
+	nsA111B::main();
 	return 0;
 }
 

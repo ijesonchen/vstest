@@ -134,10 +134,120 @@ namespace nsA1108A
 	}
 }
 
+/*
+17:25
+改进：不用小数
+17:40 15/20 pt2 异常 pt3 WA
+*/
+namespace nsA1108B
+{
+	vector<int> v1;
+	vector<int> v2;
+	bool ValidChar(const string& s)
+	{
+		for (auto ch : s)
+		{
+			if (!isdigit(ch))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	bool IsValid(string s)
+	{
+		bool neg = false;
+		if (s[0] == '-')
+		{
+			neg = true;
+			s.erase(s.begin());
+		}
+		size_t dot = s.find('.');
+		string s1(s);
+		string s2;
+		if (dot != string::npos)
+		{
+			s1 = s.substr(0, dot);
+			s2 = s.substr(dot + 1);
+			if (s2.length() > 2)
+			{
+				return false;
+			}
+		}
+		if (!ValidChar(s1) || !ValidChar(s2))
+		{
+			return false;
+		}
+		int n1 = stoi(s1);
+		int n2 = 0;
+		if (s2.length() == 1)
+		{
+			n2 = 10 * stoi(s2);
+		}
+		else if (s2.length() == 2)
+		{
+			n2 = stoi(s2);
+		}
+		if (n1 > 1000 ||
+			(n1 == 100 && n2))
+		{
+			return false;
+		}
+		if (neg)
+		{
+			n1 = -n1;
+			n2 = -n2;
+		}
+		v1.push_back(n1);
+		v2.push_back(n2);
+		return true;
+	}
+
+	void main(void)
+	{
+		v1.clear();
+		v2.clear();
+		int n;
+		cin >> n;
+		for (int i = 0; i < n; ++i)
+		{
+			string s;
+			cin >> s;
+			if (!IsValid(s))
+			{
+				printf("ERROR: %s is not a legal number\n", s.c_str());
+				continue;
+			}
+		}
+		if (v1.empty())
+		{
+			cout << "The average of 0 numbers is Undefined" << endl;
+			return;
+		}
+		int sum1 = 0;
+		int sum2 = 0;
+		for (size_t i = 0; i < v1.size(); ++i)
+		{
+			sum1 += v1[i];
+		}
+		for (size_t i = 0; i < v2.size(); ++i)
+		{
+			sum2 += v2[i];
+		}
+		sum1 += sum2 / 100;
+		sum2 %= 100;
+		float f = sum1 + float(sum2) / 100;
+		int nLen = v1.size();
+		f /= nLen;
+		printf("The average of %d numbers is %.2f\n", nLen, f);
+	}
+}
+
 // rename this to main int PAT
 int A1108Func(void)
 {
-	nsA1108A::main();
+	nsA1108B::main();
 	return 0;
 }
 
