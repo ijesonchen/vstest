@@ -9,6 +9,18 @@
 			第一次23分时，不应该再次检查，耗费15分钟，否则A1023有机会提交得22分
 		A1023 AVL树算法不了解，凭猜测做题，方法复杂，容易出错，并且部分结果不对。
 
+	总结2：
+		1.AVL算法实现按照四个旋转递归处理。熟练时可以40min内完成编码且不易出错。
+		2.区别满二叉树（每层都填满）、完全二叉树（按照每层从左到右顺序填，可以不满）
+
+	问题：尝试修正nsA1123A旋转算法
+		
+nsA1123A: naive算法。2h 22/30. complete判定算法错
+nsLiuchuo： Liuchuo示例代码
+nsA1123B：参考Liuchuo及AVL树解析后的代码。
+
+具体记录见实际代码
+
 An AVL tree is a self-balancing binary search tree. 
 In an AVL tree, the heights of the two child subtrees of any node differ by at most one; 
 if at any time they differ by more than one, rebalancing is done to restore this property. 
@@ -227,6 +239,7 @@ namespace nsA1123A
 
 	vector<int> vLevel;
 	bool bComplete = true;
+	// 错误。该算法判定的是满二叉树。
 	void IsComplete(Node* p)
 	{
 		if (p && bComplete)
@@ -342,7 +355,7 @@ BST平衡原则：不平衡时，将对应子树压缩1，必要时调整父节点再平衡
 			同1：重新平衡
 	插入到右子树引起不平衡类似。
 
-	整体调整不平衡，不要局限在示例局部类型。否则调整后顺序不同。
+	调整不平衡时将局部作为一个，不要局限在示例具体结构。否则调整后顺序不同。
 */
 namespace nsA1123RefLiuchuo
 {
@@ -487,6 +500,9 @@ revisit 9:40
 10:30 22/30 PT2,3 WA
 参考ref代码 10:45
 改写 IsComplete 10:55 PASS
+问题：区分满二叉树和完全二叉树
+	IsComplete实际上判定的是满二叉树
+	IsComplete2才是判定完全二叉树
 */
 namespace nsA1123B
 {
@@ -540,7 +556,7 @@ namespace nsA1123B
 		return std::max(TreeHight(p->left), TreeHight(p->right)) + 1;
 	}
 
-	Node* InsertData(Node* p, int val)
+	Node* BuildAvlTree(Node* p, int val)
 	{
 		if (!p)
 		{
@@ -549,14 +565,14 @@ namespace nsA1123B
 		}
 		if (val < p->data)
 		{
-			p->left = InsertData(p->left, val);
+			p->left = BuildAvlTree(p->left, val);
 		}
 		else
 		{
-			p->right = InsertData(p->right, val);
+			p->right = BuildAvlTree(p->right, val);
 		}
 
-		// AVL rebalance
+		// AVL re balance
 		int nleft = TreeHight(p->left);
 		int nRight = TreeHight(p->right);
 		int nDiff = nleft - nRight;
@@ -598,6 +614,7 @@ namespace nsA1123B
 		cout << endl;
 	}
 
+	// 错误。实际上判定的是满二叉树
 	bool IsComplete(Node* p)
 	{
 		if (p)
@@ -647,7 +664,7 @@ namespace nsA1123B
 		for (int i = 0; i < n; ++i)
 		{
 			cin >> k;
-			pRoot = InsertData(pRoot, k);
+			pRoot = BuildAvlTree(pRoot, k);
 
 		}
 
