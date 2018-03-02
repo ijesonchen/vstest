@@ -100,6 +100,11 @@ using namespace std;
 时间最短路径（相同取定点最少）
 而这路径相同，合并输出
 16:50 27/30 PT4 TLE
+
+保存DFS中间结果(Dijkstra数组)，进一步减枝
+17:00 TLE
+
+改进：合并两次搜索
 */
 
 namespace nsA111A
@@ -118,6 +123,7 @@ namespace nsA111A
 
 	vector<int> pathTemp;
 	vector<bool> vVisit;
+	vector<int> vAssist;
 
 	int minDist = MAXVALUE;
 	int minDistTime = MAXVALUE;
@@ -129,10 +135,7 @@ namespace nsA111A
 	
 	void DfsDist(int u, int dist, int distTime)
 	{
-		if (dist > minDist)
-		{
-			return;
-		}
+		if (dist > vAssist[u]) { return; }
 		if (u == dstNode)
 		{
 			if (dist < minDist ||
@@ -149,18 +152,23 @@ namespace nsA111A
 		{
 			if (!vVisit[i] && vAdj[i])
 			{
+				int iDist = dist + vAdj[i];
+				if (iDist > vAssist[i])
+				{
+					continue;
+				}
+				vAssist[i] = iDist;
 				vVisit[i] = true;
 				pathTemp.push_back(i);
-				DfsDist(i, dist + vAdj[i], distTime + vvTime[u][i]);
+				DfsDist(i, iDist, distTime + vvTime[u][i]);
 				vVisit[i] = false;
 				pathTemp.pop_back();
 			}
 		}
 	}
-
-	void DfsTime(int u, int t, int trans)
+	
+	void Dfs(int u, int distTime, int trans)
 	{
-		if (t > minTime) { return; }
 		if (u == dstNode)
 		{
 			if (t < minTime ||
@@ -177,9 +185,49 @@ namespace nsA111A
 		{
 			if (!vVisit[i] && vAdj[i])
 			{
+				int iTime = t + vAdj[i];
+				if (iTime > vAssist[i])
+				{
+					continue;
+				}
+				vAssist[i] = iTime;
 				vVisit[i] = true;
 				pathTemp.push_back(i);
-				DfsTime(i, t + vAdj[i], trans + 1);
+				DfsTime(i, iTime, trans + 1);
+				vVisit[i] = false;
+				pathTemp.pop_back();
+			}
+		}
+	}
+
+	void DfsTime(int u, int t, int trans)
+	{
+		if (t > vAssist[u]) { return; }
+		if (u == dstNode)
+		{
+			if (t < minTime ||
+				(t == minTime && trans < minTimeTrans))
+			{
+				pathTime = pathTemp;
+				minTime = t;
+				minTimeTrans = trans;
+			}
+			return;
+		}
+		vector<int>& vAdj = vvTime[u];
+		for (size_t i = 0; i < vAdj.size(); ++i)
+		{
+			if (!vVisit[i] && vAdj[i])
+			{
+				int iTime = t + vAdj[i];
+				if (iTime > vAssist[i])
+				{
+					continue;
+				}
+				vAssist[i] = iTime;
+				vVisit[i] = true;
+				pathTemp.push_back(i);
+				DfsTime(i, iTime, trans + 1);
 				vVisit[i] = false;
 				pathTemp.pop_back();
 			}
@@ -218,20 +266,24 @@ namespace nsA111A
 
 		pathTemp.clear();
 		vVisit.assign(n, false);
+		vAssist.assign(n, MAXVALUE);
 		minDist = MAXVALUE;
 		minDistTime = MAXVALUE;
 
 		vVisit[srcNode] = true;
+		vAssist[srcNode] = 0;
 		pathTemp.push_back(srcNode);
 		DfsDist(srcNode, 0, 0);
 
 
 		pathTemp.clear();
 		vVisit.assign(n, false);
+		vAssist.assign(n, MAXVALUE);
 		minTime = MAXVALUE;
 		minTimeTrans = MAXVALUE;
 
 		vVisit[srcNode] = true;
+		vAssist[srcNode] = 0;
 		pathTemp.push_back(srcNode);
 		DfsTime(srcNode, 0, 0);
 
