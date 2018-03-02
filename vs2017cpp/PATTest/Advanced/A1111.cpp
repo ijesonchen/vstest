@@ -1,16 +1,259 @@
 /*
+1111. Online Map (30)
 
+300 ms
+
+Input our current position and a destination, an online map can recommend several paths. 
+Now your job is to recommend two paths to your user: 
+one is the shortest, and the other is the fastest. 
+It is guaranteed that a path exists for any request.
+
+Input Specification:
+
+Each input file contains one test case. 
+For each case, the first line gives two positive integers N (2 <= N <= 500), and M, 
+being the total number of streets intersections on a map, and the number of streets, respectively. 
+Then M lines follow, each describes a street in the format:
+
+V1 V2 one-way length time
+
+where V1 and V2 are the indices (from 0 to N-1) of the two ends of the street; 
+one-way is 1 if the street is one-way from V1 to V2, or 0 if not; 
+length is the length of the street;
+and time is the time taken to pass the street.
+
+Finally a pair of source and destination is given.
+
+Output Specification:
+
+For each case, first print the shortest path from the source to the destination with distance D in the format:
+
+Distance = D: source -> v1 -> ... -> destination
+
+Then in the next line print the fastest path with total time T:
+
+Time = T: source -> w1 -> ... -> destination
+
+In case the shortest path is not unique, 
+output the fastest one among the shortest paths, 
+which is guaranteed to be unique. 
+
+In case the fastest path is not unique, 
+output the one that passes through the fewest intersections, 
+which is guaranteed to be unique.
+
+In case the shortest and the fastest paths are identical, print them in one line in the format:
+Distance = D; Time = T: source -> u1 -> ... -> destination
+
+Sample Input 1:
+10 15
+0 1 0 1 1
+8 0 0 1 1
+4 8 1 1 1
+3 4 0 3 2
+3 9 1 4 1
+0 6 0 1 1
+7 5 1 2 1
+8 5 1 2 1
+2 3 0 2 2
+2 1 1 1 1
+1 3 0 3 1
+1 4 0 1 1
+9 7 1 3 1
+5 1 0 5 2
+6 5 1 1 2
+3 5
+Sample Output 1:
+Distance = 6: 3 -> 4 -> 8 -> 5
+Time = 3: 3 -> 1 -> 5
+Sample Input 2:
+7 9
+0 4 1 1 1
+1 6 1 1 3
+2 6 1 1 1
+2 5 1 2 2
+3 0 0 1 1
+3 1 1 1 3
+3 2 1 1 2
+4 5 0 2 2
+6 5 1 1 2
+3 5
+Sample Output 2:
+Distance = 3; Time = 4: 3 -> 2 -> 5
 */
 
 #include "..\patMain.h"
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
+
+/*
+16:05
+路径一定存在
+顶点N:[2,500]
+可能有单向路
+0-based
+
+长度最短路径（相同取时长最小）
+时间最短路径（相同取定点最少）
+而这路径相同，合并输出
+16:50 27/30 PT4 TLE
+*/
+
+namespace nsA111A
+{
+	const int MAXVALUE = 0x7fffffff;
+	vector<vector<int>> vvDist;
+	vector<vector<int>> vvTime;
+	
+	void Reset(int n)
+	{
+		vvDist.assign(n, vector<int>(n));
+		vvTime.assign(n, vector<int>(n));
+	}
+
+	int srcNode, dstNode;
+
+	vector<int> pathTemp;
+	vector<bool> vVisit;
+
+	int minDist = MAXVALUE;
+	int minDistTime = MAXVALUE;
+	vector<int> pathDist;
+
+	int minTime = MAXVALUE;
+	int minTimeTrans = MAXVALUE;
+	vector<int> pathTime;
+	
+	void DfsDist(int u, int dist, int distTime)
+	{
+		if (dist > minDist)
+		{
+			return;
+		}
+		if (u == dstNode)
+		{
+			if (dist < minDist ||
+				(dist == minDist && distTime < minDistTime))
+			{
+				pathDist = pathTemp;
+				minDist = dist;
+				minDistTime = distTime;
+			}
+			return;
+		}
+		vector<int>& vAdj = vvDist[u];
+		for (size_t i = 0; i < vAdj.size(); ++i)
+		{
+			if (!vVisit[i] && vAdj[i])
+			{
+				vVisit[i] = true;
+				pathTemp.push_back(i);
+				DfsDist(i, dist + vAdj[i], distTime + vvTime[u][i]);
+				vVisit[i] = false;
+				pathTemp.pop_back();
+			}
+		}
+	}
+
+	void DfsTime(int u, int t, int trans)
+	{
+		if (t > minTime) { return; }
+		if (u == dstNode)
+		{
+			if (t < minTime ||
+				(t == minTime && trans < minTimeTrans))
+			{
+				pathTime = pathTemp;
+				minTime = t;
+				minTimeTrans = trans;
+			}
+			return;
+		}
+		vector<int>& vAdj = vvTime[u];
+		for (size_t i = 0; i < vAdj.size(); ++i)
+		{
+			if (!vVisit[i] && vAdj[i])
+			{
+				vVisit[i] = true;
+				pathTemp.push_back(i);
+				DfsTime(i, t + vAdj[i], trans + 1);
+				vVisit[i] = false;
+				pathTemp.pop_back();
+			}
+		}
+	}
+
+	void PrintPath(const vector<int>& vPath)
+	{
+		cout << vPath.front();
+		for (size_t i = 1; i < vPath.size(); ++i)
+		{
+			cout << " -> " << vPath[i];
+		}
+		cout << endl;
+	}
+
+	void main(void)
+	{
+		int n, m;
+		cin >> n >> m;
+		Reset(n);		
+		for (int i = 0; i < m; ++i)
+		{
+			int u, v, tag, dist, t;
+			cin >> u >> v >> tag >> dist >> t;
+			vvDist[u][v] = dist;
+			vvTime[u][v] = t;
+			if (!tag)
+			{
+				vvDist[v][u] = dist;
+				vvTime[v][u] = t;
+			}
+		}
+
+		cin >> srcNode >> dstNode;
+
+		pathTemp.clear();
+		vVisit.assign(n, false);
+		minDist = MAXVALUE;
+		minDistTime = MAXVALUE;
+
+		vVisit[srcNode] = true;
+		pathTemp.push_back(srcNode);
+		DfsDist(srcNode, 0, 0);
+
+
+		pathTemp.clear();
+		vVisit.assign(n, false);
+		minTime = MAXVALUE;
+		minTimeTrans = MAXVALUE;
+
+		vVisit[srcNode] = true;
+		pathTemp.push_back(srcNode);
+		DfsTime(srcNode, 0, 0);
+
+		if (pathDist == pathTime)
+		{
+			// Distance = 3; Time = 4: 3 -> 2 -> 5
+			cout << "Distance = " << minDist << "; Time = " << minTime << ": ";
+		}
+		else
+		{
+			cout << "Distance = " << minDist << ": ";
+			PrintPath(pathDist);
+			cout << "Time = " << minTime << ": ";
+		}
+		PrintPath(pathTime);
+	}
+} 
 
 // rename this to main int PAT
 int A1111Func(void)
 {
+	nsA111A::main();
 	return 0;
 }
 
@@ -26,5 +269,6 @@ void A1111(const string& fn)
 void A1111(void)
 {
 	A1111("data\\A1111-1.txt"); // 
+	A1111("data\\A1111-2.txt"); // 
 }
 

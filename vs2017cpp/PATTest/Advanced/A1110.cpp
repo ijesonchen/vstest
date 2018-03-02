@@ -65,7 +65,8 @@ using namespace std;
 test: n >= 2;
 
 16:06
-bug-fix: IsComplete 
+bug-fix: IsComplete 递归部分路径未返回。
+	！！注意编译警告！！
 24/25 PT6 异常
 
 */
