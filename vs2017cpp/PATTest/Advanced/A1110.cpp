@@ -63,6 +63,11 @@ using namespace std;
 ≈–∂œ
 16:00 14/25 PT0,2,6 WA
 test: n >= 2;
+
+16:06
+bug-fix: IsComplete 
+24/25 PT6 “Ï≥£
+
 */
 
 namespace nsA1110A
@@ -108,6 +113,7 @@ namespace nsA1110A
 				dqNode.push_back(node.right);
 			}
 		}
+		return true;
 	}
 
 	int LastChild(const vector<Node>& vNode, int iRoot)
