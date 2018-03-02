@@ -64,7 +64,7 @@ using namespace std;
 16:00 14/25 PT0,2,6 WA
 test: n >= 2;
 
-16:06
+16:05
 bug-fix: IsComplete 递归部分路径未返回。
 	！！注意编译警告！！
 24/25 PT6 异常
