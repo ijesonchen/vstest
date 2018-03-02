@@ -482,8 +482,12 @@ namespace nsA1123RefLiuchuo
 	}
 }
 
-// revisit 9:40 10:30
-// 22/30 PT2,3 WA
+/*
+revisit 9:40 
+10:30 22/30 PT2,3 WA
+²Î¿¼ref´úÂë 10:45
+¸ÄÐ´ IsComplete 10:55 PASS
+*/
 namespace nsA1123B
 {
 	struct Node
@@ -494,7 +498,6 @@ namespace nsA1123B
 
 		Node(int v) :data(v) {};
 	};
-
 
 	Node* RightRotate(Node* p);
 	Node* LeftRotate(Node* p);
@@ -595,7 +598,7 @@ namespace nsA1123B
 		cout << endl;
 	}
 
-	bool IsCompleteTree(Node* p)
+	bool IsComplete(Node* p)
 	{
 		if (p)
 		{
@@ -604,7 +607,34 @@ namespace nsA1123B
 			{
 				return false;
 			}
-			return IsCompleteTree(p->left) && IsCompleteTree(p->right);
+			return IsComplete(p->left) && IsComplete(p->right);
+		}
+		return true;
+	}
+
+	bool IsComplete2(Node* p)
+	{
+		bool noChild = false;
+		deque<Node*> dqNode;
+		dqNode.push_back(p);
+		while (!dqNode.empty())
+		{
+			p = dqNode.front();
+			dqNode.pop_front();
+			if (!p->left)
+				{ noChild = true; }
+			else
+			{
+				if (noChild) { return false; }
+				dqNode.push_back(p->left);
+			}
+			if (!p->right)
+				{ noChild = true; }
+			else
+			{
+				if (noChild) { return false; }
+				dqNode.push_back(p->right);
+			}
 		}
 		return true;
 	}
@@ -623,7 +653,7 @@ namespace nsA1123B
 
 		LevelPrint(pRoot);
 
-		if (IsCompleteTree(pRoot))
+		if (IsComplete2(pRoot))
 		{
 			cout << "YES" << endl;
 		}
@@ -657,6 +687,5 @@ void A1123(void)
 {
 	A1123("data\\A1123-1.txt"); // 
  	A1123("data\\A1123-2.txt"); // 
-
 }
 
