@@ -482,10 +482,164 @@ namespace nsA1123RefLiuchuo
 	}
 }
 
+// revisit 9:40 10:30
+// 22/30 PT2,3 WA
+namespace nsA1123B
+{
+	struct Node
+	{
+		int data;
+		Node* left = nullptr;
+		Node* right = nullptr;
+
+		Node(int v) :data(v) {};
+	};
+
+
+	Node* RightRotate(Node* p);
+	Node* LeftRotate(Node* p);
+
+	Node* RightRotate(Node* p)
+	{
+		Node* pLeft = p->left;
+		Node* pc = pLeft->right;
+		pLeft->right = p;
+		p->left = pc;
+		return pLeft;
+	}
+
+	Node* LeftRightRotate(Node* p)
+	{
+		p->left = LeftRotate(p->left);
+		p = RightRotate(p);
+		return p;
+	}
+
+	Node* LeftRotate(Node* p)
+	{
+		Node* pRight = p->right;
+		Node* pb = pRight->left;
+		pRight->left = p;
+		p->right = pb;
+		return pRight;
+	}
+
+	Node* RightLeftRotate(Node* p)
+	{
+		p->right = RightRotate(p->right);
+		p = LeftRotate(p);
+		return p;
+	}
+
+	int TreeHight(Node* p)
+	{
+		if (!p) { return 0; }
+		return std::max(TreeHight(p->left), TreeHight(p->right)) + 1;
+	}
+
+	Node* InsertData(Node* p, int val)
+	{
+		if (!p)
+		{
+			p = new Node(val);
+			return p;
+		}
+		if (val < p->data)
+		{
+			p->left = InsertData(p->left, val);
+		}
+		else
+		{
+			p->right = InsertData(p->right, val);
+		}
+
+		// AVL rebalance
+		int nleft = TreeHight(p->left);
+		int nRight = TreeHight(p->right);
+		int nDiff = nleft - nRight;
+		if (nDiff > 2 || nDiff < -2) { throw 0; }
+		if (nDiff == 2)
+		{
+			bool bLL = val < p->left->data;
+			if ( bLL ) { p = RightRotate(p); }
+			else { p = LeftRightRotate(p); }
+		}
+		if (nDiff == -2)
+		{
+			bool bRR = val > p->right->data;
+			if (bRR) { p = LeftRotate(p); }
+			else { p = RightLeftRotate(p); }
+		}
+
+		return p;
+	}
+
+	void LevelPrint(Node* pRoot)
+	{
+		vector<int> vData;
+		deque<Node*> dqNode;
+		dqNode.push_back(pRoot);
+		while (!dqNode.empty())
+		{
+			Node* p = dqNode.front();
+			dqNode.pop_front();
+			vData.push_back(p->data);
+			if (p->left) { dqNode.push_back(p->left); }
+			if (p->right) { dqNode.push_back(p->right); }
+		}
+		cout << vData.front();
+		for (size_t i = 1; i < vData.size(); ++i)
+		{
+			cout << " " << vData[i];
+		}
+		cout << endl;
+	}
+
+	bool IsCompleteTree(Node* p)
+	{
+		if (p)
+		{
+			if ((p->left && !p->right) ||
+				(p->right && !p->left))
+			{
+				return false;
+			}
+			return IsCompleteTree(p->left) && IsCompleteTree(p->right);
+		}
+		return true;
+	}
+
+	int main(void)
+	{
+		int n, k;
+		cin >> n;
+		Node* pRoot = nullptr;
+		for (int i = 0; i < n; ++i)
+		{
+			cin >> k;
+			pRoot = InsertData(pRoot, k);
+
+		}
+
+		LevelPrint(pRoot);
+
+		if (IsCompleteTree(pRoot))
+		{
+			cout << "YES" << endl;
+		}
+		else
+		{
+			cout << "NO" << endl;
+		}
+
+		return 0;
+	}
+}
+
 // rename this to main int PAT
 int A1123Func(void)
 {
-	nsA1123A::main();
+	nsA1123B::main();
 
 	return 0;
 }
@@ -501,7 +655,7 @@ void A1123(const string& fn)
 
 void A1123(void)
 {
-//	A1123("data\\A1123-1.txt"); // 
+	A1123("data\\A1123-1.txt"); // 
  	A1123("data\\A1123-2.txt"); // 
 
 }
