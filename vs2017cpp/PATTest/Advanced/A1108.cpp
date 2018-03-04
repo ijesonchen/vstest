@@ -56,6 +56,10 @@ using namespace std;
 14:25 14:45 18/20 PT2 WA
 可能错误：误差累计 
 改进：整数小数分开累加计算
+
+题解：ref-fix-1
+	仔细读题：只有一个时用number，多个时numbers
+	pass
 */
 namespace nsA1108A
 {
@@ -130,7 +134,9 @@ namespace nsA1108A
 		}
 		int nLen = (int)vNumbers.size();
 		sum /= nLen;
-		printf("The average of %d numbers is %.2f\n", nLen, sum);
+		// ref-fix-1
+		string s = (nLen == 1) ? "number" : "numbers";
+		printf("The average of %d %s is %.2f\n", nLen, s.c_str(), sum);
 	}
 }
 
