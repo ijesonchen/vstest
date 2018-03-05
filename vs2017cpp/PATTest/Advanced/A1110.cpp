@@ -1,6 +1,26 @@
 /*
 1110. Complete Binary Tree (25)
 
+总结：
+	1. 注意输入有效性检查：n==1时iRoot为-1，异常处理（bug-fix-1）
+
+
+15:25
+双向链表
+找到根
+判断
+16:00 14/25 PT0,2,6 WA
+test: n >= 2;（测试错误n可能为1）
+
+16:05
+bug-fix: IsComplete 递归部分路径未返回。
+！！注意编译警告！！
+24/25 PT6 异常
+
+11:20 10min PASS
+PT6: n == 1
+
+
 Given a tree, you are supposed to tell if it is a complete binary tree.
 
 Input Specification:
@@ -55,21 +75,6 @@ NO 1
 #include <deque>
 
 using namespace std;
-
-/*
-15:25
-双向链表
-找到根
-判断
-16:00 14/25 PT0,2,6 WA
-test: n >= 2;
-
-16:05
-bug-fix: IsComplete 递归部分路径未返回。
-	！！注意编译警告！！
-24/25 PT6 异常
-
-*/
 
 namespace nsA1110A
 {
@@ -139,6 +144,12 @@ namespace nsA1110A
 	{
 		int n;
 		cin >> n;
+		// bug-fix: n==1, iRoot = -1
+		if (n == 1)
+		{
+			cout << "YES 0" << endl;
+			return;
+		}
 		vector<Node> vNode(n);
 		int iRoot = -1;
 		for (int i = 0; i < n; ++i)
@@ -196,8 +207,9 @@ void A1110(const string& fn)
 
 void A1110(void)
 {
-// 	A1110("data\\A1110-1.txt"); // 
-// 	A1110("data\\A1110-2.txt"); // 
+	A1110("data\\A1110-1.txt"); // 
+	A1110("data\\A1110-2.txt"); // 
 	A1110("data\\A1110-3.txt"); // 
+	A1110("data\\A1110-4.txt"); // 
 }
 

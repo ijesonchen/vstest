@@ -126,6 +126,7 @@ A1011: 50MIN 27/30 10MIN 27/30 20MIN 18/30
 A1108: REF 1H nsA1108A pass，nsA1108B 异常
     **0305
 A1108: nsA1108B pass nsA1108RefRewrite pass
+A1110: 10MIN PASS
 ```
 
 ## 解题报告
