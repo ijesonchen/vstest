@@ -116,12 +116,14 @@ A1023: 2H 22/30 PT2,3 WA
 A1023: ref 80min pass. 
 	1. AVL的旋转递归实现
 	2. 注意区分满二叉树和完全二叉树。参见代码总结
-A1008: 20MIN 18/20 15min 15/20 REF 1H pass
+A1008: 20MIN 18/20 15min 15/20
 A1009: 40MIN PASS
 A1010: 40MIN 24/25
 A1011: 50MIN 27/30 10MIN 27/30 20MIN 18/30
 	模拟测试1 2H30MIN：18 25 24 27 = 94
     一定要注意时间。有剩余时间要仔细选择
+    **0304
+A1108: REF 1H nsA1108A pass，nsA1108B 异常
     **0305
 A1108: nsA1108B pass nsA1108RefRewrite pass
 ```
