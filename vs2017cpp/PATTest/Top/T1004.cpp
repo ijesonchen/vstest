@@ -205,15 +205,15 @@ namespace nsPermut
 	{
 		if (start == nTotal - 1)
 		{
-			cout << endl;
 			return;
 		}
 
 
-		cout << s[start];
 
 		for (int i = start + 1; i < nTotal; ++i)
 		{
+			cout << s << endl;
+			swap(s[start], s[i]);
 			Search(i);
 			swap(s[start], s[i]);
 		}

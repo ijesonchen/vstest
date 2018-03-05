@@ -127,6 +127,13 @@ A1108: REF 1H nsA1108A pass，nsA1108B 异常
     **0305
 A1108: nsA1108B pass nsA1108RefRewrite pass
 A1110: 10MIN PASS
+T1004: 1H FAILED
+T1005: 30MIN 28/35
+T1006: 1H FAILED 1H 22/35 pt2,3,4,5WA
+	模拟测试2：3H 0+28+0=28
+	1. 只想到暴力解法
+	2. 常规问题不会处理（递归全排列）
+	3. 速度太慢（T1006想到方法但是太慢）
 ```
 
 ## 解题报告
