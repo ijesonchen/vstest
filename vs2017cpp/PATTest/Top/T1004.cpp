@@ -196,9 +196,10 @@ namespace nsT1004A
 	}
 }
 
+// see perm2, permStl
 namespace nsPermutation
 {
-	string str("1234");
+	string str("123");
 	int nTotal = str.length();
 	// wrong, to perm1
 	void Perm(string s, int start)
@@ -213,7 +214,7 @@ namespace nsPermutation
 		for (int i = start + 1; i < nTotal; ++i)
 		{
 			swap(s[start], s[i]);
-			Perm(s, i+1);
+			Perm(s, i+1); // X: next is start + 1
 			swap(s[start], s[i]);
 		}
 	}
@@ -229,7 +230,7 @@ namespace nsPermutation
 		for (int i = start; i < nTotal; ++i)
 		{
 			swap(str[start], str[i]);
-			Perm1(i + 1); // X from start + 1
+			Perm1(i + 1); // X: next from start + 1
 			swap(str[start], str[i]);
 		}
 	}
@@ -265,6 +266,15 @@ namespace nsPermutation
 		}
 	}
 
+	void PermStl(string s)
+	{
+		sort(s.begin(), s.end());
+		do
+		{
+			cout << s << endl;
+		} while (next_permutation(s.begin(), s.end()));
+	}
+
 
 	void main(void)
 	{
@@ -272,12 +282,8 @@ namespace nsPermutation
 //		Perm(str, 0);
 //		Perm1(0);
 //		Perm2(0);
-		Perm11(0);
-// 		sort(s.begin(), s.end());
-// 		do 
-// 		{
-// 			cout << s << endl;
-// 		} while (next_permutation(s.begin(), s.end()));
+//		Perm11(0);
+		PermStl(str);
 	}
 
 }
@@ -369,7 +375,7 @@ namespace nsPermRef
 // rename this to main int PAT
 int T1004Func(void)
 {
-	nsPermRef::main();
+	nsPermutation::main();
 	return 0;
 }
 
