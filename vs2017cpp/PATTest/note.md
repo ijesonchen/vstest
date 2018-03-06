@@ -139,7 +139,7 @@ T1004: Permutation with Recurrence, passed
 A1104: 20MIN PASS
 A1105: 50MIN PASS
 A1106: 30MIN 17/25 wa mle, 5min 丢弃中间结果 17/25 WA，5min float-> double pass 
-A1107: 30min 20/30 wa, 30min 检查数据 20/30，10min 定位到问题
+A1107: 30min 20/30 wa, 30min 检查数据 20/30，10min 定位到问题，20min pass
 	模拟测试3：3H 20+25+25+20=90
 	1. 最后一题一直怀疑是否是未注意题目细节（30min），最后10min才怀疑是不是算法有问题，生成问题数据后已经没时间测试。
 ```

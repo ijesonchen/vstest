@@ -48,6 +48,7 @@ Sample Output:
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+#include <deque>
 
 using namespace std;
 
@@ -67,6 +68,13 @@ dfs，连通分量, union-find
 采用3进行搜索。首个访问节点作为clusterid，使用map记录数量
 
 16:20 20/30 PT1,4,5 WA
+
+16:50 定位到问题：链式关联下不正确
+	3
+	3: 1 2 3
+	3: 3 4 5
+	3: 5 6 7
+17:10 pass
 */
 
 namespace nsA1107A
@@ -110,20 +118,29 @@ namespace nsA1107A
 			if (!vVisit[i])
 			{
 				int iCluster = i;
-				++mapClusterCount[iCluster];
+				mapClusterCount[iCluster] = 1;
 				vVisit[i] = true;
-				vector<int>& vHobby = vvPeople2Hobby[i];
-				for (auto hob : vHobby)
+
+				deque<vector<int>> dqvHobby;
+				dqvHobby.push_back(vvPeople2Hobby[i]);
+
+				while (!dqvHobby.empty())
 				{
-					vector<int>& vPeople = vvHobby2People[hob];
-					for (auto p : vPeople)
+					vector<int>& vHobby = dqvHobby.front();
+					for (auto hob : vHobby)
 					{
-						if (!vVisit[p])
+						vector<int>& vPeople = vvHobby2People[hob];
+						for (auto p : vPeople)
 						{
-							vVisit[p] = true;
-							++mapClusterCount[iCluster];
+							if (!vVisit[p])
+							{
+								vVisit[p] = true;
+								++mapClusterCount[iCluster];
+								dqvHobby.push_back(vvPeople2Hobby[p]);
+							}
 						}
 					}
+					dqvHobby.pop_front();
 				}
 			}
 		}
@@ -161,6 +178,8 @@ void A1107(const string& fn)
 
 void A1107(void)
 {
-	A1107("data\\A1107-1.txt"); // 
+// 	A1107("data\\A1107-1.txt"); // 
+// 	A1107("data\\A1107-2.txt"); // 
+	A1107("data\\A1107-4.txt"); // 
 }
 
