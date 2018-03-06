@@ -69,6 +69,9 @@ using namespace std;
 
 不记录结果路径，仅记录数量
 15:45 17/25 pt3,5,6,7 wa
+
+改float为double
+15:50 pass
 */
 
 namespace nsA1106A
@@ -115,7 +118,7 @@ namespace nsA1106A
 	{
 
 		int n, k;
-		float p, r;
+		double p, r;
 		cin >> n >> p >> r;
 		r = 1 + r / 100;
 
