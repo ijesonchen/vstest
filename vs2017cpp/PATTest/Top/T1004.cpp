@@ -196,40 +196,180 @@ namespace nsT1004A
 	}
 }
 
-namespace nsPermut
+namespace nsPermutation
 {
-	string s("asdf");
-	int nTotal = 4;
-
-	void Search(int start)
+	string str("1234");
+	int nTotal = str.length();
+	// wrong, to perm1
+	void Perm(string s, int start)
 	{
-		if (start == nTotal - 1)
+		if (start >= nTotal - 1) // X stop too early
 		{
+			cout << s << endl;
 			return;
 		}
 
-
-
+		// X i from start
 		for (int i = start + 1; i < nTotal; ++i)
 		{
-			cout << s << endl;
 			swap(s[start], s[i]);
-			Search(i);
+			Perm(s, i+1);
 			swap(s[start], s[i]);
 		}
+	}
+	// wrong, to perm11
+	void Perm1(int start)
+	{
+		if (start == nTotal)
+		{
+			cout << str << endl;
+			return;
+		}
+
+		for (int i = start; i < nTotal; ++i)
+		{
+			swap(str[start], str[i]);
+			Perm1(i + 1); // X from start + 1
+			swap(str[start], str[i]);
+		}
+	}
+	// pass
+	void Perm11(int start)
+	{
+		if (start == nTotal)
+		{
+			cout << str << endl;
+			return;
+		}
+		for (int i = start; i < nTotal; ++i)
+		{
+			swap(str[start], str[i]);
+			Perm11(start + 1);
+			swap(str[start], str[i]);
+		}
+	}
+
+	// pass. ref to PermRef
+	void Perm2(int start)
+	{
+		if (start == nTotal)
+		{
+			cout << str << endl;
+			return;
+		}
+		for (int i = start; i < nTotal; ++i)
+		{
+			swap(str[start], str[i]);
+			Perm2(start + 1);
+			swap(str[start], str[i]);
+		}
+	}
+
+
+	void main(void)
+	{
+		
+//		Perm(str, 0);
+//		Perm1(0);
+//		Perm2(0);
+		Perm11(0);
+// 		sort(s.begin(), s.end());
+// 		do 
+// 		{
+// 			cout << s << endl;
+// 		} while (next_permutation(s.begin(), s.end()));
+	}
+
+}
+
+namespace nsPermRef
+{
+	int nCount = 0;
+	int nTotal = 0;
+
+	void Permutation(char* pStr, char* pBegin)
+	{
+		if (*pBegin == '\0')
+		{
+			++nCount;
+			printf("%s\n", pStr);
+			return;
+		}
+
+		for (char* pCh = pBegin; *pCh != '\0'; ++pCh)
+		{
+			swap(*pCh, *pBegin);
+			Permutation(pStr, pBegin + 1);
+			swap(*pCh, *pBegin);
+		}
+	}
+
+	void Permutation2(char* p, int start)
+	{
+		if (*(p+start) == '\0')
+		{
+			++nCount;
+			printf("%s\n", p);
+			return;
+		}
+
+		for (char* pCh = p + start; *pCh != '\0'; ++pCh)
+		{
+			swap(*pCh, *(p + start));
+			Permutation2(p, start + 1);
+			swap(*pCh, *(p + start));
+		}
+	}
+
+	void Permutation3(char* p, int start)
+	{
+		if (start == nTotal)
+//		if (p[start] == 0)
+		{
+			++nCount;
+			printf("%s\n", p);
+			return;
+		}
+		for (int i = start; i < nTotal; ++i)
+		{
+			swap(p[start], p[i]);
+			Permutation3(p, start + 1);
+			swap(p[start], p[i]);
+		}
+	}
+
+	int factor(int n)
+	{
+		int sum = 1;
+		for (int i = 1; i <= n; ++i)
+		{
+			sum *= i;
+		}
+		return sum;
 	}
 
 	void main(void)
 	{
-		Search(0);
-	}
+		nCount = 0;
+		string s("123");
+		nTotal = s.length();
+		char* p = (char*)s.c_str();
+//		Permutation(p, p);
+//		Permutation2(p, 0);
+		Permutation3(p, 0);
+		auto cnt = factor(s.length());
+		if (nCount != cnt)
+		{
+			throw 0;
+		}
 
+	}
 }
 
 // rename this to main int PAT
 int T1004Func(void)
 {
-	nsPermut::main();
+	nsPermRef::main();
 	return 0;
 }
 
