@@ -69,8 +69,21 @@ o(n!)
 
 10:00 继续全排列搜索算法
 注意理解题意
-应该用动态规划
-11:00 29/35 PT3,6 TLE
+应该用动态规划减少复杂度
+11:00 29/35 PT2,6 TLE
+
+bug-fix-1: 30/35 pt2 TLE
+
+
+ref改进：
+1. 读取是确定是否有需要的beed	
+2. 不要在62维数组上搜索，只要记录所需要的几个字母即可（用map或者数组映射）
+3. 使用DFS搜索（如何实现？）
+http://blog.csdn.net/zorelemn/article/details/50152597
+http://blog.csdn.net/jtjy568805874/article/details/50759483
+https://mephis.me/2017/10/21/to_buy_not_not_buy/
+
+
 */
 namespace nsT1004A
 {
@@ -164,7 +177,8 @@ namespace nsT1004A
 
 	void Search(Beads& beads, const int start, int rest)
 	{
-		if (nRest || start >= nResult)
+		// bug-fix-1 start >= nResult ->  
+		if (nRest || rest >= nResult)
 		{
 			// 减枝: 全搜完有剩余 或者 已经有更少的选择
 			return;

@@ -128,7 +128,7 @@ A1108: REF 1H nsA1108A pass，nsA1108B 异常
 A1108: nsA1108B pass nsA1108RefRewrite pass
 A1110: 10MIN PASS
 T1004: 1H FAILED
-T1005: 30MIN 28/35
+T1005: 30MIN 28/35 TLE
 T1006: 1H FAILED 1H 22/35 pt2,3,4,5WA
 	模拟测试2：3H 0+28+0=28
 	1. 只想到暴力解法
@@ -142,6 +142,8 @@ A1106: 30MIN 17/25 wa mle, 5min 丢弃中间结果 17/25 WA，5min float-> doubl
 A1107: 30min 20/30 wa, 30min 检查数据 20/30，10min 定位到问题，20min pass
 	模拟测试3：3H 20+25+25+20=90
 	1. 最后一题一直怀疑是否是未注意题目细节（30min），最后10min才怀疑是不是算法有问题，生成问题数据后已经没时间测试。
+	**03.07
+T1004: 1H 29/35 TLE
 ```
 
 ## 解题报告
