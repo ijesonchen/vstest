@@ -76,7 +76,8 @@ bug-fix-1: 30/35 pt2 TLE
 
 
 ref改进：
-1. 读取是确定是否有需要的beed	
+1. 读取时确定是否有需要的beed	
+	剔除无用信息（不需要的bead只记数量，需要的bead记录每个color的数量）
 2. 不要在62维数组上搜索，只要记录所需要的几个字母即可（用map或者数组映射）
 3. 使用DFS搜索（如何实现？）
 http://blog.csdn.net/zorelemn/article/details/50152597

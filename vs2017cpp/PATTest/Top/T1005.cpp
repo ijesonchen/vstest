@@ -54,6 +54,15 @@ using namespace std;
 
 bug-fix: N和字串长度相等
 15:50 28/35 pt3,4 TLE 
+
+ref思路：
+后缀数组LCP算法
+区间最值RMQ算法
+哈希
+http://www.cnblogs.com/zufezzt/p/5744413.html
+http://blog.csdn.net/jtjy568805874/article/details/50759503
+http://blog.csdn.net/chr1991/article/details/54429653
+http://www.cnblogs.com/jackdong/archive/2012/10/15/2724034.html
 */
 
 namespace nsT1005A

@@ -43,6 +43,7 @@ Impossible
 #include <vector>
 #include <unordered_set>
 #include <deque>
+#include <algorithm>
 
 using namespace std;
 
@@ -51,6 +52,10 @@ using namespace std;
 利用in/pre/post根的位置不断切分
 0表示未知
 17:50 22/35 PT2,3,4,5 WA
+
+ref http://blog.csdn.net/guojiaqi007/article/details/59155604
+测试in.i == pre.front / post.back
+  或pre.front == post.back
 */
 
 namespace nsT1006A
@@ -287,10 +292,252 @@ namespace nsT1006A
 	}
 }
 
+
+/*
+15:00
+ref http://blog.csdn.net/guojiaqi007/article/details/59155604
+测试in.i == pre.front / post.back
+或pre.front == post.back
+16:00 未见改善
+*/
+
+namespace nsT1006B
+{
+	enum IDEnum
+	{
+		INID = 0,
+		PREID,
+		POSTID
+	};
+	const int TOTALORDER = 3;
+
+	struct Node
+	{
+		int data = 0;
+		int left = 0;
+		int right = 0;
+	};
+	vector<Node> vNode;
+
+	int nNode;
+	vector<vector<int>> vvOrder;
+	vector<int> vRest;
+
+	bool bImpossible = false;
+	vector<int> vLevel;
+
+	void Reset(void)
+	{
+		nNode = 0;
+		vNode.clear();
+		vvOrder.assign(3, vector<int>());
+		vRest.assign(3, 0);
+		bImpossible = false;
+		vLevel.clear();
+	}
+
+	int GetNode(const string& s)
+	{
+		if (s == "-")
+		{
+			return 0;
+		}
+		return stoi(s);
+	}
+
+	int GetRest(const vector<int>& v, int start, int len)
+	{
+		return (int)count(v.begin() + start, v.begin() + start + len, 0);
+	}
+	
+	void GetMiss(const unordered_set<int>& nodes, vector<int>& v, int start, int len)
+	{
+		for (auto i : nodes)
+		{
+			auto it = find(v.begin() + start, v.begin() + start + len, i);
+			if (it != v.end())
+			{
+				*it = i;
+				break;
+			}
+		}
+	}
+
+	int End(int start, int len) { return start + len - 1; }
+
+	int Build(const int in1, const  int pre1, const  int post1, const int len)
+	{
+		if (len <= 0 || bImpossible) { return 0; }
+		int in2 = End(in1, len), pre2 = End(pre1, len), post2 = End(post1, len);
+		auto& vIn = vvOrder[INID];
+		auto& vPre = vvOrder[PREID];
+		auto& vPost = vvOrder[POSTID];
+
+		int& rPre = vPre[pre1];
+		int& rPost = vPost[post2];
+		if (rPre && rPost && (rPre != rPost))
+		{
+			bImpossible = true;
+			return 0;
+		}
+		int root = std::max(rPre, rPost);
+		rPre = root;
+		rPost = root;
+
+		// root ?
+		int iRoot = -1;
+		for (int i = in1; i <= in2; ++i)
+		{
+			int& nIn = vIn[i];
+			if (!nIn) { continue; }
+			if (nIn == rPre || nIn == rPost)
+			{
+				root = nIn;
+				rPre = nIn;
+				rPost = nIn;
+				iRoot = i;
+				break;
+			}
+		}
+		
+		if (iRoot < 0)
+		{
+			if (root)
+			{
+				if (GetRest(vIn, in1, len) != 1)
+				{
+					bImpossible = true;
+					return 0;
+				}
+				auto p = find(vIn.begin() + in1, vIn.begin() + in1 + len, 0);
+				*p = root;
+				iRoot = p - vIn.begin();
+			}
+			else
+			{
+				bool bIn = GetRest(vvOrder[INID], in1, len) <= 1;
+				if (!bIn)
+				{
+					bImpossible = true;
+					return 0;
+				}
+
+				unordered_set<int> allSet;
+				vector<int> v{ in1, pre1, post1 };
+				for (int i = 0; i < TOTALORDER; ++i)
+				{
+					for (int j = 0; j < len; ++j)
+					{
+						int iNode = vvOrder[i][j + v[i]];
+						if (!iNode)
+						{
+							continue;
+						}
+						allSet.insert(iNode);
+						if (allSet.size() == len) { break; }
+					}
+					if (allSet.size() == len) { break; }
+				}
+
+				if (allSet.size() != len)
+				{
+					bImpossible = true;
+					return 0;
+				}
+				GetMiss(allSet, vvOrder[PREID], pre1, len);
+				GetMiss(allSet, vvOrder[POSTID], post1, len);
+				GetMiss(allSet, vvOrder[INID], in1, len);
+				root = rPre;
+				auto p = find(vIn.begin() + in1, vIn.begin() + in1 + len, root);
+				iRoot = p - vIn.begin();
+			}
+		}
+
+		int nLeft = iRoot - in1;
+		if (nLeft > 0)
+		{
+			int rootLeft = Build(in1, pre1 + 1, post1, nLeft);
+			vNode[root].left = rootLeft;
+		}
+		int nRight = in2 - iRoot;
+		if (nRight > 0)
+		{
+			int rootRight = Build(in1 + nLeft + 1, pre1 + nLeft + 1, post1 + nLeft, nRight);
+			vNode[root].right = rootRight;
+		}
+
+		return root;
+	}
+
+	void PrintVec(const vector<int>& v)
+	{
+		cout << v.front();
+		for (size_t i = 1; i < v.size(); ++i)
+		{
+			cout << " " << v[i];
+		}
+		cout << endl;
+	}
+
+	void LevelPrint(int root)
+	{
+		deque<int> dqNodes;
+		dqNodes.push_back(root);
+		while (!dqNodes.empty())
+		{
+			root = dqNodes.front();
+			dqNodes.pop_front();
+			vLevel.push_back(root);
+			if (vNode[root].left)
+			{
+				dqNodes.push_back(vNode[root].left);
+			}
+			if (vNode[root].right)
+			{
+				dqNodes.push_back(vNode[root].right);
+			}
+		}
+		PrintVec(vLevel);
+	}
+
+	void main(void)
+	{
+		Reset();
+		cin >> nNode;
+		vNode.assign(nNode + 1, Node());
+		string s;
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int j = 0; j < nNode; ++j)
+			{
+				cin >> s;
+				int node = GetNode(s);
+				if (!node)
+				{
+					++vRest[i];
+				}
+				vvOrder[i].push_back(node);
+			}
+		}
+
+		int root = Build(0, 0, 0, nNode);
+		if (bImpossible)
+		{
+			cout << "Impossible" << endl;
+			return;
+		}
+		PrintVec(vvOrder[INID]);
+		PrintVec(vvOrder[PREID]);
+		PrintVec(vvOrder[POSTID]);
+		LevelPrint(root);
+		//		if (root) Level.push_back(root);
+	}
+}
+
 // rename this to main int PAT
 int T1006Func(void)
 {
-	nsT1006A::main();
+	nsT1006B::main();
 	return 0;
 }
 
