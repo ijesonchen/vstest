@@ -67,10 +67,14 @@ o(n!)
 
 15:20 放弃。全排列算法不熟悉
 
+10:00 继续全排列搜索算法
+注意理解题意
+应该用动态规划
+11:00 29/35 PT3,6 TLE
 */
 namespace nsT1004A
 {
-	const int TOTALBEADS = 52;
+	const int TOTALBEADS = 62;
 	const int MAXRESULT = 10000000;
 	char Index(char ch)
 	{
@@ -88,103 +92,121 @@ namespace nsT1004A
 			return ch - 'A' + 36;
 		}
 		throw 0;
+		return 0;
 	}
 
-	struct String
+	struct Beads
 	{
-		char data[TOTALBEADS] = {0};
+		vector<int> data;
+		int total = 0;
+		string s;
 		
-		String(const string& str)
+		Beads(const string& str): data(TOTALBEADS), s(str)
 		{
 			for (auto ch : str)
 			{
-				++data[Index(ch)];
+				auto i = Index(ch);
+				++data[i];
 			}
+			total = (int)str.length();
 		}
 
-		String(const String& s)
+		int Remove(const Beads& b)
 		{
-			memcpy(data, s.data, TOTALBEADS * sizeof(char));
-		}
-
-		bool Remove(const String& s)
-		{
-			bool done = true;
+			int rest = b.total - total;
 			for (int i = 0; i < TOTALBEADS; ++i)
 			{
-				if (data[i] && data[i] <= s.data[i])
+				if (data[i])
 				{
-					data[i] = 0;
-				}
-				else
-				{
-					data[i] -= s.data[i];
-					done = false;
+					if (data[i] <= b.data[i])
+					{
+						total -= data[i];
+						data[i] = 0;
+					}
+					else
+					{
+						total -= b.data[i];
+						data[i] -= b.data[i];
+					}
 				}
 			}
-			return done;
+
+			if (total < 0)
+			{
+				throw 0;
+			}
+
+			for (auto ch : b.s)
+			{
+				auto it = s.find(ch);
+				if (it != s.npos)
+				{
+					s.erase(it, 1);
+				}
+			}
+			
+			return rest + total;
 		}
 
 		int Count(void)
 		{
-			int cnt = 0;
-			for (int i = 0; i < TOTALBEADS; ++i)
-				{ cnt += data[i]; }
-			return cnt;
+			return total;
 		}
 	};
 
-	vector<String*> vResult;
-	int nResult = MAXRESULT;
-	int nRest = MAXRESULT;
-
 	// input data
-	vector<String*> vpData;
-	int nTotal = 0;
+	vector<Beads*> vpData;
+	int nBeads = 0;
 
-	void Search(String strRest, const int start)
+	int nResult = MAXRESULT;
+	int nRest = 0;
+
+
+	void Search(Beads& beads, const int start, int rest)
 	{
-		if (start >= MAXRESULT - 1)
+		if (nRest || start >= nResult)
 		{
-			// 减枝
+			// 减枝: 全搜完有剩余 或者 已经有更少的选择
 			return;
 		}
-		if (start == nTotal - 1)
+		if (start == nBeads)
 		{
 			// no result
-			int cnt = strRest.Count();
-			if (cnt < nRest)
-			{
-				nRest = cnt;
-			}
-			return;
-		}
-		if (strRest.Remove(*vpData[start]))
-		{
-			// found
-			if (start < nResult)
-			{
-				nResult = start;
-			}
+			nRest = beads.Count();
 			return;
 		}
 
-		for (int i = start + 1; i < nTotal; ++i)
+		for (int i = start; i < nBeads; ++i)
 		{
 			std::swap(vpData[start], vpData[i]);
-			Search(strRest, i);
+			Beads nextBead(beads);
+			auto pNext = vpData[start];
+			int nextRest = nextBead.Remove(*pNext) + rest;
+			if (!nextBead.total)
+			{
+				// found
+				if (nextRest < nResult)
+				{
+					nResult = nextRest;
+				}
+			}
+			Search(nextBead, start + 1, nextRest);
 			std::swap(vpData[start], vpData[i]);
 		}
 	}
 
 	void main(void)
 	{
+		vpData.clear();
+		nResult = MAXRESULT;
+		nRest = 0;
+		
 		string str;
 		cin >> str;
-		String target(str);
-		vector<String> vData;
-		cin >> nTotal;
-		for (int i = 0; i < nTotal; ++i)
+		Beads target(str);
+		vector<Beads> vData;
+		cin >> nBeads;
+		for (int i = 0; i < nBeads; ++i)
 		{
 			cin >> str;
 			vData.push_back(str);
@@ -193,6 +215,15 @@ namespace nsT1004A
 		{
 			vpData.push_back(&s);
 		}
+		Search(target, 0, 0);
+		if (nRest)
+		{
+			cout << "No " << nRest << endl;
+		}
+		else
+		{
+			cout << "Yes " << nResult << endl;
+		}
 	}
 }
 
@@ -200,7 +231,7 @@ namespace nsT1004A
 namespace nsPermutation
 {
 	string str("123");
-	int nTotal = str.length();
+	int nTotal = (int)str.length();
 	// wrong, to perm1
 	void Perm(string s, int start)
 	{
@@ -358,12 +389,12 @@ namespace nsPermRef
 	{
 		nCount = 0;
 		string s("123");
-		nTotal = s.length();
+		nTotal = (int)s.length();
 		char* p = (char*)s.c_str();
 //		Permutation(p, p);
 //		Permutation2(p, 0);
 		Permutation3(p, 0);
-		auto cnt = factor(s.length());
+		auto cnt = factor((int)s.length());
 		if (nCount != cnt)
 		{
 			throw 0;
@@ -375,7 +406,7 @@ namespace nsPermRef
 // rename this to main int PAT
 int T1004Func(void)
 {
-	nsPermutation::main();
+	nsT1004A::main();
 	return 0;
 }
 
@@ -391,5 +422,6 @@ void T1004(const string& fn)
 void T1004(void)
 {
 	T1004("data\\T1004-1.txt"); // 
+	T1004("data\\T1004-2.txt"); // 
 }
 
