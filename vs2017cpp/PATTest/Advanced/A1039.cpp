@@ -4,6 +4,14 @@
 65536 kB
 
 18:00
+20min 23/25 pt5 TLE
+50min pass
+总结：时间要求非常高的情况下：
+	umap<string,set<int>>
+	1. io使用scanf / printf
+	2. map[string] -> map[int] (4字节名字提示）
+	3. set改用vector+排序
+
 
 Zhejiang University has 40000 students and provides 2500 courses.
 Now given the student name lists of all the courses, 
@@ -92,8 +100,6 @@ sln：结果：umap<string, set<int>> mapNameCourse
 
 set改为vector（取消排序，看速度）
 18:17: 6/25 PT0,2WA pt5TLE
-
-
 */
 
 namespace nsA1039A
@@ -177,9 +183,52 @@ namespace nsA1039B
 	}
 }
 
+
+/*
+cin/cout, name->int, vector排序
+TLE
+*/
+namespace nsA1039F
+{
+	void main(void)
+	{
+		unordered_map<int, vector<int>> mapNameCourse;
+		int n, k, c, ni;
+		string name;
+		cin >> n >> k;
+		for (int i = 0; i < k; ++i)
+		{
+			cin >> c >> ni;
+			for (int j = 0; j < ni; ++j)
+			{
+				cin >> name;
+				int id = *(int*)name.c_str();
+				mapNameCourse[id].push_back(c);
+			}
+		}
+		for (int i = 0; i < n; ++i)
+		{
+			cin >> name;
+			int id = *(int*)name.c_str();
+			auto& res = mapNameCourse[id];
+			cout << name << " " << res.size();
+			if (res.size())
+			{
+				sort(res.begin(), res.end());
+				for (auto c : res)
+				{
+					cout << " " << c;
+				}
+			}
+			cout << endl;
+		}
+	}
+}
+
 /*
 使用scanf和printf
 18:33 23/25 TLE
+问题：Name2ID构造了string, 改为Name2ID(const char* s), 替换set后pass
 */
 namespace nsA1039C
 {
@@ -329,7 +378,7 @@ namespace nsA1039E
 // rename this to main int PAT
 int A1039Func(void)
 {
-	nsA1039E::main();
+	nsA1039F::main();
 	return 0;
 }
 
@@ -337,8 +386,8 @@ int A1039Func(void)
 void A1039(const string& fn)
 {
 	cout << fn << endl;
-//	RedirCin(fn);
-	freopen(fn.c_str(), "r", stdin);
+	RedirCin(fn);
+//	freopen(fn.c_str(), "r", stdin);
 	A1039Func();
 	cout << endl;
 }

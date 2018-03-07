@@ -144,6 +144,8 @@ A1107: 30min 20/30 wa, 30min 检查数据 20/30，10min 定位到问题，20min 
 	1. 最后一题一直怀疑是否是未注意题目细节（30min），最后10min才怀疑是不是算法有问题，生成问题数据后已经没时间测试。
 	**03.07
 T1004: 1H 29/35 TLE
+A1039: 20MIN 23/25 TLE，30min pass
+	scanf, map[string]->map[int], set->sort(vector)
 ```
 
 ## 解题报告
