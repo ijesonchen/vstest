@@ -78,6 +78,7 @@ using namespace std;
 当前油箱覆盖的站点
 最大油箱距离能覆盖的油站
 11：00 放弃
+
 */
 
 namespace nsA1033A
@@ -147,6 +148,90 @@ namespace nsA1033A
 		else
 		{
 			printf("%.2f\n", pTotal);
+		}
+	}
+}
+
+
+/*
+14：30
+贪心：
+站点按价格排序，每次取最小的加满
+选取下一最小站点i：价格pi，油量gLeft，最大加油量
+未加油位置链表表示
+15:30 放弃
+*/
+namespace nsA1133B
+{
+	struct Station 
+	{
+		float d;
+		float p;
+
+		bool operator<(const Station& a) 
+		{ return p != a.p ? p < a.p : d < a.d; }
+	};
+
+	struct Dist
+	{
+		float start = 0;
+		float end = 0;
+		bool filled = false;
+		Dist* next = nullptr;
+
+		Dist(float s, float e, bool f) : start(s), end(e), filled(f) {};
+
+		bool Include(int d) 
+			{ return start <= d && d >= end; }
+		float MaxDist(void) const { return end - start; }
+	};
+
+	Dist* FindPos(Dist* pRoot, int d)
+	{
+		while (!pRoot->Include(d))
+		{
+			pRoot = pRoot->next;
+		}
+	}
+
+	void main(void)
+	{
+		float tankCap, dstDist, distPerGas;
+		int nStation;
+		scanf("%f %f %f %d\n", &tankCap, &dstDist, &distPerGas, &nStation);
+		float maxFullTankDist = tankCap * distPerGas;
+		vector<Station> vStation;
+		bool bImpossible = true;
+		for (int i = 0; i < nStation; ++i)
+		{
+			vStation.emplace_back();
+			scanf("%f %f\n", &vStation.back().p, &vStation.back().d);
+			if (vStation.back().d == 0)
+			{
+				bImpossible = false;
+			}
+		}
+		vStation.emplace_back();
+		sort(vStation.begin(), vStation.end());
+		
+		// memory leakage
+		Dist* pRoot = new Dist(0, dstDist, false);
+		float totalPrice = 0;
+		for (int i = 0; i < nStation; ++i)
+		{
+			auto& station = vStation[i];
+			if (station.d >= dstDist) { continue; }
+			Dist* pCurrent = FindPos(pRoot, station.d);
+			// 决定最大加油量，处理链表
+			if (pCurrent->filled)
+			{
+				if (!pCurrent->next) { continue; }
+				Dist* pNext = pCurrent->next;
+				float maxDist = pNext->MaxDist();
+				if (maxDist == maxFullTankDist)
+				{ 
+				}
+			}
 		}
 	}
 }

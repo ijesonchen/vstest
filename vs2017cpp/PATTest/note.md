@@ -146,6 +146,10 @@ A1107: 30min 20/30 wa, 30min 检查数据 20/30，10min 定位到问题，20min 
 T1004: 1H 29/35 TLE
 A1039: 20MIN 23/25 TLE，30min pass
 	scanf, map[string]->map[int], set->sort(vector)
+	**03.08
+A1033: 1H20MIN 未完成 1H 未完成
+A1034: 1H05MIN 28/30 段错误 10min PASS
+
 ```
 
 ## 解题报告
