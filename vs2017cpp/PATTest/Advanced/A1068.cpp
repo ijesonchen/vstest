@@ -51,7 +51,12 @@ using namespace std;
 /*
 17:20 
 似乎是背包问题？
+排序后，搜索所有可能排列，找到第一个后结束
 18:10 29/30 PT6 TLE
+
+PT6为no sln
+尝试提前退出 
+18:20 2/30
 */
 
 namespace nsA1068A
@@ -88,10 +93,6 @@ namespace nsA1068A
 				found = true;
 			}
 
-// 			found = true;
-// 			if (start < vResult.size())
-// 			{
-// 			}
 			return;
 		}
 		for (int i = start; i < nCoin; ++i)
