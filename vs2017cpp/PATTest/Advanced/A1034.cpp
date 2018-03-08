@@ -74,6 +74,7 @@ using namespace std;
 /*
 11：05
 12:10: 28/30 PT3 段错误
+12:15: PASS
 */
 
 namespace nsA1034A
@@ -115,7 +116,8 @@ namespace nsA1034A
 		k *= 2;
 		vector<int> vWeight(1);
 		vector<int> vName(1);
-		vector<vector<int>> vvAdj(n+2); // max n+2 people
+		// bug-fix-1: 每行最多2人，最多2*n个人
+		vector<vector<int>> vvAdj(n*2+1); // max n+2 people
 		unordered_map<int, int> mapNameIndex;
 		for (int i = 0; i < n; ++i)
 		{
