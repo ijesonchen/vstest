@@ -141,19 +141,18 @@ namespace nsA1066A
 		}
 		return p;
 	}
-
-
+	
 	void main(void)
 	{
 		int n, t;
 		cin >> n;
-		Node* p = nullptr;
+		Node* pRoot = nullptr;
 		for (int i = 0; i < n; ++i)
 		{
 			cin >> t;
-			p = Insert(p, t);
+			pRoot = Insert(pRoot, t);
 		}
-		cout << p->data << endl;
+		cout << pRoot->data << endl;
 	}
 }
 
