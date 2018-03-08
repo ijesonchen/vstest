@@ -192,6 +192,7 @@ namespace nsA1133B
 		{
 			pRoot = pRoot->next;
 		}
+		return pRoot;
 	}
 
 	void main(void)
