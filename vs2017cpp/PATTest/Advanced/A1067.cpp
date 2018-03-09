@@ -35,6 +35,7 @@ Sample Output:
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
 
 using namespace std;
 
@@ -154,10 +155,78 @@ namespace nsA1067B
 	}
 }
 
+/*
+11：00
+使用umap替换vData2Index
+11:10 8/25 1tle, 3wa，说明流程有错误导致死循环或者错误结果
+
+*/
+namespace nsA1067C
+{
+	void main(void)
+	{
+		int n, t;
+		scanf("%d", &n);
+
+		vector<int> vData(n);
+		unordered_map<int, int> mapDataIndex;
+		int left = 0;
+		for (int i = 0; i < n; ++i)
+		{
+			scanf("%d", &t);
+			if (t != i) { ++left; }
+			vData[i] = t;
+			mapDataIndex[t] = i;
+		}
+		int cnt = 0;
+		int idxi = 0;
+		int istart = 1;
+		while (left)
+		{
+			// vdata[idx0] = 0, vdata[idxi] = i;
+			if (!mapDataIndex[0])
+			{
+				// find next pos
+				idxi = istart;
+				while (idxi < n && vData[idxi] == idxi)
+				{
+					++idxi;
+				}
+				if (idxi == n)
+				{
+					break;
+				}
+				istart = idxi + 1;
+				mapDataIndex[0] = idxi;
+				mapDataIndex[vData[idxi]] = 0;
+				swap(vData[0], vData[idxi]);
+				++cnt;
+				++left;
+			}
+			int idx0 = mapDataIndex[0];
+			while (idx0)
+			{
+				// swap(0, di=idx0) 
+				idxi = mapDataIndex[idx0];
+				// data:0,   di = idx0 -> di=idx0, 0
+				// pos:idx0, idxi      -> idx0   , idxi
+				mapDataIndex[0] = idxi;
+				idx0 = idxi;
+				mapDataIndex[idx0] = idx0;
+				swap(vData[idx0], vData[idxi]);
+				++cnt;
+				--left;
+			}
+			--left;
+		}
+		cout << cnt << endl;
+	}
+}
+
 // rename this to main int PAT
 int A1067Func(void)
 {
-	nsA1067B::main();
+	nsA1067C::main();
 	return 0;
 }
 
