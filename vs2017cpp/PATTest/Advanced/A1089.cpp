@@ -122,6 +122,42 @@ namespace nsA1089A
 		return true;
 	}
 
+	int MergeStep(void)
+	{
+		vector<int> vMerge = vInit;
+		int step = 4;
+		bool same = true;
+		for (; step < nTotal && same; step *=2)
+		{
+			sort(vMerge.begin(), vMerge.begin() + step);
+			for (int i = 0; i < step; ++i)
+			{
+				if (vMerge[i] != vRef[i])
+				{
+					same = false;
+					break;
+				}
+			}
+		}
+		return step / 2;
+	}
+
+	void Merge(void)
+	{
+		int step = MergeStep();
+		for (int i = 0; i < nTotal; i+= step)
+		{
+			int off = i + step;
+			if (off > nTotal)
+			{
+				off = nTotal;
+			}
+			sort(vRef.begin() + i, vRef.begin() + off);
+		}
+		cout << "Merge Sort" << endl;
+		Print(vRef);
+	}
+
 	void main(void)
 	{
 		cin >> nTotal;
@@ -140,7 +176,7 @@ namespace nsA1089A
 			return;
 		}
 
-		throw 0;
+		Merge();
 	}
 }
 
@@ -162,7 +198,7 @@ void A1089(const string& fn)
 
 void A1089(void)
 {
-	A1089("data\\A1089-1.txt"); // 
+//	A1089("data\\A1089-1.txt"); // 
 	A1089("data\\A1089-2.txt"); // 
 }
 
