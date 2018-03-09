@@ -60,7 +60,6 @@ namespace nsA1067A
 		{
 			vData.push_back(n);
 		}
-		numbers = vData.size();
 		vector<int> vRef(numbers); // data to sort index
 		for (int i = 0; i < numbers; ++i)
 		{
@@ -89,6 +88,15 @@ namespace nsA1067A
 路径：0和当前位置的数字调换
 0在对的位置时，找到第一个错的位置调换
 9:40 29/25 pt1,2 tle
+
+改为scanf
+9:48 29/25 1,2TLE
+
+使用vDataIndex
+10:20 29/25 1,2TLE
+
+v[0]==0搜索下一个交换时，从上次搜索位置开始
+10:30 pass
 */
 namespace nsA1067B
 {
@@ -98,23 +106,26 @@ namespace nsA1067B
 		scanf("%d", &n);
 
 		vector<int> vData(n);
-		int idx0 = 0;
+		vector<int> vDataIndex(n);
+		int& idx0 = vDataIndex[0];
 		int left = 0;
 		for (int i = 0; i < n; ++i)
 		{
 			scanf("%d", &t);
-			if (!t) { idx0 = i; }
 			if (t != i) { ++left; }
 			vData[i] = t;
+			vDataIndex[t] = i;
 		}
 		int cnt = 0;
 		int idxi = 0;
+		int istart = 1;
 		while (left)
 		{
+			// vdata[idx0] = 0, vdata[idxi] = i;
 			if (!idx0)
 			{
 				// find next pos
-				idxi = 1;
+				idxi = istart;
 				while (idxi < n && vData[idxi] == idxi)
 				{
 					++idxi;
@@ -123,20 +134,17 @@ namespace nsA1067B
 				{
 					break;
 				}
+				istart = idxi + 1;
 				swap(vData[idx0], vData[idxi]);
-				swap(idx0, idxi);
+				swap(vDataIndex[vData[idx0]], vDataIndex[0]);
 				++cnt;
 				++left;
 			}
 			while (idx0)
 			{
-				idxi = 0;
-				while (vData[idxi] != idx0)
-				{
-					++idxi;
-				}
+				idxi = vDataIndex[idx0];
 				swap(vData[idx0], vData[idxi]);
-				swap(idx0, idxi);
+				swap(vDataIndex[idx0], vDataIndex[0]); // vData[idxi] = idx0, vData[idx0] = 0;
 				++cnt;
 				--left;
 			}
