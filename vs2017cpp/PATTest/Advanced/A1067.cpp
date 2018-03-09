@@ -95,14 +95,14 @@ namespace nsA1067B
 	void main(void)
 	{
 		int n, t;
-		cin >> n;
+		scanf("%d", &n);
 
 		vector<int> vData(n);
 		int idx0 = 0;
 		int left = 0;
 		for (int i = 0; i < n; ++i)
 		{
-			cin >> t;
+			scanf("%d", &t);
 			if (!t) { idx0 = i; }
 			if (t != i) { ++left; }
 			vData[i] = t;
