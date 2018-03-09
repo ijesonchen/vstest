@@ -53,21 +53,14 @@ namespace nsA1067A
 	void main(void)
 	{
 		int numbers, n;
-		cin >> n;
-		numbers = n + 1;
+		cin >> numbers;
 
-		vector<int> vData(numbers);
-		vData[0] = n;
-		for (int i = 1; i < numbers; ++i)
+		vector<int> vData;
+		while (cin >> n)
 		{
-			cin >> vData[i];
+			vData.push_back(n);
 		}
-		vector<int> vSort(vData);
-//		sort(vSort.begin(), vSort.end());
-// 		if (vSort == vData)
-// 		{
-// 			cout << 0 << endl;
-// 		}
+		numbers = vData.size();
 		vector<int> vRef(numbers); // data to sort index
 		for (int i = 0; i < numbers; ++i)
 		{
@@ -90,10 +83,73 @@ namespace nsA1067A
 	}
 }
 
+/*
+9:10
+题意：只能和0调换
+路径：0和当前位置的数字调换
+0在对的位置时，找到第一个错的位置调换
+9:40 29/25 pt1,2 tle
+*/
+namespace nsA1067B
+{
+	void main(void)
+	{
+		int n, t;
+		cin >> n;
+
+		vector<int> vData(n);
+		int idx0 = 0;
+		int left = 0;
+		for (int i = 0; i < n; ++i)
+		{
+			cin >> t;
+			if (!t) { idx0 = i; }
+			if (t != i) { ++left; }
+			vData[i] = t;
+		}
+		int cnt = 0;
+		int idxi = 0;
+		while (left)
+		{
+			if (!idx0)
+			{
+				// find next pos
+				idxi = 1;
+				while (idxi < n && vData[idxi] == idxi)
+				{
+					++idxi;
+				}
+				if (idxi == n)
+				{
+					break;
+				}
+				swap(vData[idx0], vData[idxi]);
+				swap(idx0, idxi);
+				++cnt;
+				++left;
+			}
+			while (idx0)
+			{
+				idxi = 0;
+				while (vData[idxi] != idx0)
+				{
+					++idxi;
+				}
+				swap(vData[idx0], vData[idxi]);
+				swap(idx0, idxi);
+				++cnt;
+				--left;
+			}
+			--left;
+		}
+		cout << cnt << endl;
+	}
+}
+
 // rename this to main int PAT
 int A1067Func(void)
 {
-	nsA1067A::main();
+	nsA1067B::main();
 	return 0;
 }
 
@@ -108,7 +164,6 @@ void A1067(const string& fn)
 
 void A1067(void)
 {
-//	A1067("data\\A1067-1.txt"); // 
-	A1067("data\\A1067-2.txt"); // 
+	A1067("data\\A1067-1.txt"); // 
 }
 
