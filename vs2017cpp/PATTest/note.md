@@ -161,8 +161,8 @@ A1068: 50MIN 29/30 6TLE 10MIN TLE/WA
 A1067: 30min 29/25 1,2TLE，50min pass
 	仔细审题。理解并掌握vector<int> data2index数组的用法
 	**模拟测试A4
-A1088: 
-A1089: 
+A1088: 1H FAIL
+A1089: 30min 11/25, 10min 17/25, 20min PASS
 A1090: 
 A1091: 
 ```

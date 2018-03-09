@@ -64,7 +64,14 @@ using namespace std;
 实现下一步
 
 ins判断(merge抛异常)
-15:55 11/25 异常
+15:55 11/25 1,3,5,6异常
+16:05 17/25 3,5,6WA
+
+19:45
+mergeStep错误
+应该判断是否每N个都排序
+模拟实现归并排序
+20:05 pass
 */
 
 namespace nsA1089A
@@ -125,7 +132,7 @@ namespace nsA1089A
 	int MergeStep(void)
 	{
 		vector<int> vMerge = vInit;
-		int step = 4;
+		int step = 2;
 		bool same = true;
 		for (; step < nTotal && same; step *=2)
 		{
@@ -158,6 +165,37 @@ namespace nsA1089A
 		Print(vRef);
 	}
 
+	void Merge2(vector<int>& v, int step)
+	{
+		for (int i = 0; i < nTotal; i += step)
+		{
+			int off = i + step;
+			if (off > nTotal)
+			{
+				off = nTotal;
+			}
+			sort(v.begin() + i, v.begin() + off);
+		}
+	}
+
+	void Merge2(void)
+	{
+		vector<int> vMerge = vInit;
+		int step = 2;
+		for (; step < nTotal; step*=2)
+		{
+			Merge2(vMerge, step);
+			if (vMerge == vRef)
+			{
+				break;
+			}
+		}
+		Merge2(vMerge, step * 2);
+
+		cout << "Merge Sort" << endl;
+		Print(vMerge);
+	}
+
 	void main(void)
 	{
 		cin >> nTotal;
@@ -176,7 +214,7 @@ namespace nsA1089A
 			return;
 		}
 
-		Merge();
+		Merge2();
 	}
 }
 
@@ -198,7 +236,8 @@ void A1089(const string& fn)
 
 void A1089(void)
 {
-//	A1089("data\\A1089-1.txt"); // 
+	A1089("data\\A1089-1.txt"); // 
 	A1089("data\\A1089-2.txt"); // 
+	A1089("data\\A1089-3.txt"); // 有歧义。主要是为了测试归并能够正确处理多个步骤
 }
 
