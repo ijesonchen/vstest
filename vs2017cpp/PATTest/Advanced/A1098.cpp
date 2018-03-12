@@ -73,6 +73,10 @@ using namespace std;
 16：33 12/25 非0 0,2,4
 
 2应为insert
+16：45 加入临界tc（3-6），未找到问题
+测试：vRef确定未完成排序
+
+改进： 利用sort模拟insert
 
 */
 
@@ -148,6 +152,7 @@ namespace nsA1098A
 		for (; step < nTotal; ++step)
 		{
 			pop_heap(vTemp.begin(), vTemp.begin() + nTotal - step);
+//			Print(vTemp);
 			if (vTemp == vRef)
 			{
 				break;
@@ -213,7 +218,11 @@ void A1098(const string& fn)
 
 void A1098(void)
 {
-	A1098("data\\A1098-1.txt"); // 
-	A1098("data\\A1098-2.txt"); // 
+ 	A1098("data\\A1098-1.txt"); // 
+ 	A1098("data\\A1098-2.txt"); // 
+	A1098("data\\A1098-3.txt"); // 
+	A1098("data\\A1098-4.txt"); // 
+	A1098("data\\A1098-5.txt"); // 
+	A1098("data\\A1098-6.txt"); // 
 }
 
