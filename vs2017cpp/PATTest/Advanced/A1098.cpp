@@ -76,7 +76,10 @@ using namespace std;
 16：45 加入临界tc（3-6），未找到问题
 测试：vRef确定未完成排序
 
+14：30
 改进： 利用sort模拟insert
+14：40 23/25 wa2
+使用A1089的insert判定算法可以通过PT0,2,4
 
 */
 
@@ -94,6 +97,25 @@ namespace nsA1098A
 			cout << " " << v[i];
 		}
 		cout << endl;
+	}
+
+	bool IsInsertion2(void)
+	{
+		vector<int> vTemp(vInit);
+
+		for (size_t i = 1; i < vTemp.size(); ++i)
+		{
+			sort(vTemp.begin(), vTemp.begin() + i);
+//			Print(vTemp);
+			if (vTemp == vRef)
+			{
+				cout << "Insertion Sort" << endl;
+				sort(vTemp.begin(), vTemp.begin() + i + 1);
+				Print(vTemp);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	bool SameTail(int n)
@@ -188,7 +210,7 @@ namespace nsA1098A
 			vRef.push_back(k);
 		}
 
-		if (IsInsertion())
+		if (IsInsertion2())
 		{
 			return 0;
 		}
@@ -218,11 +240,11 @@ void A1098(const string& fn)
 
 void A1098(void)
 {
- 	A1098("data\\A1098-1.txt"); // 
- 	A1098("data\\A1098-2.txt"); // 
-	A1098("data\\A1098-3.txt"); // 
-	A1098("data\\A1098-4.txt"); // 
-	A1098("data\\A1098-5.txt"); // 
-	A1098("data\\A1098-6.txt"); // 
+ 	A1098("data\\A1098-1.txt"); // I 1 2 3 5 7 8 9 4 6 0
+ 	A1098("data\\A1098-2.txt"); // H 5 4 3 1 0 2 6 7 8 9
+	A1098("data\\A1098-3.txt"); // I 1 2 3 8 7 5 9 4 6 0
+	A1098("data\\A1098-4.txt"); // I 0 1 2 3 4 5 6 7 8 9
+	A1098("data\\A1098-5.txt"); // H 7 6 5 4 0 3 2 1 8 9
+	A1098("data\\A1098-6.txt"); // H 0 1 2 3 4 5 6 7 8 9
 }
 
