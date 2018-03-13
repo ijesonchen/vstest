@@ -81,6 +81,21 @@ using namespace std;
 14：40 23/25 wa2
 使用A1089的insert判定算法可以通过PT0,2,4
 
+问题：insertion当部分数据已排序时，会有跳过步骤
+	A1098::IsInsertion/IsInsertion2都是按照最早的步骤输出
+	A1089::IsInsertion则是按照最晚的步骤输出。
+
+A1098::IsInsertion2
+bug-fix-1：跳过当前已排序部分
+14:50 PASS
+
+如：
+2 1 3 4 5 7 6
+1 2 3 4 5 7 6
+1 2 3 4 5 6 7
+
+
+
 */
 
 namespace nsA1098A
@@ -109,8 +124,14 @@ namespace nsA1098A
 //			Print(vTemp);
 			if (vTemp == vRef)
 			{
+				// bug-fix-1: 跳过当前已排序部分
+				while (vTemp == vRef)
+				{
+					++i;
+					sort(vTemp.begin(), vTemp.begin() + i);
+				}
 				cout << "Insertion Sort" << endl;
-				sort(vTemp.begin(), vTemp.begin() + i + 1);
+//				sort(vTemp.begin(), vTemp.begin() + i + 1);
 				Print(vTemp);
 				return true;
 			}
