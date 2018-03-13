@@ -46,6 +46,7 @@ Sample Output 2:
 #include <string>
 #include <cmath>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -247,11 +248,29 @@ namespace nsA1088A
 0. 使用纯分数计算，使用带分数打印
 1. 判断是否为0
 2. 分子带符号，除法变乘法（注意符号）
-16:20 8/20 WA0,2
+16:20 35MIN 8/20 WA0,2
+
+bug-fix-1: 求最大公约数时，应该从min(a,b)开始往回找
+16:35 15min 14/20 WA2 TLE3
+
+improve-1
+谷歌最大公约数：
+gcd(a,b) = gcd(b, a%b)
+16:55 20min 17/20 WA2
 */
 
 namespace nsA1088B
 {
+
+	int gcd(long a, long b)
+	{
+		if (b==0)
+		{
+			return a;
+		}
+		return gcd(b, a%b);
+	}
+
 	struct Rational 
 	{
 		long a = 0;
@@ -309,16 +328,21 @@ namespace nsA1088B
 				u = u % v;
 			}
 
-			long t = (long)sqrt(v) + 1;
-			for (long i = t; i > 1; --i)
-			{
-				if ((u/i*i==u) && (v/i*i==v))
-				{
-					u = u / i;
-					v = v / i;
-					break;
-				}
-			}
+			// bug-fix-1
+// 			long t = std::min(abs(u), v);
+// 			for (long i = t; i > 1; --i)
+// 			{
+// 				if ((u/i*i==u) && (v/i*i==v))
+// 				{
+// 					u = u / i;
+// 					v = v / i;
+// 					break;
+// 				}
+// 			}
+			// improve-1
+			long t = abs(gcd(u, v));
+			u /= t;
+			v /= t;
 			if (k) { printf("%d ", k); }
 			printf("%d/%d", u, v);
 			if (a < 0) { printf(")"); }
@@ -390,7 +414,6 @@ namespace nsA1088B
 		Sub(r1, r2);
 		Mul(r1, r2);
 		Div(r1, r2);
-
 	}
 }
 
@@ -412,7 +435,8 @@ void A1088(const string& fn)
 
 void A1088(void)
 {
-	A1088("data\\A1088-1.txt"); // 
-	A1088("data\\A1088-2.txt"); // 
+//	A1088("data\\A1088-1.txt"); // 
+//	A1088("data\\A1088-2.txt"); // 
+	A1088("data\\A1088-3.txt");
 }
 
