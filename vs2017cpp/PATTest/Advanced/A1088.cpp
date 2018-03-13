@@ -241,10 +241,163 @@ namespace nsA1088A
 	}
 }
 
+
+/*
+15:45
+0. 使用纯分数计算，使用带分数打印
+1. 判断是否为0
+2. 分子带符号，除法变乘法（注意符号）
+16:20 8/20 WA0,2
+*/
+
+namespace nsA1088B
+{
+	struct Rational 
+	{
+		long a = 0;
+		long b = 0;
+
+		Rational(int u, int v):a(u),b(v)
+		{
+			if (b < 0) { throw 0; }
+			if (a == 0) { b = 1; }
+		}
+
+		bool IsZero(void) { return a == 0; }
+
+		void Turn(void)
+		{
+			swap(a, b);
+			if (b < 0)
+			{
+				a = -a;
+				b = -b;
+			}
+		}
+
+		void Print(void) 
+		{
+			if (b == 0) // inf
+			{ 
+				printf("Inf");
+				return;
+			}
+			if (a == 0) // 0
+			{ 
+				printf("0");
+				return;
+			}
+
+			if (a<0)
+			{
+				printf("(");
+			}
+			if (a / b * b == a) // 整数
+			{
+				printf("%d", a / b); 
+				if (a < 0) { printf(")"); }
+				return; 
+			}
+
+			long k = 0;
+			long u = a;
+			long v = b;
+			if (abs(u)>v)
+			{
+				k = u / v;
+				u = abs(u);
+				u = u % v;
+			}
+
+			long t = (long)sqrt(v) + 1;
+			for (long i = t; i > 1; --i)
+			{
+				if ((u/i*i==u) && (v/i*i==v))
+				{
+					u = u / i;
+					v = v / i;
+					break;
+				}
+			}
+			if (k) { printf("%d ", k); }
+			printf("%d/%d", u, v);
+			if (a < 0) { printf(")"); }
+		};
+	};
+
+	void Add(Rational r1, Rational r2)
+	{
+		int a = r1.a*r2.b + r1.b*r2.a;
+		int b = r1.b*r2.b;
+		Rational r(a, b);
+		r1.Print();
+		cout << " + ";
+		r2.Print();
+		cout << " = ";
+		r.Print();
+		cout << endl;
+	}
+
+	void Sub(Rational r1, Rational r2)
+	{
+		int a = r1.a*r2.b - r1.b*r2.a;
+		int b = r1.b*r2.b;
+		Rational r(a, b);
+		r1.Print();
+		cout << " - ";
+		r2.Print();
+		cout << " = ";
+		r.Print();
+		cout << endl;
+	}
+
+	void Mul(Rational r1, Rational r2)
+	{
+		int a = r1.a*r2.a;
+		int b = r1.b*r2.b;
+		Rational r(a, b);
+		r1.Print();
+		cout << " * ";
+		r2.Print();
+		cout << " = ";
+		r.Print();
+		cout << endl;
+	}
+	
+	void Div(Rational r1, Rational r2)
+	{
+		Rational tmp(r2);
+		r2.Turn();
+		int a = r1.a*r2.a;
+		int b = r1.b*r2.b;
+		Rational r(a, b);
+		r1.Print();
+		cout << " / ";
+		tmp.Print();
+		cout << " = ";
+		r.Print();
+		cout << endl;
+	}
+
+	void main(void)
+	{
+		long a, b;
+		scanf("%ld/%ld", &a, &b);
+		Rational r1(a, b);
+		scanf("%ld/%ld", &a, &b);
+		Rational r2(a, b);
+		Add(r1, r2);
+		Sub(r1, r2);
+		Mul(r1, r2);
+		Div(r1, r2);
+
+	}
+}
+
 // rename this to main int PAT
 int A1088Func(void)
 {
-	nsA1088A::main();
+	nsA1088B::main();
 	return 0;
 }
 

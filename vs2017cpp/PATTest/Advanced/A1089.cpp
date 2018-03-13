@@ -3,6 +3,26 @@
 200 ms
 65536 kB
 
+总结：参考A1098的排序总结
+
+30min 11/25, 10min 17/25, （开会）20min PASS
+
+15:25
+判断是插入还是归并排序的步骤
+实现下一步
+
+ins判断(merge抛异常)
+15:55 11/25 1,3,5,6异常
+16:05 17/25 3,5,6WA
+
+开会打断
+
+19:45
+mergeStep错误
+应该判断是否每N个都排序
+模拟实现归并排序
+20:05 pass
+
 According to Wikipedia:
 
 Insertion sort iterates, consuming one input element each repetition, and growing a sorted output list. 
@@ -57,24 +77,6 @@ Merge Sort
 #include <vector>
 
 using namespace std;
-
-/*
-15:25
-判断是插入还是归并排序的步骤
-实现下一步
-
-ins判断(merge抛异常)
-15:55 11/25 1,3,5,6异常
-16:05 17/25 3,5,6WA
-
-开会打断
-
-19:45
-mergeStep错误
-应该判断是否每N个都排序
-模拟实现归并排序
-20:05 pass
-*/
 
 namespace nsA1089A
 {
