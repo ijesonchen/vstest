@@ -3,6 +3,12 @@
 200 ms
 65536 kB
 
+总结：
+	1. 最大公约数
+	2. 模拟步骤，一般不会太复杂。想清楚。
+	3. 注意数据类型：题目要求long，部分计算步骤采用了int,导致2一直不过。
+	4. 重点就是约分。可以不用Rational类，只写一个约分函数。
+
 14:30
 
 For two rational numbers, your task is to implement the basic arithmetics, that is,
@@ -257,12 +263,16 @@ improve-1
 谷歌最大公约数：
 gcd(a,b) = gcd(b, a%b)
 16:55 20min 17/20 WA2
+
+bug-fix-2:
+部分计算采用了int类型！！！
+17:05 10min pass
 */
 
 namespace nsA1088B
 {
 
-	int gcd(long a, long b)
+	long gcd(long  a, long b)
 	{
 		if (b==0)
 		{
@@ -276,7 +286,7 @@ namespace nsA1088B
 		long a = 0;
 		long b = 0;
 
-		Rational(int u, int v):a(u),b(v)
+		Rational(long u, long v):a(u),b(v)
 		{
 			if (b < 0) { throw 0; }
 			if (a == 0) { b = 1; }
@@ -329,16 +339,7 @@ namespace nsA1088B
 			}
 
 			// bug-fix-1
-// 			long t = std::min(abs(u), v);
-// 			for (long i = t; i > 1; --i)
-// 			{
-// 				if ((u/i*i==u) && (v/i*i==v))
-// 				{
-// 					u = u / i;
-// 					v = v / i;
-// 					break;
-// 				}
-// 			}
+			// long t = std::min(abs(u), v); for
 			// improve-1
 			long t = abs(gcd(u, v));
 			u /= t;
@@ -351,8 +352,8 @@ namespace nsA1088B
 
 	void Add(Rational r1, Rational r2)
 	{
-		int a = r1.a*r2.b + r1.b*r2.a;
-		int b = r1.b*r2.b;
+		long a = r1.a*r2.b + r1.b*r2.a;
+		long b = r1.b*r2.b;
 		Rational r(a, b);
 		r1.Print();
 		cout << " + ";
@@ -364,8 +365,8 @@ namespace nsA1088B
 
 	void Sub(Rational r1, Rational r2)
 	{
-		int a = r1.a*r2.b - r1.b*r2.a;
-		int b = r1.b*r2.b;
+		long a = r1.a*r2.b - r1.b*r2.a;
+		long b = r1.b*r2.b;
 		Rational r(a, b);
 		r1.Print();
 		cout << " - ";
@@ -377,8 +378,8 @@ namespace nsA1088B
 
 	void Mul(Rational r1, Rational r2)
 	{
-		int a = r1.a*r2.a;
-		int b = r1.b*r2.b;
+		long a = r1.a*r2.a;
+		long b = r1.b*r2.b;
 		Rational r(a, b);
 		r1.Print();
 		cout << " * ";
@@ -392,8 +393,8 @@ namespace nsA1088B
 	{
 		Rational tmp(r2);
 		r2.Turn();
-		int a = r1.a*r2.a;
-		int b = r1.b*r2.b;
+		long a = r1.a*r2.a;
+		long b = r1.b*r2.b;
 		Rational r(a, b);
 		r1.Print();
 		cout << " / ";
