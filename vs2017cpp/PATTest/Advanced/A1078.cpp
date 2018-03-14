@@ -52,6 +52,8 @@ H=K%size，size取最近的素数(10^4)
 PT3 22ms，数据量较大
 调式：取最近素数应该没问题
 19:50 放弃
+
+
 */
 
 namespace nsA1078A
@@ -145,10 +147,106 @@ namespace nsA1078A
 	}
 }
 
+/*
+21：25
+Quadratic probing
+改为从当前位置*2
+21:30 20/25 wa3
+*/
+namespace nsA1078B
+{
+	bool IsPrime(int n)
+	{
+		if (n <= 1)
+		{
+			return false;
+		}
+		if (n == 2)
+		{
+			return true;
+		}
+		if ((n & 1) == 0)
+		{
+			return false;
+		}
+		int k = (int)sqrt(n) + 1;
+		for (int i = 2; i <= k; ++i)
+		{
+			if (n / i * i == n)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	int NextPrim(int n)
+	{
+		while (!IsPrime(n))
+		{
+			++n;
+		}
+		return n;
+	}
+
+	vector<int> vHash;
+	int nSize;
+	bool bFirst;
+
+	void Hash(int n)
+	{
+		int h = n % nSize;
+		if (h < 1)
+		{
+			if (vHash[h])
+			{
+				cout << "-";
+			}
+			else
+			{
+				cout << h;
+				vHash[h] = n;
+			}
+			return;
+		}
+		for (int i = h; i < nSize; i *= 2)
+		{
+			if (!vHash[i])
+			{
+				cout << i;
+				vHash[i] = n;
+				return;
+			}
+		}
+		cout << "-";
+	}
+
+	void main(void)
+	{
+		int m, n, k;
+		cin >> m >> n;
+		nSize = NextPrim(m);
+		vHash.assign(nSize, 0);
+		bFirst = true;
+		for (int i = 0; i < n; ++i)
+		{
+			cin >> k;
+			if (bFirst)
+			{
+				bFirst = false;
+			}
+			else
+			{
+				cout << " ";
+			}
+			Hash(k);
+		}
+		cout << endl;
+	}
+}
 // rename this to main int PAT
 int A1078Func(void)
 {
-	nsA1078A::main();
+	nsA1078B::main();
 	return 0;
 }
 
