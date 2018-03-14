@@ -105,6 +105,10 @@ final，ge相同则rank相同
 
 输出:每个学校录取人id。无录取输出空行
 21:15 12/30 wa0
+
+如果某个学校quota为0？
+21：20 6/30 wa0,3,4
+
 */
 namespace nsA1080A
 {
@@ -149,7 +153,7 @@ namespace nsA1080A
 		vvApp.resize(nSchool);
 		vQuota.resize(nSchool);
 		vStudent.resize(nStudent);
-		vRank.resize(nStudent);
+		vRank.assign(nStudent, -1);
 		vvChoice.assign(nStudent, vector<int>(nChoice));
 		for (int i = 0; i < nSchool; ++i)
 		{
