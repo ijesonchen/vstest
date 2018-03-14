@@ -24,6 +24,9 @@ void AllPairShortestPath(void);
 void TravelingSalesmanProblem(void);
 void ApproxTravelingSalesmanProblem(void);
 void Test2Sat(void);
+
+// for test
+void TestKnapsack(void);
 void TestClrs22(void);
 using namespace std;
 
