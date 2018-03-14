@@ -26,7 +26,7 @@ A1018：题解使用BFS+DFS处理，逻辑？
 A1030：diskstra rebuild shortest path， pt1 WA
 A1123: 尝试nsA1123A能否修正。尝试完全树的两次循环判定算法。
 A1067: vector<int> data2index替换map时的用法.nsC 用map代码错误
-A1068: TLE
+A1068: TLE.01背包问题
 A1088：分数四则运算。没有合适思路。
 A1096：最长连续因子序列。没有合适思路。
 ```
@@ -175,6 +175,13 @@ A1095: 70min pass 已超时
 	**03.13
 A1088: 35m 8/20 wa0,2; 15m 14/20 wa2,tle3; 20min 17/20 wa2；
 	 10m pass（70MIN） 注意数据类型(要求long用了int)
+	**03.14
+review A1068 knapsack A1096 模拟搜索
+	**模拟测试A6 18:50
+A1077: 25m pass
+A1078: 30m 20/25 wa3; 5min -;
+A1079: 40m 16/25 wa2,3,4,5; 0m pass; 精度问题，float -> double
+A1080
 ```
 
 ## 解题报告
