@@ -181,7 +181,8 @@ review A1068 knapsack A1096 模拟搜索
 A1077: 25m pass
 A1078: 30m 20/25 wa3; 5min -;
 A1079: 40m 16/25 wa2,3,4,5; 0m pass; 精度问题，float -> double
-A1080: 45m 12/30 wa0;
+A1080: 45m 12/30 wa0; 50m 6/30 wa0,3,4; 55m pass; 赋值错误写成了==
+
 ```
 
 ## 解题报告

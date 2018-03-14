@@ -109,6 +109,11 @@ final，ge相同则rank相同
 如果某个学校quota为0？
 21：20 6/30 wa0,3,4
 
+题目中，quota非负
+
+
+bug-fix-1 复制写成了相等比较
+21：25 pass
 */
 namespace nsA1080A
 {
@@ -191,7 +196,7 @@ namespace nsA1080A
 		}
 
 		// applicant
-		for (auto& stu : vStudent)
+		for (const auto& stu : vStudent)
 		{
 			auto& vChoice = vvChoice[stu.id];
 			for (auto sch : vChoice)
@@ -199,7 +204,8 @@ namespace nsA1080A
 				if (vQuota[sch])
 				{
 					--vQuota[sch];
-					vRank[sch] == stu.rank;
+					// bug-fix-1 复制写成了相等比较
+					vRank[sch] = stu.rank;
 					vvApp[sch].push_back(stu.id);
 					break;
 				}
