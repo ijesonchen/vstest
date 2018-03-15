@@ -59,7 +59,7 @@ bug-fix-1
 
 ÅÐ¶¨£ºtotal < e*e?
 15:42 1/25
-FAIL
+15:50  bug-fix-2 bug-fix-3 4/25 wa0,1,4 tle3
 */
 
 namespace nsA1117A
@@ -91,8 +91,10 @@ namespace nsA1117A
 		{
 			scanf("%d", &vDist[i]);
 		}
-		int e = 0;
-		for (int i = 2; i < n; ++i)
+		// bug-fix-2 e=n
+		int e = n;
+		// bug-fix-3 e=n-1 (i<n) -> (i<=n)
+		for (int i = 2; i <= n; ++i)
 		{
 			if (!MoreEdd(vDist, i))
 			{
@@ -124,6 +126,8 @@ void A1117(void)
 {
 //	A1117("data\\A1117-1.txt"); // 
 //	A1117("data\\A1117-2.txt"); // 
-	A1117("data\\A1117-3.txt"); //
+//	A1117("data\\A1117-3.txt"); //
+//	A1117("data\\A1117-4.txt"); //
+	A1117("data\\A1117-5.txt"); //
 }
 
