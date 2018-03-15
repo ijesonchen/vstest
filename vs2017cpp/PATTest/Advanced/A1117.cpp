@@ -73,7 +73,7 @@ pt5: 1
 
 namespace nsA1117A
 {
-	bool MoreEdd(const vector<long long>& v, const int k)
+	bool MoreEdd(const vector<int>& v, const int k)
 	{
 		int len = (int)v.size();
 		if (len < k){ return false; }
@@ -96,7 +96,7 @@ namespace nsA1117A
 		int n;
 		long long total = 0;
 		scanf("%d", &n);
-		vector<long long> vDist(n);
+		vector<int> vDist(n);
 		for (int i = 0; i < n; ++i)
 		{
 			scanf("%d", &vDist[i]);
@@ -122,10 +122,43 @@ namespace nsA1117A
 	}
 }
 
+/*
+20:20
+ref http://blog.csdn.net/qq_34594236/article/details/52823131
+是说有E天骑行距离大于E公里
+和连续多少天完全没有关系
+20:40 PASS
+*/
+namespace nsA1117RefWrite
+{
+
+
+	void main(void)
+	{
+		int n;
+		cin >> n;
+		vector<int> vDist(n);
+		for (int i = 0; i < n; ++i)
+		{
+			cin >> vDist[i];
+		}
+		sort(vDist.rbegin(), vDist.rend());
+		int i = 0;
+		for (; i < n; ++i)
+		{
+			if (vDist[i] <= i+1)
+			{
+				break;
+			}
+		}
+		cout << i << endl;
+	}
+}
+
 // rename this to main int PAT
 int A1117Func(void)
 {
-	nsA1117A::main();
+	nsA1117RefWrite::main();
 	return 0;
 }
 
@@ -140,10 +173,10 @@ void A1117(const string& fn)
 
 void A1117(void)
 {
-//	A1117("data\\A1117-1.txt"); // 
-//	A1117("data\\A1117-2.txt"); // 
-//	A1117("data\\A1117-3.txt"); //
-//	A1117("data\\A1117-4.txt"); //
-	A1117("data\\A1117-5.txt"); //
+	A1117("data\\A1117-1.txt"); // 6
+	A1117("data\\A1117-2.txt"); // 0
+	A1117("data\\A1117-3.txt"); // 1
+	A1117("data\\A1117-4.txt"); // 4
+	A1117("data\\A1117-5.txt"); // 3
 }
 
