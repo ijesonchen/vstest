@@ -3,8 +3,6 @@
 250 ms
 65536 kB
 
-
-
 British astronomer Eddington liked to ride a bike. It is said that in order to show off his skill,
 he has even defined an "Eddington number", E -- 
 that is, the maximum integer E such that it is for E days that one rides more than E miles.
@@ -60,6 +58,11 @@ bug-fix-1
 ÅÐ¶¨£ºtotal < e*e?
 15:42 1/25
 15:50  bug-fix-2 bug-fix-3 4/25 wa0,1,4 tle3
+
+pt3: n
+pt5: 1
+
+17£º20£º 8/25 wa0,1,4
 */
 
 namespace nsA1117A
@@ -85,11 +88,18 @@ namespace nsA1117A
 	void main(void)
 	{
 		int n;
+		long long total = 0;
 		scanf("%d", &n);
 		vector<int> vDist(n);
 		for (int i = 0; i < n; ++i)
 		{
 			scanf("%d", &vDist[i]);
+			total += vDist[i];
+		}
+		if (total > n * n)
+		{
+			cout << n << endl;
+			return;
 		}
 		// bug-fix-2 e=n
 		int e = n;
