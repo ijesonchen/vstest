@@ -57,6 +57,9 @@ EÈ¡Öµ[1,n]
 bug-fix-1
 15:40 1/25 wa0,1,2,4 lte3
 
+ÅÐ¶¨£ºtotal < e*e?
+15:42 1/25
+FAIL
 */
 
 namespace nsA1117A
