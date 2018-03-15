@@ -37,6 +37,8 @@ Sample Output:
 using namespace std;
 
 /*
+****二分查找不熟悉！！！！
+
 14:45
 区间和 >= 区间长度
 动态规划？区间和？贪心？
@@ -59,22 +61,26 @@ bug-fix-1
 15:42 1/25
 15:50  bug-fix-2 bug-fix-3 4/25 wa0,1,4 tle3
 
+
+
+17:15 测试
 pt3: n
 pt5: 1
 
-17：20： 8/25 wa0,1,4
+17:20 8/25 wa0,1,4
+17:25 pt2: total == n*n 异常，所以必须是大于 more than
 */
 
 namespace nsA1117A
 {
-	bool MoreEdd(const vector<int>& v, const int k)
+	bool MoreEdd(const vector<long long>& v, const int k)
 	{
 		int len = (int)v.size();
 		if (len < k){ return false; }
 		long long total = 0;
 		long long mindist = k * k;
 		total = accumulate(v.begin(), v.begin() + k, total);
-		// more than E miles
+		// more than E*E miles
 		if (total <= mindist) { return false; }
 		for (int i = k; i < len; ++i)
 		{
@@ -90,7 +96,7 @@ namespace nsA1117A
 		int n;
 		long long total = 0;
 		scanf("%d", &n);
-		vector<int> vDist(n);
+		vector<long long> vDist(n);
 		for (int i = 0; i < n; ++i)
 		{
 			scanf("%d", &vDist[i]);
