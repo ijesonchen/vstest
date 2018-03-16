@@ -38,6 +38,7 @@ Sample Output:
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <deque>
 
 using namespace std;
 
@@ -119,6 +120,23 @@ namespace nsA1127A
 				}
 			}
 			bLeft = !bLeft;
+		}
+		cout << endl;
+	}
+
+	void LevelPrint(Node* pRoot)
+	{
+		cout << pRoot->data;
+		deque<Node*> dqpNodes;
+		if (pRoot->left) dqpNodes.push_back(pRoot->left);
+		if (pRoot->right) dqpNodes.push_back(pRoot->right);
+		while (!dqpNodes.empty())
+		{
+			auto p = dqpNodes.front();
+			dqpNodes.pop_front();
+			cout << " " << p->data;
+			if (p->left) dqpNodes.push_back(p->left);
+			if (p->right) dqpNodes.push_back(p->right);
 		}
 		cout << endl;
 	}
