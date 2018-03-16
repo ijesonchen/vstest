@@ -50,6 +50,9 @@ inorder+preorder build
 zigzag print
 
 17:00 1/30 WA0,1,3
+
+bug-fix-1
+17:10 pass
 */
 
 namespace nsA1127A
@@ -96,13 +99,14 @@ namespace nsA1127A
 		{
 			pTemp.clear();
 			pTemp.swap(pNode);
-			if (!bLeft)
-			{
-				reverse(pTemp.begin(), pTemp.end());
-			}
+			// bug-fix-1: 先打印，再反转。每次都得反转
 			for (auto p : pTemp)
 			{
 				cout << " " << p->data;
+			}
+			reverse(pTemp.begin(), pTemp.end());
+			for (auto p : pTemp)
+			{
 				if (bLeft)
 				{
 					if (p->left) pNode.push_back(p->left);
@@ -158,5 +162,6 @@ void A1127(const string& fn)
 void A1127(void)
 {
 	A1127("data\\A1127-1.txt"); // 
+	A1127("data\\A1127-2.txt"); // 
 }
 
