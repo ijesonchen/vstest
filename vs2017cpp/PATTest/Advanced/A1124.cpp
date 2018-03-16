@@ -70,7 +70,10 @@ s 第一个
 
 m行，<20字符
 跳过重复
-15:25 15/25 wa3
+15:25 15/20 wa3
+
+bug-fix-1: 记录第一个中奖的
+15:30 pass
 */
 
 namespace nsA1124A
@@ -93,6 +96,8 @@ namespace nsA1124A
 			cin >> name;
 		}
 		cout << name << endl;
+		// bug-fix-1: record first win.
+		setWin.insert(name);
 		int step = 0;
 		for (int i = s; i < m; ++i)
 		{
