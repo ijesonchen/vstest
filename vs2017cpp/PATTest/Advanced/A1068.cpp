@@ -151,10 +151,162 @@ namespace nsA1068A
 	}
 }
 
+/*
+21:20
+ref： Liuchuo
+01背包，动态规划
+排序
+背包容量min(n,m)（最多m个1分）
+A[i,x]: 前i个硬币，容量为x的价值
+方法有问题。需要参考Liuchuo代码检查问题出在哪里
+*/
+
+namespace nsA1068B
+{
+	int Value(vector<vector<int>>& vv, int i, int x, int v)
+	{
+		if (x < 0) { return 0; }
+		return vv[i][x] + v;
+	}
+	
+	void main(void)
+	{
+		int n, m;
+		scanf("%d %d", &n, &m);
+		vector<int> vCoin(n+1);
+		for (int i = 0; i < n; ++i)
+		{
+			scanf("%d", &vCoin[i+1]);
+		}
+		sort(vCoin.rbegin(), vCoin.rend()-1);
+		int nKnapsack = std::min(n, m);
+		vector<vector<int>> vvA(n + 1, vector<int>(nKnapsack + 1));
+		vector<int> vPath;
+		for (int i = 1; i <=n; ++i)
+		{
+			for (int j = 0; j <= nKnapsack; ++j)
+			{
+				int v1 = Value(vvA, i - 1, j, 0);
+				int v2 = Value(vvA, i - 1, j - 1, vCoin[i]);
+				vvA[i][j] = std::max(v1, v2);
+				if (vvA[i][j] == m)
+				{
+					// build path
+					vector<int> vTmpPath;
+					int a = i, b = j;
+					while (a>0)
+					{
+						if (vvA[a][b] != vvA[a-1][b])
+						{
+							// sel coin i
+							vTmpPath.push_back(vCoin[a]);
+							--b;
+						}
+						--a;
+					}
+					reverse(vTmpPath.begin(), vTmpPath.end());
+					if (!vPath.empty())
+					{
+						if (vTmpPath < vPath)
+						{
+							vPath.swap(vTmpPath);
+						}
+					}
+					else
+					{
+						vPath.swap(vTmpPath);
+					}
+				}
+			}
+		}
+	}
+}
+
+/*
+22:30
+考虑：从小到大排序。图：所有小到大都有路径
+搜索所有可能路径？2^m,减枝
+*/
+
+namespace nsA1068C
+{
+	int nTarget;
+	int nCoin;
+	vector<int> vCoins;
+	vector<bool> vVisit;
+	bool bFound;
+
+	vector<int> vPath;
+
+	// u: current idx, total current coin;
+	void dfs(int u, int total)
+	{
+		if (bFound || total > nTarget) { return; }
+		if (total == nTarget)
+		{
+			cout << vPath.front();
+			for (size_t i = 1; i < vPath.size(); ++i)
+			{
+				cout << " " << vPath[i];
+			}
+			cout << endl;
+			bFound = true;
+			return;
+		}
+		for (int i = u + 1; i < nCoin; ++i)
+		{
+			if (!vVisit[i])
+			{
+				int next = total + vCoins[i];
+				if (next > nTarget)
+				{
+					return;
+				}
+				vVisit[i] = true;
+				vPath.push_back(vCoins[i]);
+				dfs(i, total + vCoins[i]);
+				vPath.pop_back();
+				vVisit[i] = false;
+			}
+		}
+	}
+
+	void main(void)
+	{
+		cin >> nCoin >> nTarget;
+		vCoins.resize(nCoin);
+		for (int i = 0; i < nCoin; ++i)
+		{
+			cin >> vCoins[i];
+		}
+		sort(vCoins.begin(), vCoins.end());
+		vVisit.assign(nCoin, false);
+
+		vPath.clear();
+		bFound = false;
+		for (int i = 0; i < nCoin; ++i)
+		{
+			if (bFound) { return; }
+			vVisit[i] = true;
+			// dfs
+			int u = i;
+			int total = vCoins[i];
+			vPath.clear();
+			vPath.push_back(total);
+			dfs(u, total);
+		}
+		if (!bFound)
+		{
+			cout << "No Solution" << endl;
+		}
+	}
+}
+
+
 // rename this to main int PAT
 int A1068Func(void)
 {
-	nsA1068A::main();
+	nsA1068C::main();
 	return 0;
 }
 
@@ -169,7 +321,7 @@ void A1068(const string& fn)
 
 void A1068(void)
 {
-//	A1068("data\\A1068-1.txt"); // 
-	A1068("data\\A1068-2.txt"); // 
+	A1068("data\\A1068-1.txt"); // 
+//	A1068("data\\A1068-2.txt"); // 
 }
 
