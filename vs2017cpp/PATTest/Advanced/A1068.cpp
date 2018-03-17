@@ -226,6 +226,7 @@ namespace nsA1068B
 22:30
 考虑：从小到大排序。图：所有小到大都有路径
 搜索所有可能路径？2^m,减枝
+22:50 29/30 tle
 */
 
 namespace nsA1068C
@@ -302,11 +303,107 @@ namespace nsA1068C
 	}
 }
 
+/*
+http://blog.csdn.net/gzxcyy/article/details/14025949
+
+这一题和01背包问题很类似，M相当于背包问题中的背包容量，硬币面值相当于每件物品的重量，
+背包问题中要求物品价值最大，这里要求物品总重（面值和）等于M，从可选方案中选择最优的是根据给定的比较方法。
+
+我们解决问题的难点：如何选择出最小的序列？
+首先来看递归式：L(i, j)表示在前i号硬币中选择，并且总价值小于等于j的序列的最大面值和。
+这里我们不要求等于j，只要尽量接近j就可以了。a[i]是i号硬币的面值，则递归式如下：
+
+L(i, j)   
+: 0   当i == 0 || j == 0
+: L[i - 1, j]   当a[i] > j
+: max(L(i - 1, j - a[i]) + a[i], L(i - 1, j))   当a[i] <= j
+
+自底向上填表之后，回溯一遍就可以得到所得序列。
+
+!!!重点！！！
+但是想要保证序列“最小”，就必须将原面值递减排序。
+在回溯中每次遇到L(i - 1, j - a[i]) + a[i]这种情况，
+就决定选择a[i]，因为此时a[i]总是最小的。
+*/
+namespace nsA1068Ref1
+{
+	int nCoin, nTarget;
+	vector<int> vCoins;
+	vector<vector<int>> vvA;
+
+	void dp()
+	{
+		for (int i = 1; i <= nCoin; i++)
+		{
+			for (int j = 1; j <= nTarget; j++)
+			{
+				if (vCoins[i] > j)
+					vvA[i][j] = vvA[i - 1][j];
+				else
+					vvA[i][j] = vvA[i - 1][j - vCoins[i]] + vCoins[i] > vvA[i - 1][j] ? vvA[i - 1][j - vCoins[i]] + vCoins[i] : vvA[i - 1][j];
+			}
+		}
+
+		if (vvA[nCoin][nTarget] != nTarget)
+		{
+			cout << "No Solution" << endl;
+			return;
+		}
+
+		//回溯输出选取的序列  
+		int j = nTarget;
+		int i = nCoin;
+		//cout<<" ";  
+		while (j > 0)
+		{
+			if (vvA[i][j] == vvA[i - 1][j - vCoins[i]] + vCoins[i])
+			{
+				cout << vCoins[i];
+				j -= vCoins[i];
+				i -= 1;
+				if (j != 0) cout << " ";
+			}
+			else
+			{
+				i -= 1;
+			}
+		}
+		cout << endl;
+	}
+
+	bool cmp(const int &a, const int &b)
+	{
+		return a > b;
+	}
+
+	void main()
+	{
+		cin >> nCoin >> nTarget;
+		vCoins.push_back(0);
+		for (int i = 0; i < nCoin; i++)
+		{
+			int tmp;
+			cin >> tmp;
+			vCoins.push_back(tmp);
+		}
+		sort(vCoins.begin() + 1, vCoins.end(), cmp);
+		// vector<vector<int>> v[N+1][M+1]
+		for (int i = 0; i <= nCoin; i++)
+		{
+			vector<int> tmp;
+			for (int j = 0; j <= nTarget; j++)
+				tmp.push_back(0);
+			vvA.push_back(tmp);
+		}
+		dp();
+	}
+
+}
 
 // rename this to main int PAT
 int A1068Func(void)
 {
-	nsA1068C::main();
+	nsA1068Ref1::main();
 	return 0;
 }
 
