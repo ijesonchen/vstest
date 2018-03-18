@@ -222,6 +222,10 @@ namespace nsA1068B
 	}
 }
 
+
+
+
+
 /*
 22:30
 考虑：从小到大排序。图：所有小到大都有路径
@@ -400,10 +404,106 @@ namespace nsA1068Ref1
 
 }
 
+/*
+参考 nsA1068Ref1
+背包问题映射：
+容量为m
+每物品价值：硬币面值
+每物品重量：硬币面值
+A[i,x] 前i个硬币，容量<=m的最大价值
+由于vi=wi，则容量和总价值相等
+如何选择最小：
+填充A[.][x]时，要么选v[i]，要么不选
+另外，对于A[i][.]，x从小到大填充，当x比较小时，会保证过大的[v]不会被选中
+（考虑A[i][x]的填充顺序及意义）
+则v[i]按照从大到小的顺序排列，dp结束后，倒序重建路径
+要么选择v[i]（从小到大选择），要么不选
+则会保证选择的v[i]顺序最小
+
+重建路径时，要根据A的递归式，按照倾向于选择v[i]的分支选取
+即a[i][x] == v[i] + a[i][x-vi]时，选取v[i]
+
+一般重建时，可以根据a[i][x] == a[i-1][x]判断是否选择v[i]，
+但是，出现v[i]可选可不选时，该逻辑会倾向于不选，
+
+30min pass
+*/
+
+namespace nsA1068BbyRef1
+{
+	int Value(vector<vector<int>>& vv, int i, int x, int v)
+	{
+		if (x < 0) { return 0; }
+		return vv[i][x] + v;
+	}
+
+	void main(void)
+	{
+		int n, m;
+		scanf("%d %d", &n, &m);
+		vector<int> vCoin(n + 1);
+		for (int i = 0; i < n; ++i)
+		{
+			scanf("%d", &vCoin[i + 1]);
+		}
+		sort(vCoin.rbegin(), vCoin.rend() - 1);
+		//		int nKnapsack = std::min(n, m);
+		int nKnapsack = m;
+		vector<vector<int>> vvA(n + 1, vector<int>(nKnapsack + 1));
+		for (int i = 1; i <= n; ++i)
+		{
+			for (int j = 0; j <= nKnapsack; ++j)
+			{
+				int v1 = Value(vvA, i - 1, j, 0);
+				int v2 = Value(vvA, i - 1, j - vCoin[i], vCoin[i]);
+				vvA[i][j] = std::max(v1, v2);
+
+			}
+		}
+		vector<int> vPath;
+		if (vvA[n][m] == m)
+		{
+			// build path
+			vector<int> vTmpPath;
+			int a = n, b = m;
+			while (a > 0)
+			{
+				// 倾向于选择i
+				if (vvA[a][b] && vvA[a][b] == Value(vvA, a - 1, b - vCoin[a], vCoin[a]))
+				{
+					vTmpPath.push_back(vCoin[a]);
+					b -= vCoin[a];
+					if (b<0)
+					{
+						break;
+					}
+				}
+				--a;
+			}
+			vPath.swap(vTmpPath);
+		}
+
+		if (vPath.size())
+		{
+			cout << vPath.front();
+			for (size_t i = 1; i < vPath.size(); ++i)
+			{
+				cout << " " << vPath[i];
+			}
+			cout << endl;
+		}
+		else
+		{
+			cout << "No Solution" << endl;
+		}
+	}
+}
+
+
 // rename this to main int PAT
 int A1068Func(void)
 {
-	nsA1068Ref1::main();
+	nsA1068BbyRef1::main();
 	return 0;
 }
 
@@ -418,7 +518,7 @@ void A1068(const string& fn)
 
 void A1068(void)
 {
-	A1068("data\\A1068-1.txt"); // 
-//	A1068("data\\A1068-2.txt"); // 
+//	A1068("data\\A1068-1.txt"); // 
+	A1068("data\\A1068-2.txt"); // 
 }
 
