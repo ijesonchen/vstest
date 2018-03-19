@@ -5,7 +5,7 @@
 #include <chrono>
 
 using namespace std;
-using namespace std::tr2;
+using namespace std::experimental;
 using namespace chrono;
 
 void main(int argc, char** argv)
@@ -36,7 +36,7 @@ void main(int argc, char** argv)
 		cout << "open failed: " << fn << endl;
 		return;
 	}
-	auto size = sys::file_size(fn);
+	auto size = filesystem::file_size(fn);
 	auto pos = 0;
 	if (size > firstRead)
 	{
@@ -45,12 +45,12 @@ void main(int argc, char** argv)
 	string s;
 	while (true)
 	{
-		size = sys::file_size(fn);;
+		size = filesystem::file_size(fn);;
 		if (pos != size)
 		{
 			if (pos + maxRead < size)
 			{
-				pos = size - maxRead;
+				pos = int(size - maxRead);
 			}
 			f.seekg(pos);
 			pos = (int)size;
