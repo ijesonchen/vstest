@@ -139,14 +139,50 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\vs2015cpp\StanfordAlg\common.cpp" />
-    <ClCompile Include="Advanced\A1043.cpp" />
-    <ClCompile Include="Advanced\A1120.cpp" />
+    <ClCompile Include="Advanced\A1033.cpp" />
+    <ClCompile Include="Advanced\A1034.cpp" />
+    <ClCompile Include="Advanced\A1039.cpp" />
+    <ClCompile Include="Advanced\A1065.cpp" />
+    <ClCompile Include="Advanced\A1066.cpp" />
+    <ClCompile Include="Advanced\A1067.cpp" />
+    <ClCompile Include="Advanced\A1068.cpp" />
+    <ClCompile Include="Advanced\A1077.cpp" />
+    <ClCompile Include="Advanced\A1078.cpp" />
+    <ClCompile Include="Advanced\A1079.cpp" />
+    <ClCompile Include="Advanced\A1080.cpp" />
+    <ClCompile Include="Advanced\A1088.cpp" />
+    <ClCompile Include="Advanced\A1089.cpp" />
+    <ClCompile Include="Advanced\A1090.cpp" />
+    <ClCompile Include="Advanced\A1091.cpp" />
+    <ClCompile Include="Advanced\A1095.cpp" />
+    <ClCompile Include="Advanced\A1096.cpp" />
+    <ClCompile Include="Advanced\A1097.cpp" />
+    <ClCompile Include="Advanced\A1098.cpp" />
+    <ClCompile Include="Advanced\A1104.cpp" />
+    <ClCompile Include="Advanced\A1105.cpp" />
+    <ClCompile Include="Advanced\A1106.cpp" />
+    <ClCompile Include="Advanced\A1107.cpp" />
+    <ClCompile Include="Advanced\A1108.cpp" />
+    <ClCompile Include="Advanced\A1109.cpp" />
+    <ClCompile Include="Advanced\A1110.cpp" />
+    <ClCompile Include="Advanced\A1111.cpp" />
+    <ClCompile Include="Advanced\A1116.cpp" />
+    <ClCompile Include="Advanced\A1117.cpp" />
+    <ClCompile Include="Advanced\A1118.cpp" />
+    <ClCompile Include="Advanced\A1119.cpp" />
     <ClCompile Include="Advanced\A1121.cpp" />
-    <ClCompile Include="Advanced\A1122.cpp" />
-    <ClCompile Include="Advanced\A1123.cpp" />
+    <ClCompile Include="Advanced\A1124.cpp" />
+    <ClCompile Include="Advanced\A1125.cpp" />
+    <ClCompile Include="Advanced\A1126.cpp" />
+    <ClCompile Include="Advanced\A1127.cpp" />
     <ClCompile Include="Blank.cpp" />
     <ClCompile Include="patMain.cpp" />
     <ClCompile Include="Template.cpp" />
+    <ClCompile Include="Test\BinarySearch.cpp" />
+    <ClCompile Include="Test\TestMain.cpp" />
+    <ClCompile Include="Top\T1004.cpp" />
+    <ClCompile Include="Top\T1005.cpp" />
+    <ClCompile Include="Top\T1006.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\vs2015cpp\StanfordAlg\common.h" />

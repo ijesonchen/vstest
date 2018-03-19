@@ -5,23 +5,22 @@
 
 using namespace std;
 
+
 int main(void)
 {
-	A1131();
 	std::cout << "Press enter";
 	std::getchar();
 }
 
-void Basic(void) { B1003(); }
-void Advanced(void) { A1138(); }
-void Top(void) { T1001(); }
-void PatMain(void) { Advanced(); }
-
 //////////////////////////////////////////////////////////////////////////
 // redirect file to cin
 ifstream g_fRedirCin;
+FILE* g_fReopen = nullptr;
 void RedirCin(const std::string& fn)
 {
+	if (g_fReopen) { fclose(g_fReopen); }
+	freopen(fn.c_str(), "r", stdin);
+	return;
 	g_fRedirCin.close();
 	g_fRedirCin.open(fn);
 	if (!g_fRedirCin)
