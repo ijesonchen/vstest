@@ -28,6 +28,10 @@ tuple<int, string> SBDTest(int a)
 
 void TestStructuredBindingsDeclaration(void)
 {
+#if _MSC_VER > 1911
 	auto[x, y] = SBDTest(2);
 	cout << x << " " << y << endl;
+#else
+	cout << "C++17 feature: Structured Bindings P0217R3 not supported." << endl;
+#endif // _MSC_VER > 1911
 }
