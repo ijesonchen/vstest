@@ -73,15 +73,12 @@ namespace nsA1143B
 
 		Node(int d) : data(d) {};
 	};
-
-	vector<Node*> vpNodes;
-
+	
 	Node* Insert(Node* p, int d)
 	{
 		if (!p)
 		{
 			p = new Node(d);
-//			vpNodes.push_back(p);
 			return p;
 		}
 		if (d < p->data)
@@ -134,14 +131,12 @@ namespace nsA1143B
 	void main(void)
 	{
 		int m, n, d;
-// 		scanf("%d %d", &m, &n);
-		cin >> m >> n;
+ 		scanf("%d %d", &m, &n);
 		Node* pRoot = nullptr;
 		vector<bool> vVisit(1000000);
 		for (int i = 0; i < n; ++i)
 		{
-//			scanf("%d", &d);
-			cin >> d;
+			scanf("%d", &d);
 			vVisit[d] = true;
 			pRoot = Insert(pRoot, d);
 		}
@@ -149,7 +144,7 @@ namespace nsA1143B
 
 		for (int i = 0; i < m; ++i)
 		{
-			cin >> u >> v;
+			scanf("%d %d", &u, &v);
 			bool bu = (u >= 0) && vVisit[u];
 			bool bv = (v >= 0) && vVisit[v];
 			if (!bu && !bv)
