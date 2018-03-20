@@ -76,6 +76,7 @@ namespace nsA1143G
 		Node(int d) : data(d) {};
 	};
 
+	unordered_map<int, Node*> mappNode;
 
 	Node* Insert(Node* p, Node* pParent, int d)
 	{
