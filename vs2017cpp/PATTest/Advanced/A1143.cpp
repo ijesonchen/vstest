@@ -60,6 +60,173 @@ using namespace std;
 test: 0 < node < 1000000;
 */
 /*
+build path when insert
+18/30 MLE
+*/
+namespace nsA1143F
+{
+	const int MAXNODE = 1000000;
+	struct Node
+	{
+		int data = 0;
+		Node* left = nullptr;
+		Node* right = nullptr;
+		vector<int> vPath;
+
+		Node(int d) : data(d) {};
+	};
+
+	vector<Node*> vpNode(MAXNODE);
+
+	Node* Insert(Node* p, Node* pParent, int d)
+	{
+		if (!p)
+		{
+			p = new Node(d);
+			vpNode[d] = p;
+			if (pParent)
+			{
+				p->vPath = pParent->vPath;
+			}
+			p->vPath.push_back(d);
+			return p;
+		}
+		if (d < p->data)
+		{
+			p->left = Insert(p->left, p, d);
+			return p;
+		}
+		else if (d > p->data)
+		{
+			p->right = Insert(p->right, p, d);
+			return p;
+		}
+		else
+		{
+			throw 0;
+		}
+		return p;
+	}
+
+	void LCA(Node* p, int u, int v)
+	{
+		if (!p) { throw 0; }
+		if (u == p->data)
+		{
+			printf("%d is an ancestor of %d.\n", u, v);
+		}
+		else if (v == p->data)
+		{
+			printf("%d is an ancestor of %d.\n", v, u);
+		}
+		else if ((u > p->data && v < p->data) ||
+			(u < p->data && v > p->data))
+		{
+			printf("LCA of %d and %d is %d.\n", u, v, p->data);
+		}
+		else if (u < p->data && v < p->data)
+		{
+			LCA(p->left, u, v);
+		}
+		else if (u > p->data && v > p->data)
+		{
+			LCA(p->right, u, v);
+		}
+		else
+		{
+			throw 0;
+		}
+	}
+
+	void main(void)
+	{
+		int m, n, d;
+		scanf("%d %d", &m, &n);
+		Node* pRoot = nullptr;
+
+		for (int i = 0; i < n; ++i)
+		{
+			scanf("%d", &d);
+			pRoot = Insert(pRoot, pRoot, d);
+		}
+		int u, v;
+
+		for (int i = 0; i < m; ++i)
+		{
+			scanf("%d %d", &u, &v);
+			Node* pu = (u >= 0) ? vpNode[u] : nullptr;
+			Node* pv = (v >= 0) ? vpNode[v] : nullptr;
+			if (!pu && !pv)
+			{
+				printf("ERROR: %d and %d are not found.\n", u, v);
+			}
+			else if (!pu && pv)
+			{
+				printf("ERROR: %d is not found.\n", u);
+			}
+			else if (pu && !pv)
+			{
+				printf("ERROR: %d is not found.\n", v);
+			}
+			else
+			{
+
+				vector<int>& uPath = pu->vPath;
+				vector<int>& vPath = pv->vPath;
+				int iCommon = (int)std::min(uPath.size(), vPath.size()) - 1;
+				for (size_t j = 0; j < uPath.size() && j < vPath.size(); ++j)
+				{
+					if (uPath[j] != vPath[j])
+					{
+						iCommon = (int)j - 1;
+						break;
+					}
+				}
+				if (iCommon < uPath.size() - 1 && iCommon < vPath.size() - 1)
+				{
+					printf("LCA of %d and %d is %d.\n", u, v, uPath[iCommon]);
+				}
+				else if (iCommon == uPath.size() - 1)
+				{
+					printf("%d is an ancestor of %d.\n", u, v);
+				}
+				else if (iCommon == vPath.size() - 1)
+				{
+					printf("%d is an ancestor of %d.\n", v, u);
+				}
+				else
+				{
+					throw 0;
+				}
+			}
+		}
+
+	}
+}
+
+// rename this to main int PAT
+int A1143Func(void)
+{
+	nsA1143F::main();
+	return 0;
+}
+
+
+
+void A1143(const string& fn)
+{
+	cout << fn << endl;
+	RedirCin(fn);
+	A1143Func();
+	cout << endl;
+}
+
+void A1143(void)
+{
+	A1143("data\\A1143-1.txt"); // 
+}
+
+/*
 FROM nsA1143B
 
 ºÏ²¢£¿
@@ -274,30 +441,6 @@ namespace nsA1143E
 		}
 	}
 }
-
-// rename this to main int PAT
-int A1143Func(void)
-{
-	nsA1143E::main();
-	return 0;
-}
-
-
-
-void A1143(const string& fn)
-{
-	cout << fn << endl;
-	RedirCin(fn);
-	A1143Func();
-	cout << endl;
-}
-
-void A1143(void)
-{
-	A1143("data\\A1143-1.txt"); // 
-}
-
-
 /*
 FROM nsA1143B
 
