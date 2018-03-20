@@ -212,7 +212,7 @@ A1068: 30m pass;
 A1040: 14:50 15m pass
 A1041: 15:15 20m pass scanf, sort(vec<*>)性能影响
 A1042: 15:35 25m pass
-A1043: 16:00 30m 22/30 TLE3,4
+A1043: 16:00 30m 22/30 TLE3,4; 15m on-the-fly, scanf 22/30 TLE3,4;
 多次freopen stdin后要cin.clear()。否则无法读取。
 ```
 

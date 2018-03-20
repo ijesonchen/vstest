@@ -52,18 +52,20 @@ ERROR: 99 and 99 are not found.
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
 
 using namespace std;
 
 /*
 test: 0 < node < 1000000;
 */
-
 /*
-FROM nsA1143A
- 
+FROM nsA1143B
+
+合并？
+22/30 TLE 3,4
 */
-namespace nsA1143B
+namespace nsA1143E
 {
 	struct Node
 	{
@@ -73,7 +75,7 @@ namespace nsA1143B
 
 		Node(int d) : data(d) {};
 	};
-	
+
 	Node* Insert(Node* p, int d)
 	{
 		if (!p)
@@ -97,7 +99,494 @@ namespace nsA1143B
 		}
 		return p;
 	}
-	
+
+	enum ResType
+	{
+		eEXCEP,
+		eLCA,
+		eANC,
+		eEu,
+		eEv,
+		eEBoth,
+	};
+
+	struct Result
+	{
+		int u;
+		int v;
+		int anc;
+		ResType type = eEXCEP;
+
+		bool operator<(const Result& a) const
+		{
+			return v < a.v;
+		}
+
+		void Print(void)
+		{
+			switch (type)
+			{
+			case eLCA:
+				printf("LCA of %d and %d is %d.\n", u, v, anc);
+				break;
+			case eANC:
+				if (u == anc)
+				{
+					printf("%d is an ancestor of %d.\n", u, v);
+				}
+				else if (v == anc)
+				{
+					printf("%d is an ancestor of %d.\n", v, u);
+				}
+				else
+				{
+					throw 0;
+				}
+				break;
+			case eEu:
+				printf("ERROR: %d is not found.\n", u);
+				break;
+			case eEv:
+				printf("ERROR: %d is not found.\n", v);
+				break;
+			case eEBoth:
+				printf("ERROR: %d and %d are not found.\n", u, v);
+				break;
+			default:
+				throw 0;
+				break;
+			}
+		}
+	};
+
+	bool ResultLess(const Result* p1, const Result* p2)
+	{
+		return *p1 < *p2;
+	}
+
+	void LCA(Node* p, const int u, vector<Result*>& vpResult)
+	{
+		if (!p) { throw 0; }
+		int data = p->data;
+		if (u == data)
+		{
+			for (auto pRes : vpResult)
+			{
+				pRes->type = eANC;
+				pRes->anc = u;
+			}
+		}
+		else
+		{
+			vector<Result*> vp1; // < data
+			vector<Result*> vp2; // > data
+			for (auto pRes : vpResult)
+			{
+				if (pRes->v < data)
+				{
+					vp1.push_back(pRes);
+				}
+				else if (pRes->v == data)
+				{
+					pRes->type = eANC;
+					pRes->anc = pRes->v;
+				}
+				else
+				{
+					vp2.push_back(pRes);
+				}
+			}
+			if (u < data)
+			{
+				LCA(p->left, u, vp1);
+				for (auto pRes : vp2)
+				{
+					pRes->anc = data;
+					pRes->type = eLCA;
+				}
+			}
+			else
+			{
+				for (auto pRes : vp1)
+				{
+					pRes->anc = data;
+					pRes->type = eLCA;
+				}
+				LCA(p->right, u, vp2);
+			}
+		}
+	}
+
+
+	void main(void)
+	{
+		int m, n, d;
+		scanf("%d %d", &m, &n);
+		Node* pRoot = nullptr;
+		vector<bool> vVisit(1000000);
+		for (int i = 0; i < n; ++i)
+		{
+			scanf("%d", &d);
+			vVisit[d] = true;
+			pRoot = Insert(pRoot, d);
+		}
+		int u, v;
+
+		vector<Result> vResult(m);
+
+		vector<Result*> vpResult;
+		unordered_map<int, vector<Result*>> mapUResult;
+
+		for (int i = 0; i < m; ++i)
+		{
+			scanf("%d %d", &u, &v);
+			Result& res = vResult[i];
+			res.u = u;
+			res.v = v;
+			bool bu = (u >= 0) && vVisit[u];
+			bool bv = (v >= 0) && vVisit[v];
+			if (!bu && !bv)
+			{
+				res.type = eEBoth;
+			}
+			else if (!bu && bv)
+			{
+				res.type = eEu;
+			}
+			else if (bu && !bv)
+			{
+				res.type = eEv;
+			}
+			else
+			{
+				mapUResult[u].push_back(&res);
+			}
+		}
+
+		for (auto& it : mapUResult)
+		{
+			LCA(pRoot, it.first, it.second);
+		}
+
+		for (auto& res : vResult)
+		{
+			res.Print();
+		}
+	}
+}
+
+// rename this to main int PAT
+int A1143Func(void)
+{
+	nsA1143E::main();
+	return 0;
+}
+
+
+
+void A1143(const string& fn)
+{
+	cout << fn << endl;
+	RedirCin(fn);
+	A1143Func();
+	cout << endl;
+}
+
+void A1143(void)
+{
+	A1143("data\\A1143-1.txt"); // 
+}
+
+
+/*
+FROM nsA1143B
+
+22/30 TLE 3,4
+*/
+namespace nsA1143D
+{
+	struct Node
+	{
+		int data = 0;
+		Node* left = nullptr;
+		Node* right = nullptr;
+
+		Node(int d) : data(d) {};
+	};
+
+	Node* Insert(Node* p, int d)
+	{
+		if (!p)
+		{
+			p = new Node(d);
+			return p;
+		}
+		if (d < p->data)
+		{
+			p->left = Insert(p->left, d);
+			return p;
+		}
+		else if (d > p->data)
+		{
+			p->right = Insert(p->right, d);
+			return p;
+		}
+		else
+		{
+			throw 0;
+		}
+		return p;
+	}
+
+	vector<int> vData;
+
+	inline int LCA(int u, int v)
+	{
+		// u < v
+		for (size_t i = 0; i < vData.size(); ++i)
+		{
+			if (vData[i] >= u && vData[i] <= v)
+			{
+				return vData[i];
+			}
+		}
+		throw 0;
+		return 0;
+	}
+
+	void main(void)
+	{
+		int m, n, d;
+		scanf("%d %d", &m, &n);
+		Node* pRoot = nullptr;
+		vData.resize(n);
+		vector<bool> vVisit(1000000);
+		for (int i = 0; i < n; ++i)
+		{
+			scanf("%d", &d);
+			vData[i] = d;
+			vVisit[d] = true;
+			pRoot = Insert(pRoot, d);
+		}
+		int u, v;
+
+		for (int i = 0; i < m; ++i)
+		{
+			scanf("%d %d", &u, &v);
+			bool bu = (u >= 0) && vVisit[u];
+			bool bv = (v >= 0) && vVisit[v];
+			if (!bu && !bv)
+			{
+				printf("ERROR: %d and %d are not found.\n", u, v);
+			}
+			else if (!bu && bv)
+			{
+				printf("ERROR: %d is not found.\n", u);
+			}
+			else if (bu && !bv)
+			{
+				printf("ERROR: %d is not found.\n", v);
+			}
+			else
+			{
+				int a = u, b = v;
+				if (a > b)
+				{
+					swap(a, b);
+				}
+				int lca = LCA(a, b);
+				if (lca == u)
+				{
+					printf("%d is an ancestor of %d.\n", u, v);
+				}
+				else if (lca == v)
+				{
+					printf("%d is an ancestor of %d.\n", v, u);
+				}
+				else
+				{
+					printf("LCA of %d and %d is %d.\n", u, v, lca);
+				}
+			}
+		}
+
+	}
+}
+
+
+
+/*
+FROM nsA1143B
+
+根据双向链表，分别u，v向根反向搜索两次
+TLE
+性能比nsA1143B差
+*/
+namespace nsA1143C 
+{
+	const int MAXNODE = 1000000;
+	struct Node
+	{
+		int data = 0;
+		Node* parent = nullptr;
+		Node* left = nullptr;
+		Node* right = nullptr;
+
+		Node(int d) : data(d) {};
+	};
+
+	vector<bool> vHasNode(MAXNODE);
+	vector<Node*> vpNode(MAXNODE);
+
+	Node* Insert(Node* p, int d)
+	{
+		if (!p)
+		{
+			p = new Node(d);
+			vpNode[d] = p;
+			return p;
+		}
+		if (d < p->data)
+		{
+			p->left = Insert(p->left, d);
+			p->left->parent = p;
+			return p;
+		}
+		else if (d > p->data)
+		{
+			p->right = Insert(p->right, d);
+			p->right->parent = p;
+			return p;
+		}
+		else
+		{
+			throw 0;
+		}
+		return p;
+	}
+
+	int LCA(const int u, const int v)
+	{
+		// u < v;
+		vector<bool> vVisit(MAXNODE);
+		Node* p = vpNode[u];
+		while (p && p->data <= v)
+		{
+			vVisit[p->data] = true;
+			p = p->parent;
+		}
+		p = vpNode[v];
+		while (p && p->data >= u)
+		{
+			if (vVisit[p->data])
+			{
+				// on the path
+				return p->data;
+			}
+			p = p->parent;
+		}
+		throw 0;
+		return -1;
+	}
+
+	void main(void)
+	{
+		int m, n, d;
+		scanf("%d %d", &m, &n);
+		Node* pRoot = nullptr;
+		for (int i = 0; i < n; ++i)
+		{
+			scanf("%d", &d);
+			vHasNode[d] = true;
+			pRoot = Insert(pRoot, d);
+		}
+		int u, v;
+
+		for (int i = 0; i < m; ++i)
+		{
+			scanf("%d %d", &u, &v);
+			bool bu = (u >= 0) && vHasNode[u];
+			bool bv = (v >= 0) && vHasNode[v];
+			if (!bu && !bv)
+			{
+				printf("ERROR: %d and %d are not found.\n", u, v);
+			}
+			else if (!bu && bv)
+			{
+				printf("ERROR: %d is not found.\n", u);
+			}
+			else if (bu && !bv)
+			{
+				printf("ERROR: %d is not found.\n", v);
+			}
+			else
+			{
+				int a = u, b = v;
+				if (a > b)
+				{
+					swap(a, b);
+				}
+				int lca = LCA(a, b);
+				if (lca == u)
+				{
+					printf("%d is an ancestor of %d.\n", u, v);
+				}
+				else if (lca == v)
+				{
+					printf("%d is an ancestor of %d.\n", v, u);
+				}
+				else
+				{
+					printf("LCA of %d and %d is %d.\n", u, v, lca);
+				}
+			}
+		}
+
+	}
+}
+
+/*
+FROM nsA1143A
+
+LCA on-the-fly
+scanf
+TLE3,4
+*/
+namespace nsA1143B
+{
+	struct Node
+	{
+		int data = 0;
+		Node* left = nullptr;
+		Node* right = nullptr;
+
+		Node(int d) : data(d) {};
+	};
+
+	Node* Insert(Node* p, int d)
+	{
+		if (!p)
+		{
+			p = new Node(d);
+			return p;
+		}
+		if (d < p->data)
+		{
+			p->left = Insert(p->left, d);
+			return p;
+		}
+		else if (d > p->data)
+		{
+			p->right = Insert(p->right, d);
+			return p;
+		}
+		else
+		{
+			throw 0;
+		}
+		return p;
+	}
+
 	void LCA(Node* p, int u, int v)
 	{
 		if (!p) { throw 0; }
@@ -109,7 +598,7 @@ namespace nsA1143B
 		{
 			printf("%d is an ancestor of %d.\n", v, u);
 		}
-		else if ((u > p->data && v < p->data) || 
+		else if ((u > p->data && v < p->data) ||
 			(u < p->data && v > p->data))
 		{
 			printf("LCA of %d and %d is %d.\n", u, v, p->data);
@@ -131,7 +620,7 @@ namespace nsA1143B
 	void main(void)
 	{
 		int m, n, d;
- 		scanf("%d %d", &m, &n);
+		scanf("%d %d", &m, &n);
 		Node* pRoot = nullptr;
 		vector<bool> vVisit(1000000);
 		for (int i = 0; i < n; ++i)
@@ -167,29 +656,6 @@ namespace nsA1143B
 
 	}
 }
-
-// rename this to main int PAT
-int A1143Func(void)
-{
-	nsA1143B::main();
-	return 0;
-}
-
-
-void A1143(const string& fn)
-{
-	cout << fn << endl;
-	RedirCin(fn);
-	A1143Func();
-	cout << endl;
-}
-
-void A1143(void)
-{
-	A1143("data\\A1143-1.txt"); // 
-}
-
-
 namespace nsA1143A
 {
 	struct Node
