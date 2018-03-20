@@ -28,7 +28,7 @@ tuple<int, string> SBDTest(int a)
 
 void TestStructuredBindingsDeclaration(void)
 {
-#if _MSC_VER > 1911
+#if _MSC_VER >= 1911
 	auto[x, y] = SBDTest(2);
 	cout << x << " " << y << endl;
 #else

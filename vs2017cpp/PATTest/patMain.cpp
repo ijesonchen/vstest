@@ -8,6 +8,7 @@ using namespace std;
 
 int main(void)
 {
+	A1140();
 	std::cout << "Press enter";
 	std::getchar();
 }
@@ -19,7 +20,8 @@ FILE* g_fReopen = nullptr;
 void RedirCin(const std::string& fn)
 {
 	if (g_fReopen) { fclose(g_fReopen); }
-	freopen(fn.c_str(), "r", stdin);
+	g_fReopen = freopen(fn.c_str(), "r", stdin);
+	cin.clear();
 	return;
 	g_fRedirCin.close();
 	g_fRedirCin.open(fn);
