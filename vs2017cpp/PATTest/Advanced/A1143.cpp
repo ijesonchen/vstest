@@ -81,7 +81,7 @@ namespace nsA1143B
 		if (!p)
 		{
 			p = new Node(d);
-			//			vpNodes.push_back(p);
+//			vpNodes.push_back(p);
 			return p;
 		}
 		if (d < p->data)
@@ -100,30 +100,13 @@ namespace nsA1143B
 		}
 		return p;
 	}
-
-	Node* FindPath(Node* p, int d, vector<int>& vPath)
-	{
-		if (!p) { return nullptr; }
-		vPath.push_back(p->data);
-		if (p->data == d)
-		{
-			return p;
-		}
-		else if (d < p->data)
-		{
-			return FindPath(p->left, d, vPath);
-		}
-		else
-		{
-			return FindPath(p->right, d, vPath);
-		}
-	}
-
+	
 	void LCA(Node* p, int u, int v)
 	{
 		if (!p) { throw 0; }
 		if (u == p->data)
 		{
+			printf("%d is an ancestor of %d.\n", u, v);
 		}
 		else if (v == p->data)
 		{
@@ -151,11 +134,13 @@ namespace nsA1143B
 	void main(void)
 	{
 		int m, n, d;
+// 		scanf("%d %d", &m, &n);
 		cin >> m >> n;
 		Node* pRoot = nullptr;
 		vector<bool> vVisit(1000000);
 		for (int i = 0; i < n; ++i)
 		{
+//			scanf("%d", &d);
 			cin >> d;
 			vVisit[d] = true;
 			pRoot = Insert(pRoot, d);
@@ -181,36 +166,7 @@ namespace nsA1143B
 			}
 			else
 			{
-				vector<int> uPath;
-				vector<int> vPath;
-				auto pu = FindPath(pRoot, u, uPath);
-				auto pv = FindPath(pRoot, v, vPath);
-				int iCommon = (int)std::min(uPath.size(), vPath.size()) - 1;
-				for (size_t j = 0; j < uPath.size() && j < vPath.size(); ++j)
-				{
-					if (uPath[j] != vPath[j])
-					{
-						iCommon = (int)j - 1;
-						break;
-					}
-				}
-				if (iCommon < uPath.size() - 1 && iCommon < vPath.size() - 1)
-				{
-					printf("LCA of %d and %d is %d.\n", u, v, uPath[iCommon]);
-				}
-				else if (iCommon == uPath.size() - 1)
-				{
-					printf("%d is an ancestor of %d.\n", u, v);
-				}
-				else if (iCommon == vPath.size() - 1)
-				{
-					printf("%d is an ancestor of %d.\n", v, u);
-				}
-				else
-				{
-					throw 0;
-				}
-
+				LCA(pRoot, u, v);
 			}
 		}
 
