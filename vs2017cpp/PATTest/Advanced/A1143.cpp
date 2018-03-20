@@ -59,6 +59,186 @@ using namespace std;
 test: 0 < node < 1000000;
 */
 
+/*
+FROM nsA1143A
+ 
+*/
+namespace nsA1143B
+{
+	struct Node
+	{
+		int data = 0;
+		Node* left = nullptr;
+		Node* right = nullptr;
+
+		Node(int d) : data(d) {};
+	};
+
+	vector<Node*> vpNodes;
+
+	Node* Insert(Node* p, int d)
+	{
+		if (!p)
+		{
+			p = new Node(d);
+			//			vpNodes.push_back(p);
+			return p;
+		}
+		if (d < p->data)
+		{
+			p->left = Insert(p->left, d);
+			return p;
+		}
+		else if (d > p->data)
+		{
+			p->right = Insert(p->right, d);
+			return p;
+		}
+		else
+		{
+			throw 0;
+		}
+		return p;
+	}
+
+	Node* FindPath(Node* p, int d, vector<int>& vPath)
+	{
+		if (!p) { return nullptr; }
+		vPath.push_back(p->data);
+		if (p->data == d)
+		{
+			return p;
+		}
+		else if (d < p->data)
+		{
+			return FindPath(p->left, d, vPath);
+		}
+		else
+		{
+			return FindPath(p->right, d, vPath);
+		}
+	}
+
+	void LCA(Node* p, int u, int v)
+	{
+		if (!p) { throw 0; }
+		if (u == p->data)
+		{
+		}
+		else if (v == p->data)
+		{
+			printf("%d is an ancestor of %d.\n", v, u);
+		}
+		else if ((u > p->data && v < p->data) || 
+			(u < p->data && v > p->data))
+		{
+			printf("LCA of %d and %d is %d.\n", u, v, p->data);
+		}
+		else if (u < p->data && v < p->data)
+		{
+			LCA(p->left, u, v);
+		}
+		else if (u > p->data && v > p->data)
+		{
+			LCA(p->right, u, v);
+		}
+		else
+		{
+			throw 0;
+		}
+	}
+
+	void main(void)
+	{
+		int m, n, d;
+		cin >> m >> n;
+		Node* pRoot = nullptr;
+		vector<bool> vVisit(1000000);
+		for (int i = 0; i < n; ++i)
+		{
+			cin >> d;
+			vVisit[d] = true;
+			pRoot = Insert(pRoot, d);
+		}
+		int u, v;
+
+		for (int i = 0; i < m; ++i)
+		{
+			cin >> u >> v;
+			bool bu = (u >= 0) && vVisit[u];
+			bool bv = (v >= 0) && vVisit[v];
+			if (!bu && !bv)
+			{
+				printf("ERROR: %d and %d are not found.\n", u, v);
+			}
+			else if (!bu && bv)
+			{
+				printf("ERROR: %d is not found.\n", u);
+			}
+			else if (bu && !bv)
+			{
+				printf("ERROR: %d is not found.\n", v);
+			}
+			else
+			{
+				vector<int> uPath;
+				vector<int> vPath;
+				auto pu = FindPath(pRoot, u, uPath);
+				auto pv = FindPath(pRoot, v, vPath);
+				int iCommon = (int)std::min(uPath.size(), vPath.size()) - 1;
+				for (size_t j = 0; j < uPath.size() && j < vPath.size(); ++j)
+				{
+					if (uPath[j] != vPath[j])
+					{
+						iCommon = (int)j - 1;
+						break;
+					}
+				}
+				if (iCommon < uPath.size() - 1 && iCommon < vPath.size() - 1)
+				{
+					printf("LCA of %d and %d is %d.\n", u, v, uPath[iCommon]);
+				}
+				else if (iCommon == uPath.size() - 1)
+				{
+					printf("%d is an ancestor of %d.\n", u, v);
+				}
+				else if (iCommon == vPath.size() - 1)
+				{
+					printf("%d is an ancestor of %d.\n", v, u);
+				}
+				else
+				{
+					throw 0;
+				}
+
+			}
+		}
+
+	}
+}
+
+// rename this to main int PAT
+int A1143Func(void)
+{
+	nsA1143B::main();
+	return 0;
+}
+
+
+void A1143(const string& fn)
+{
+	cout << fn << endl;
+	RedirCin(fn);
+	A1143Func();
+	cout << endl;
+}
+
+void A1143(void)
+{
+	A1143("data\\A1143-1.txt"); // 
+}
+
+
 namespace nsA1143A
 {
 	struct Node
@@ -77,7 +257,7 @@ namespace nsA1143A
 		if (!p)
 		{
 			p = new Node(d);
-//			vpNodes.push_back(p);
+			//			vpNodes.push_back(p);
 			return p;
 		}
 		if (d < p->data)
@@ -133,13 +313,13 @@ namespace nsA1143A
 		for (int i = 0; i < m; ++i)
 		{
 			cin >> u >> v;
-			bool bu = (u >=0 ) && vVisit[u];
-			bool bv = (v >=0 ) && vVisit[v];
+			bool bu = (u >= 0) && vVisit[u];
+			bool bv = (v >= 0) && vVisit[v];
 			if (!bu && !bv)
 			{
 				printf("ERROR: %d and %d are not found.\n", u, v);
 			}
-			else if(!bu && bv)
+			else if (!bu && bv)
 			{
 				printf("ERROR: %d is not found.\n", u);
 			}
@@ -156,7 +336,7 @@ namespace nsA1143A
 				int iCommon = (int)std::min(uPath.size(), vPath.size()) - 1;
 				for (size_t j = 0; j < uPath.size() && j < vPath.size(); ++j)
 				{
-					if (uPath[j]!=vPath[j])
+					if (uPath[j] != vPath[j])
 					{
 						iCommon = (int)j - 1;
 						break;
@@ -183,26 +363,5 @@ namespace nsA1143A
 		}
 
 	}
-}
-
-// rename this to main int PAT
-int A1143Func(void)
-{
-	nsA1143A::main();
-	return 0;
-}
-
-
-void A1143(const string& fn)
-{
-	cout << fn << endl;
-	RedirCin(fn);
-	A1143Func();
-	cout << endl;
-}
-
-void A1143(void)
-{
-	A1143("data\\A1143-1.txt"); // 
 }
 
