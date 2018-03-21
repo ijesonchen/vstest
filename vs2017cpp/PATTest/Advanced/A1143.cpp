@@ -3,6 +3,14 @@
 200 ms
 65536 kB
 
+test: 0 < node < 1000000;
+
+总结：
+	带返回值的递归效率要比参数引用的递归低（2-4倍性能差距）
+	发生TLE时，如果感觉代码无法优化，不要凭直觉判断，二分法确定性能瓶颈。一开始一直怀疑查询较慢，实际上是建树插入函数慢。
+	优化插入后，A/B方案都可以通过。即问题出在插入上面。
+
+
 The lowest common ancestor (LCA) of two nodes U and V in a tree is the deepest node that has both U and V as descendants.
 
 A binary search tree (BST) is recursively defined as a binary tree which has the following properties:
@@ -52,13 +60,264 @@ ERROR: 99 and 99 are not found.
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cstdio>
 #include <unordered_map>
 
 using namespace std;
 
 /*
-test: 0 < node < 1000000;
+FROM nsA1143A
 */
+
+namespace nsA1143I
+{
+	struct Node
+	{
+		int data = 0;
+		Node* left = nullptr;
+		Node* right = nullptr;
+
+		Node(int d) : data(d) {};
+	};
+
+	void Insert(Node*& p, int d)
+	{
+		if (!p)
+		{
+			p = new Node(d);
+			return;
+		}
+		if (d < p->data)
+		{
+			Insert(p->left, d);
+		}
+		else if (d > p->data)
+		{
+			Insert(p->right, d);
+		}
+		else
+		{
+			throw 0;
+		}
+	}
+
+	Node* FindPath(Node* p, int d, vector<int>& vPath)
+	{
+		if (!p) { return nullptr; }
+		vPath.push_back(p->data);
+		if (p->data == d)
+		{
+			return p;
+		}
+		else if (d < p->data)
+		{
+			return FindPath(p->left, d, vPath);
+		}
+		else
+		{
+			return FindPath(p->right, d, vPath);
+		}
+	}
+
+
+	void main(void)
+	{
+		int m, n, d;
+		cin >> m >> n;
+		Node* pRoot = nullptr;
+		vector<bool> vHasNode(1000000);
+		for (int i = 0; i < n; ++i)
+		{
+			cin >> d;
+			vHasNode[d] = true;
+			Insert(pRoot, d);
+		}
+		int u, v;
+
+		for (int i = 0; i < m; ++i)
+		{
+			cin >> u >> v;
+			bool bu = (u >= 0) && vHasNode[u];
+			bool bv = (v >= 0) && vHasNode[v];
+			if (!bu && !bv)
+			{
+				printf("ERROR: %d and %d are not found.\n", u, v);
+			}
+			else if (!bu && bv)
+			{
+				printf("ERROR: %d is not found.\n", u);
+			}
+			else if (bu && !bv)
+			{
+				printf("ERROR: %d is not found.\n", v);
+			}
+			else
+			{
+				vector<int> uPath;
+				vector<int> vPath;
+				auto pu = FindPath(pRoot, u, uPath);
+				auto pv = FindPath(pRoot, v, vPath);
+				int iCommon = (int)std::min(uPath.size(), vPath.size()) - 1;
+				for (size_t j = 0; j < uPath.size() && j < vPath.size(); ++j)
+				{
+					if (uPath[j] != vPath[j])
+					{
+						iCommon = (int)j - 1;
+						break;
+					}
+				}
+				if (iCommon < uPath.size() - 1 && iCommon < vPath.size() - 1)
+				{
+					printf("LCA of %d and %d is %d.\n", u, v, uPath[iCommon]);
+				}
+				else if (iCommon == uPath.size() - 1)
+				{
+					printf("%d is an ancestor of %d.\n", u, v);
+				}
+				else if (iCommon == vPath.size() - 1)
+				{
+					printf("%d is an ancestor of %d.\n", v, u);
+				}
+				else
+				{
+					throw 0;
+				}
+
+			}
+		}
+
+	}
+}
+
+
+
+// rename this to main int PAT
+int main(void)
+{
+	nsA1143I::main();
+	return 0;
+}
+
+
+
+void A1143(const string& fn)
+{
+	cout << fn << endl;
+	RedirCin(fn);
+//	A1143Func();
+	cout << endl;
+}
+
+void A1143(void)
+{
+	A1143("data\\A1143-1.txt"); // 
+}
+
+/*
+PASS 110ms
+*/
+namespace nsA1143H
+{
+	struct Node
+	{
+		int data = 0;
+		Node* left = nullptr;
+		Node* right = nullptr;
+
+		Node(int d) : data(d) {};
+	};
+
+	void Insert(Node*& p, int d)
+	{
+		if (!p)
+		{
+			p = new Node(d);
+			return;
+		}
+		if (d < p->data)
+		{
+			Insert(p->left, d);
+		}
+		else if (d > p->data)
+		{
+			Insert(p->right, d);
+		}
+		else
+		{
+			throw 0;
+		}
+	}
+
+	void LCA(Node* p, int u, int v)
+	{
+		if (!p) { throw 0; }
+		if (u == p->data)
+		{
+			printf("%d is an ancestor of %d.\n", u, v);
+		}
+		else if (v == p->data)
+		{
+			printf("%d is an ancestor of %d.\n", v, u);
+		}
+		else if ((u > p->data && v < p->data) ||
+			(u < p->data && v > p->data))
+		{
+			printf("LCA of %d and %d is %d.\n", u, v, p->data);
+		}
+		else if (u < p->data && v < p->data)
+		{
+			LCA(p->left, u, v);
+		}
+		else if (u > p->data && v > p->data)
+		{
+			LCA(p->right, u, v);
+		}
+		else
+		{
+			throw 0;
+		}
+	}
+
+	void main(void)
+	{
+		int m, n, d;
+		scanf("%d %d", &m, &n);
+		Node* pRoot = nullptr;
+		vector<bool> vVisit(1000000);
+		for (int i = 0; i < n; ++i)
+		{
+			scanf("%d", &d);
+			vVisit[d] = true;
+			Insert(pRoot, d);
+		}
+		int u, v;
+
+		for (int i = 0; i < m; ++i)
+		{
+			scanf("%d %d", &u, &v);
+			bool bu = (u >= 0) && vVisit[u];
+			bool bv = (v >= 0) && vVisit[v];
+			if (!bu && !bv)
+			{
+				printf("ERROR: %d and %d are not found.\n", u, v);
+			}
+			else if (!bu && bv)
+			{
+				printf("ERROR: %d is not found.\n", u);
+			}
+			else if (bu && !bv)
+			{
+				printf("ERROR: %d is not found.\n", v);
+			}
+			else
+			{
+				LCA(pRoot, u, v);
+			}
+		}
+
+	}
+}
+
 /*
 from nsA1143F
 build path when insert
@@ -202,28 +461,6 @@ namespace nsA1143G
 		}
 
 	}
-}
-
-// rename this to main int PAT
-int A1143Func(void)
-{
-	nsA1143G::main();
-	return 0;
-}
-
-
-
-void A1143(const string& fn)
-{
-	cout << fn << endl;
-	RedirCin(fn);
-	A1143Func();
-	cout << endl;
-}
-
-void A1143(void)
-{
-	A1143("data\\A1143-1.txt"); // 
 }
 /*
 from nsA1143B
@@ -953,15 +1190,12 @@ namespace nsA1143A
 
 		Node(int d) : data(d) {};
 	};
-
-	vector<Node*> vpNodes;
-
+	
 	Node* Insert(Node* p, int d)
 	{
 		if (!p)
 		{
 			p = new Node(d);
-			//			vpNodes.push_back(p);
 			return p;
 		}
 		if (d < p->data)
@@ -1005,11 +1239,11 @@ namespace nsA1143A
 		int m, n, d;
 		cin >> m >> n;
 		Node* pRoot = nullptr;
-		vector<bool> vVisit(1000000);
+		vector<bool> vHasNode(1000000);
 		for (int i = 0; i < n; ++i)
 		{
 			cin >> d;
-			vVisit[d] = true;
+			vHasNode[d] = true;
 			pRoot = Insert(pRoot, d);
 		}
 		int u, v;
@@ -1017,8 +1251,8 @@ namespace nsA1143A
 		for (int i = 0; i < m; ++i)
 		{
 			cin >> u >> v;
-			bool bu = (u >= 0) && vVisit[u];
-			bool bv = (v >= 0) && vVisit[v];
+			bool bu = (u >= 0) && vHasNode[u];
+			bool bv = (v >= 0) && vHasNode[v];
 			if (!bu && !bv)
 			{
 				printf("ERROR: %d and %d are not found.\n", u, v);
