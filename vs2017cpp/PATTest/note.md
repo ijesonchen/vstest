@@ -214,8 +214,9 @@ A1041: 15:15 20m pass scanf, sort(vec<*>)性能影响
 A1042: 15:35 25m pass
 A1043: 16:00 30m 22/30 TLE3,4; 15m on-the-fly, scanf 22/30 TLE3,4;
 build时创立vPath数组：MLE3,4,5
-尝试仅创建叶节点数组
 多次freopen stdin后要cin.clear()。否则无法读取。
+	**03.20
+A1043: PASS 7ms
 ```
 
 ## 解题报告

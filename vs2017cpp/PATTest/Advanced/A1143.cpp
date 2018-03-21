@@ -9,6 +9,47 @@ test: 0 < node < 1000000;
 	带返回值的递归效率要比参数引用的递归低（2-4倍性能差距）
 	发生TLE时，如果感觉代码无法优化，不要凭直觉判断，二分法确定性能瓶颈。一开始一直怀疑查询较慢，实际上是建树插入函数慢。
 	优化插入后，A/B方案都可以通过。即问题出在插入上面。
+	仔细看方案D，其实不需要建树。仅根据前序+中序（大小序）即可。7ms pass(方案I）
+	遇到问题时，先思考再尝试。减少已有思路的影响，尝试有没有其他方案。
+
+日志：(为通过部分标注时间为PT5时间。A-E TLE3,4 FG MLE, HI PASS)
+nsA1143A：160 
+	vector<bool> 节点是否存在
+	FindPath：BST搜索并记录路径
+
+nsA1143B：110 
+	vector<bool> 节点是否存在
+	LCA: 二分查找同时判断公共节点
+
+nsA1143C：170
+	vector<bool> 节点是否存在
+	双向链表，vector<Node*>记录节点指针
+	两次反向搜索，找到第一个公共节点
+
+nsA1143D：110
+	类似B
+	vector<bool> 节点是否存在
+	preOrder+inOrder(大小序)查找
+
+
+nsA1143E：110
+	类似B
+	vector<bool> 节点是否存在
+	LCA : 二分查找同时判断公共节点
+	合并u或v相同的查询，使用umap<int, v<Node*>>存储
+	最后统一输出结果
+
+nsA1143F: 建树时记录路径数组 MLE
+
+nsA1143H: nsA1143B性能测试：
+	仅build，107ms TLE3,4
+	Insert改为无返回值，引用传参 102s
+
+	使用nsA1143B，改Insert返回值为参数引用。PASS 110ms
+
+nsA1143I:
+	使用nsA1143A，改Insert返回值为参数引用。PASS 180ms
+
 
 
 The lowest common ancestor (LCA) of two nodes U and V in a tree is the deepest node that has both U and V as descendants.
@@ -66,7 +107,113 @@ ERROR: 99 and 99 are not found.
 using namespace std;
 
 /*
+from D
+pass 7ms
+*/
+
+namespace nsA1143J
+{
+	vector<int> vData;
+
+	inline int LCA(int u, int v)
+	{
+		// u < v
+		for (size_t i = 0; i < vData.size(); ++i)
+		{
+			if (vData[i] >= u && vData[i] <= v)
+			{
+				return vData[i];
+			}
+		}
+		throw 0;
+		return 0;
+	}
+
+	void main(void)
+	{
+		int m, n, d;
+		scanf("%d %d", &m, &n);
+		vData.resize(n);
+		vector<bool> vVisit(1000000);
+		for (int i = 0; i < n; ++i)
+		{
+			scanf("%d", &d);
+			vData[i] = d;
+			vVisit[d] = true;
+		}
+		int u, v;
+
+		for (int i = 0; i < m; ++i)
+		{
+			scanf("%d %d", &u, &v);
+			bool bu = (u >= 0) && vVisit[u];
+			bool bv = (v >= 0) && vVisit[v];
+			if (!bu && !bv)
+			{
+				printf("ERROR: %d and %d are not found.\n", u, v);
+			}
+			else if (!bu && bv)
+			{
+				printf("ERROR: %d is not found.\n", u);
+			}
+			else if (bu && !bv)
+			{
+				printf("ERROR: %d is not found.\n", v);
+			}
+			else
+			{
+				int a = u, b = v;
+				if (a > b)
+				{
+					swap(a, b);
+				}
+				int lca = LCA(a, b);
+				if (lca == u)
+				{
+					printf("%d is an ancestor of %d.\n", u, v);
+				}
+				else if (lca == v)
+				{
+					printf("%d is an ancestor of %d.\n", v, u);
+				}
+				else
+				{
+					printf("LCA of %d and %d is %d.\n", u, v, lca);
+				}
+			}
+		}
+
+	}
+}
+
+
+
+
+// rename this to main int PAT
+int A1143Func(void)
+{
+	nsA1143J::main();
+	return 0;
+}
+
+
+
+void A1143(const string& fn)
+{
+	cout << fn << endl;
+	RedirCin(fn);
+	A1143Func();
+	cout << endl;
+}
+
+void A1143(void)
+{
+	A1143("data\\A1143-1.txt"); // 
+}
+
+/*
 FROM nsA1143A
+PASS
 */
 
 namespace nsA1143I
@@ -187,30 +334,6 @@ namespace nsA1143I
 		}
 
 	}
-}
-
-
-
-// rename this to main int PAT
-int main(void)
-{
-	nsA1143I::main();
-	return 0;
-}
-
-
-
-void A1143(const string& fn)
-{
-	cout << fn << endl;
-	RedirCin(fn);
-//	A1143Func();
-	cout << endl;
-}
-
-void A1143(void)
-{
-	A1143("data\\A1143-1.txt"); // 
 }
 
 /*
