@@ -216,7 +216,8 @@ A1043: 16:00 30m 22/30 TLE3,4; 15m on-the-fly, scanf 22/30 TLE3,4;
 build时创立vPath数组：MLE3,4,5
 多次freopen stdin后要cin.clear()。否则无法读取。
 	**03.20
-A1043: PASS 7ms
+A1043: PASS 7ms。参见总结。
+
 ```
 
 ## 解题报告

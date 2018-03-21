@@ -6,7 +6,8 @@
 test: 0 < node < 1000000;
 
 总结：
-	带返回值的递归效率要比参数引用的递归低（2-4倍性能差距）
+	大量递归下尽量不要带返回值，影响效率。带返回值的递归效率要比参数引用的递归低（3-4倍性能差距）
+	大量数据索引/判断时，可以考虑用vec而非uset/umap。未指明数据量时，可以简单判断数据量大小。
 	发生TLE时，如果感觉代码无法优化，不要凭直觉判断，二分法确定性能瓶颈。一开始一直怀疑查询较慢，实际上是建树插入函数慢。
 	优化插入后，A/B方案都可以通过。即问题出在插入上面。
 	仔细看方案D，其实不需要建树。仅根据前序+中序（大小序）即可。7ms pass(方案I）
@@ -52,6 +53,13 @@ nsA1143I:
 
 nsA1143J：
 	使用nsA1143D，不创建树，仅根据树的前序+中序判断
+
+nsA1143J: from nsA1143J 10ms
+	用uset替换vector
+	证明可能的情况下，vec要比uset快
+
+nsA1143K：from E，改进Insert 180ms
+
 
 The lowest common ancestor (LCA) of two nodes U and V in a tree is the deepest node that has both U and V as descendants.
 
