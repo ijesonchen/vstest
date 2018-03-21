@@ -8,7 +8,6 @@ using namespace std;
 
 int main(void)
 {
-	A1140();
 	std::cout << "Press enter";
 	std::getchar();
 }
