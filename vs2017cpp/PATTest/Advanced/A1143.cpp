@@ -50,7 +50,8 @@ nsA1143H: nsA1143B性能测试：
 nsA1143I:
 	使用nsA1143A，改Insert返回值为参数引用。PASS 180ms
 
-
+nsA1143J：
+	使用nsA1143D，不创建树，仅根据树的前序+中序判断
 
 The lowest common ancestor (LCA) of two nodes U and V in a tree is the deepest node that has both U and V as descendants.
 
@@ -97,15 +98,333 @@ ERROR: 99 and 99 are not found.
 */
 
 #include "..\patMain.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <cstdio>
 #include <unordered_map>
+#include <unordered_set>
 
 using namespace std;
 
+
+/*
+nsA1143L: from E, 180ms
+*/
+namespace nsA1143L
+{
+	struct Node
+	{
+		int data = 0;
+		Node* left = nullptr;
+		Node* right = nullptr;
+
+		Node(int d) : data(d) {};
+	};
+
+	void Insert(Node*& p, int d)
+	{
+		if (!p)
+		{
+			p = new Node(d);
+			return;
+		}
+		if (d < p->data)
+		{
+			Insert(p->left, d);
+		}
+		else if (d > p->data)
+		{
+			Insert(p->right, d);
+		}
+		else
+		{
+			throw 0;
+		}
+		return;
+	}
+
+	enum ResType
+	{
+		eEXCEP,
+		eLCA,
+		eANC,
+		eEu,
+		eEv,
+		eEBoth,
+	};
+
+	struct Result
+	{
+		int u;
+		int v;
+		int anc;
+		ResType type = eEXCEP;
+
+		bool operator<(const Result& a) const
+		{
+			return v < a.v;
+		}
+
+		void Print(void)
+		{
+			switch (type)
+			{
+			case eLCA:
+				printf("LCA of %d and %d is %d.\n", u, v, anc);
+				break;
+			case eANC:
+				if (u == anc)
+				{
+					printf("%d is an ancestor of %d.\n", u, v);
+				}
+				else if (v == anc)
+				{
+					printf("%d is an ancestor of %d.\n", v, u);
+				}
+				else
+				{
+					throw 0;
+				}
+				break;
+			case eEu:
+				printf("ERROR: %d is not found.\n", u);
+				break;
+			case eEv:
+				printf("ERROR: %d is not found.\n", v);
+				break;
+			case eEBoth:
+				printf("ERROR: %d and %d are not found.\n", u, v);
+				break;
+			default:
+				throw 0;
+				break;
+			}
+		}
+	};
+
+	bool ResultLess(const Result* p1, const Result* p2)
+	{
+		return *p1 < *p2;
+	}
+
+	void LCA(Node* p, const int u, vector<Result*>& vpResult)
+	{
+		if (!p) { throw 0; }
+		int data = p->data;
+		if (u == data)
+		{
+			for (auto pRes : vpResult)
+			{
+				pRes->type = eANC;
+				pRes->anc = u;
+			}
+		}
+		else
+		{
+			vector<Result*> vp1; // < data
+			vector<Result*> vp2; // > data
+			for (auto pRes : vpResult)
+			{
+				if (pRes->v < data)
+				{
+					vp1.push_back(pRes);
+				}
+				else if (pRes->v == data)
+				{
+					pRes->type = eANC;
+					pRes->anc = pRes->v;
+				}
+				else
+				{
+					vp2.push_back(pRes);
+				}
+			}
+			if (u < data)
+			{
+				LCA(p->left, u, vp1);
+				for (auto pRes : vp2)
+				{
+					pRes->anc = data;
+					pRes->type = eLCA;
+				}
+			}
+			else
+			{
+				for (auto pRes : vp1)
+				{
+					pRes->anc = data;
+					pRes->type = eLCA;
+				}
+				LCA(p->right, u, vp2);
+			}
+		}
+	}
+
+
+	void main(void)
+	{
+		int m, n, d;
+		scanf("%d %d", &m, &n);
+		Node* pRoot = nullptr;
+		vector<bool> vVisit(1000000);
+		for (int i = 0; i < n; ++i)
+		{
+			scanf("%d", &d);
+			vVisit[d] = true;
+			Insert(pRoot, d);
+		}
+		int u, v;
+
+		vector<Result> vResult(m);
+
+		vector<Result*> vpResult;
+		unordered_map<int, vector<Result*>> mapUResult;
+
+		for (int i = 0; i < m; ++i)
+		{
+			scanf("%d %d", &u, &v);
+			Result& res = vResult[i];
+			res.u = u;
+			res.v = v;
+			bool bu = (u >= 0) && vVisit[u];
+			bool bv = (v >= 0) && vVisit[v];
+			if (!bu && !bv)
+			{
+				res.type = eEBoth;
+			}
+			else if (!bu && bv)
+			{
+				res.type = eEu;
+			}
+			else if (bu && !bv)
+			{
+				res.type = eEv;
+			}
+			else
+			{
+				mapUResult[u].push_back(&res);
+			}
+		}
+
+		for (auto& it : mapUResult)
+		{
+			LCA(pRoot, it.first, it.second);
+		}
+
+		for (auto& res : vResult)
+		{
+			res.Print();
+		}
+	}
+}
+
+// rename this to main int PAT
+int A1143Func(void)
+{
+	nsA1143L::main();
+	return 0;
+}
+
+
+
+void A1143(const string& fn)
+{
+	cout << fn << endl;
+	RedirCin(fn);
+	A1143Func();
+	cout << endl;
+}
+
+void A1143(void)
+{
+	A1143("data\\A1143-1.txt"); // 
+}
+
+
+/*
+from nsA1143J 10ms
+用uset替换vector
+证明可能的情况下，vec要比uset快
+*/
+
+namespace nsA1143K
+{
+	vector<int> vData;
+
+	inline int LCA(int u, int v)
+	{
+		// u < v
+		for (size_t i = 0; i < vData.size(); ++i)
+		{
+			if (vData[i] >= u && vData[i] <= v)
+			{
+				return vData[i];
+			}
+		}
+		throw 0;
+		return 0;
+	}
+
+	void main(void)
+	{
+		int m, n, d;
+		scanf("%d %d", &m, &n);
+		vData.resize(n);
+		unordered_set<int> setData;
+
+		for (int i = 0; i < n; ++i)
+		{
+			scanf("%d", &d);
+			vData[i] = d;
+			setData.insert(d);
+		}
+		int u, v;
+
+		for (int i = 0; i < m; ++i)
+		{
+			scanf("%d %d", &u, &v);
+			bool bu = (u >= 0) && (setData.find(u) != setData.end());
+			bool bv = (v >= 0) && (setData.find(v) != setData.end());
+			if (!bu && !bv)
+			{
+				printf("ERROR: %d and %d are not found.\n", u, v);
+			}
+			else if (!bu && bv)
+			{
+				printf("ERROR: %d is not found.\n", u);
+			}
+			else if (bu && !bv)
+			{
+				printf("ERROR: %d is not found.\n", v);
+			}
+			else
+			{
+				int a = u, b = v;
+				if (a > b)
+				{
+					swap(a, b);
+				}
+				int lca = LCA(a, b);
+				if (lca == u)
+				{
+					printf("%d is an ancestor of %d.\n", u, v);
+				}
+				else if (lca == v)
+				{
+					printf("%d is an ancestor of %d.\n", v, u);
+				}
+				else
+				{
+					printf("LCA of %d and %d is %d.\n", u, v, lca);
+				}
+			}
+		}
+
+	}
+}
 /*
 from D
 pass 7ms
@@ -184,31 +503,6 @@ namespace nsA1143J
 		}
 
 	}
-}
-
-
-
-
-// rename this to main int PAT
-int A1143Func(void)
-{
-	nsA1143J::main();
-	return 0;
-}
-
-
-
-void A1143(const string& fn)
-{
-	cout << fn << endl;
-	RedirCin(fn);
-	A1143Func();
-	cout << endl;
-}
-
-void A1143(void)
-{
-	A1143("data\\A1143-1.txt"); // 
 }
 
 /*
