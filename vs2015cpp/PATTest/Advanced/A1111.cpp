@@ -91,6 +91,270 @@ Distance = 3; Time = 4: 3 -> 2 -> 5
 using namespace std;
 
 /*
+REF: liuchuo： 两遍dijkstra+dfs
+
+Dijkstra+DFS重建路径要不dfs剪枝搜索要快
+*/
+namespace nsA111C
+{
+	const int MAXVALUE = 0x7fffffff;
+
+	struct Edge
+	{
+		int v = 0;
+		int d = 0;
+		int t = 0;
+
+		Edge(int v1, int len1, int t1)
+			: v(v1), d(len1), t(t1)
+		{};
+	};
+
+	int nNode; // [2,500], 0-based
+	int nEdge; // pos
+	int iSrc;
+	int iDst;
+	vector<vector<Edge>> vvAdj;
+
+	// diskstra shortest path
+	vector<bool> vVisit;
+	vector<int> vPath;
+	vector<int> vDist;
+	vector<int> pathDist;
+	int nDist;
+	int nDistCost;
+	vector<int> vTime;
+	vector<int> pathTime;
+	int nTime;
+	int nTimeCost;
+
+	struct Dist
+	{
+		int idx = 0;
+		int dist = 0;
+		Dist(int i, int d):idx(i), dist(d) {}
+
+		bool operator<(const Dist& a) const
+		{ return dist < a.dist; }
+	};
+
+	bool DistLess(const Dist* p1, const Dist* p2)
+	{ return *p1 < *p2; }
+
+	bool IntLess(const int* p1, const int* p2)
+	{ return *p1 < *p2; }
+
+
+
+	void PrintPath(const vector<int>& vPath)
+	{
+		cout << vPath.front();
+		for (size_t i = 1; i < vPath.size(); ++i)
+		{
+			cout << " -> " << vPath[i];
+		}
+		cout << endl;
+	}
+
+	void DijkstraDist(void)
+	{
+		vVisit.assign(nNode, false);
+
+		int n = nNode;
+		vDist.assign(nNode, MAXVALUE);
+		vDist[iSrc] = 0;
+		
+		while (n--)
+		{
+			size_t u = 0;
+			int nMin = MAXVALUE;
+			for (size_t i = 0; i < vDist.size(); ++i)
+			{
+				if (!vVisit[i] && vDist[i] < nMin)
+				{
+					u = i;
+					nMin = vDist[i];
+				}
+			}
+			vVisit[u] = true;
+			auto uDist = vDist[u];
+			for (auto& e : vvAdj[u])
+			{
+				if (!vVisit[e.v] && uDist + e.d < vDist[e.v])
+				{
+					vDist[e.v] = uDist + e.d;
+				}
+			}
+		}		
+	}
+
+	void DfsDist(const int start, const int dist, int const cost)
+	{
+		if (dist > vDist[start]) { return; }
+		if (start == iDst)
+		{
+			if (dist < nDist)
+			{
+				pathDist = vPath;
+				nDist = dist;
+				nDistCost = cost;
+			}
+			else if (dist == nDist && cost < nDistCost)
+			{
+				pathDist = vPath;
+				nDist = dist;
+				nDistCost = cost;
+			}
+			return;
+		}
+		for (auto& e : vvAdj[start])
+		{
+			if (!vVisit[e.v])
+			{
+				vVisit[e.v] = true;
+				vPath.push_back(e.v);
+				DfsDist(e.v, dist + e.d, cost + e.t);
+				vPath.pop_back();
+				vVisit[e.v] = false;
+			}
+		}
+	}
+
+
+	void DijkstraTime(void)
+	{
+		vVisit.assign(nNode, false);
+
+		int n = nNode;
+		vTime.assign(nNode, MAXVALUE);
+		vTime[iSrc] = 0;
+		while (n--)
+		{
+			size_t u = 0;
+			int nMin = MAXVALUE;
+			for (size_t i = 0; i < vTime.size(); ++i)
+			{
+				if (!vVisit[i] && vTime[i] < nMin)
+				{
+					u = i;
+					nMin = vTime[i];
+				}
+			}
+			vVisit[u] = true;
+			auto uTime = vTime[u];
+			for (auto& e : vvAdj[u])
+			{
+				if (!vVisit[e.v] && uTime + e.t < vTime[e.v])
+				{
+					vTime[e.v] = uTime + e.t;
+				}
+			}
+		}
+
+	}
+
+
+	void DfsTime(const int start, const int ntime, int const cost)
+	{
+		if (ntime > vTime[start]) { return; }
+		if (start == iDst)
+		{
+			if (ntime < nTime ||
+				(ntime == nTime && cost < nTimeCost))
+			{
+				pathTime = vPath;
+				nTime = ntime;
+				nTimeCost = cost;
+			}
+			return;
+		}
+		for (auto& e : vvAdj[start])
+		{
+			if (!vVisit[e.v])
+			{
+				vVisit[e.v] = true;
+				vPath.push_back(e.v);
+				DfsTime(e.v, ntime + e.t, cost + 1);
+				vPath.pop_back();
+				vVisit[e.v] = false;
+			}
+		}
+	}
+
+	void main(void)
+	{
+		// V1 V2 one-way length time
+
+		cin >> nNode >> nEdge;
+		int u, v, len, t;
+		bool tag;
+		vvAdj.assign(nNode, vector<Edge>());
+		for (int i = 0; i < nEdge; ++i)
+		{
+			cin >> u >> v >> tag >> len >> t;
+			vvAdj[u].emplace_back(v,len,t);
+			if (!tag)
+			{ vvAdj[v].emplace_back(u, len, t); }
+		}
+		cin >> iSrc >> iDst;
+		
+		DijkstraDist();
+		vVisit.assign(nNode, false);
+		nDist = MAXVALUE;
+		nDistCost = MAXVALUE;
+		vPath.clear();
+		vPath.push_back(iSrc);
+		DfsDist(iSrc, 0, 0);
+
+		DijkstraTime();
+		vVisit.assign(nNode, false);
+		nTime = MAXVALUE;
+		nTimeCost = MAXVALUE;
+		vPath.clear();
+		vPath.push_back(iSrc);
+		DfsTime(iSrc, 0, 0);
+
+		if (pathDist == pathTime)
+		{
+			// Distance = 3; Time = 4: 3 -> 2 -> 5
+			cout << "Distance = " << nDist << "; Time = " << nTime << ": ";
+		}
+		else
+		{
+			cout << "Distance = " << nDist << ": ";
+			PrintPath(pathDist);
+			cout << "Time = " << nTime << ": ";
+		}
+		PrintPath(pathTime);
+
+
+	}
+}
+
+// rename this to main int PAT
+int A1111Func(void)
+{
+	nsA111C::main();
+	return 0;
+}
+
+
+void A1111(const string& fn)
+{
+	cout << fn << endl;
+	RedirCin(fn);
+	A1111Func();
+	cout << endl;
+}
+
+void A1111(void)
+{
+	A1111("data\\A1111-1.txt"); // 
+	A1111("data\\A1111-2.txt"); // 
+}
+
+
+/*
 16:05
 路径一定存在
 顶点N:[2,500]
@@ -117,7 +381,7 @@ namespace nsA111A
 	const int MAXVALUE = 0x7fffffff;
 	vector<vector<int>> vvDist;
 	vector<vector<int>> vvTime;
-	
+
 	void Reset(int n)
 	{
 		vvDist.assign(n, vector<int>(n));
@@ -187,7 +451,7 @@ namespace nsA111A
 			}
 		}
 	}
-	
+
 	void DfsDist(int u, int dist, int distTime)
 	{
 		if (dist > vAssist[u]) { return; }
@@ -270,7 +534,7 @@ namespace nsA111A
 	{
 		int n, m;
 		cin >> n >> m;
-		Reset(n);		
+		Reset(n);
 		for (int i = 0; i < m; ++i)
 		{
 			int u, v, tag, dist, t;
@@ -312,7 +576,7 @@ namespace nsA111A
 		}
 		PrintPath(pathTime);
 	}
-} 
+}
 
 
 namespace nsA111B
@@ -389,7 +653,7 @@ namespace nsA111B
 			}
 		}
 	}
-	
+
 	void PrintPath(const vector<int>& vPath)
 	{
 		cout << vPath.front();
@@ -449,141 +713,3 @@ namespace nsA111B
 		PrintPath(pathTime);
 	}
 }
-
-
-/*
-REF: liuchuo： 两遍dijkstra+dfs
-
-*/
-namespace nsA111CRef
-{
-	const int MAXVALUE = 0x7fffffff;
-
-	struct Edge
-	{
-		int v = 0;
-		int len = 0;
-		int t = 0;
-
-		Edge(int v1, int len1, int t1)
-			: v(v1), len(len1), t(t1)
-		{};
-	};
-
-	int nNode; // [2,500], 0-based
-	int nEdge; // pos
-	int iSrc;
-	int iDst;
-	vector<vector<Edge>> vvAdj;
-
-	struct Dist
-	{
-		int idx = 0;
-		int dist = 0;
-		Dist(int i, int d):idx(i), dist(d) {}
-
-		bool operator<(const Dist& a) const
-		{ return dist < a.dist; }
-	};
-
-	bool DistLess(const Dist* p1, const Dist* p2)
-	{ return *p1 < *p2; }
-
-	bool IntLess(const int* p1, const int* p2)
-	{ return *p1 < *p2; }
-
-	vector<int> vDijk;
-	void Dijkstra(void)
-	{
-		vector<bool> vVisit(nNode);
-		vector<int> vDist(nNode, MAXVALUE);
-		vector<int*> vpDist;
-		for (auto& p : vDist)
-		{ vpDist.push_back(&p); }
-
-		vDist[iSrc] = 0;
-
-		make_heap(vpDist.begin(), vpDist.end(), IntLess);
-
-		int loop = nNode;
-// 		while (vDist.size())
-// 		{
-// 			// find min
-// 			pop_heap(vpDist.begin(), vpDist.end(), IntLess);
-// 			int u = vpDist.back()-- - vDist.data();
-// 			vVisit[u] = true;
-// 			vpDist.pop_back();
-// 			// update dist
-// 			auto& uAdj = vvAdj[u];
-// 			int uDist = vDist[u];
-// 			for (auto e : uAdj)
-// 			{
-// 				if (!vVisit[e.v])
-// 				{
-// 					if (uDist + e.len < vDist[e.v])
-// 					{
-// 						vDist[e.v] = uDist + e.len;
-// 					}
-// 				}
-// 			}
-// 		}
-
-	}
-
-	void main(void)
-	{
-		// V1 V2 one-way length time
-
-		cin >> nNode >> nEdge;
-		int u, v, len, t;
-		bool tag;
-		vvAdj.assign(nNode, vector<Edge>());
-		for (int i = 0; i < nNode; ++i)
-		{
-			cin >> u >> v >> tag >> len >> t;
-			vvAdj[u].emplace_back(v,len,t);
-			if (!tag)
-			{ vvAdj[v].emplace_back(u, len, t); }
-		}
-		cin >> iSrc >> iDst;
-
-
-
-		
-
-
-
-		// shortest path: fastest one
-		// Distance = D: source -> v1 -> ... -> destination
-		// fastest path: fewest intersections,
-		// Time = T: source -> w1 -> ... -> destination
-		// Distance = D; Time = T: source -> u1 -> ... -> destination
-
-
-
-
-	}
-}
-
-// rename this to main int PAT
-int A1111Func(void)
-{
-	nsA111CRef::main();
-	return 0;
-}
-
-
-void A1111(const string& fn)
-{
-	cout << fn << endl;
-	RedirCin(fn);
-	A1111Func();
-	cout << endl;
-}
-
-void A1111(void)
-{
-	A1111("data\\A1111-1.txt"); // 
-	A1111("data\\A1111-2.txt"); // 
-}
-
