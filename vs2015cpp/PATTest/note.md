@@ -30,7 +30,7 @@ A1068: DP时，通过vv<bool> 确定选取路径
 
 未PASS
 A1096：最长连续因子序列。没有合适思路。
-A1111: TLE. ref: 分别使用Dijkstra+DFS
+A1111: TLE. ref: 分别使用Dijkstra+DFS。测试Dijkstra 数组/heap性能
 A1121: PT1 WA
 01背包 背包9讲
 动态规划
@@ -217,7 +217,14 @@ build时创立vPath数组：MLE3,4,5
 多次freopen stdin后要cin.clear()。否则无法读取。
 	**03.20
 A1043: PASS 7ms。参见总结。
-
+	**03.22
+Dijkstra算法。待测试
+	**03.23
+	**模拟测试A9 1.5H 100
+A1144：20m pass。题目很多时候有取巧的办法
+A1145: 30m pass。Quadratic probing: h=(k+i^2)%size i:[0,size]
+A1146: 20m pass。
+A1147: 20m pass。实现isHeap
 ```
 
 ## 解题报告
