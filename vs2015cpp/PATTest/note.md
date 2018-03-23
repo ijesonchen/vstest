@@ -1,5 +1,9 @@
 # Advanced
 
+## 待处理事项
+
+整理vstest repo，将数据移动到新repo
+
 ## 已处理列表
 
 A1001-A1031
@@ -30,7 +34,6 @@ A1068: DP时，通过vv<bool> 确定选取路径
 
 未PASS
 A1096：最长连续因子序列。没有合适思路。
-A1111: TLE. ref: 分别使用Dijkstra+DFS。测试Dijkstra 数组/heap性能
 A1121: PT1 WA
 01背包 背包9讲
 动态规划
@@ -109,25 +112,25 @@ A1132: REWRITE 15min pass
 A1133: rewrite 30min pass ref 20min pass
 A1032: 15MIN pass
 	**02.27
-A1035: rewrite 70min
+A1135: rewrite 70min
 A1043: 70min pass. 注意输出格式和大小写！！！
 	rewrite: preOrder to postOrder not finished!!!
 	**02.28
 A1043: rewrite
 	**03.01
-A1020: 10MIN PASS
-A1021: 15MIN 23/25, PT1 段错误 15MIN 23/25
-A1022: 20MIN PASS
-A1023: 2H 22/30 PT2,3 WA
-	模拟测试：见A1023总结。
+A1120: 10MIN PASS
+A1121: 15MIN 23/25, PT1 段错误 15MIN 23/25
+A1122: 20MIN PASS
+A1123: 2H 22/30 PT2,3 WA
+	模拟测试：见A1123总结。
     **03.02
-A1023: ref 80min pass. 
+A1123: ref 80min pass. 
 	1. AVL的旋转递归实现
 	2. 注意区分满二叉树和完全二叉树。参见代码总结
-A1008: 20MIN 18/20 15min 15/20
-A1009: 40MIN PASS
-A1010: 40MIN 24/25
-A1011: 50MIN 27/30 10MIN 27/30 20MIN 18/30
+A1108: 20MIN 18/20 15min 15/20
+A1109: 40MIN PASS
+A1110: 40MIN 24/25
+A1111: 50MIN 27/30 10MIN 27/30 20MIN 18/30。Dijk+Dfs要比DFS剪枝快
 	模拟测试A1 2H30MIN：18 25 24 27 = 94
     一定要注意时间。有剩余时间要仔细选择
     **0304
@@ -209,14 +212,14 @@ A1068: 30m dp, fail; 1h, ref
 	**03.18
 A1068: 30m pass;
 	**03.20
-A1040: 14:50 15m pass
-A1041: 15:15 20m pass scanf, sort(vec<*>)性能影响
-A1042: 15:35 25m pass
-A1043: 16:00 30m 22/30 TLE3,4; 15m on-the-fly, scanf 22/30 TLE3,4;
+A1140: 14:50 15m pass
+A1141: 15:15 20m pass scanf, sort(vec<*>)性能影响
+A1142: 15:35 25m pass
+A1143: 16:00 30m 22/30 TLE3,4; 15m on-the-fly, scanf 22/30 TLE3,4;
 build时创立vPath数组：MLE3,4,5
 多次freopen stdin后要cin.clear()。否则无法读取。
 	**03.20
-A1043: PASS 7ms。参见总结。
+A1143: PASS 7ms。参见总结。
 	**03.22
 Dijkstra算法。待测试
 	**03.23

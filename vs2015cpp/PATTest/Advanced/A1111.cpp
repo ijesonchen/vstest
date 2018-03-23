@@ -93,7 +93,7 @@ using namespace std;
 /*
 REF: liuchuo： 两遍dijkstra+dfs
 
-Dijkstra+DFS重建路径要不dfs剪枝搜索要快
+Dijkstra+DFS重建路径要比dfs剪枝搜索要快
 */
 namespace nsA111C
 {
@@ -143,9 +143,7 @@ namespace nsA111C
 
 	bool IntLess(const int* p1, const int* p2)
 	{ return *p1 < *p2; }
-
-
-
+	
 	void PrintPath(const vector<int>& vPath)
 	{
 		cout << vPath.front();
