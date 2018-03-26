@@ -7,6 +7,8 @@
 #include <sstream>
 #include <thread>
 #include <chrono>
+#include <cstring>
+#include <array>
 
 using namespace std;
 
@@ -35,9 +37,9 @@ void InitPreLog(vector<string>& vPreLog)
 		s.resize(len);
 		s.front() = '<';
 		s.back() = '>';
-		for (size_t i = 1; i < len-1; ++i)
+		for (int i = 1; i < len-1; ++i)
 		{
-			s[i] = 'a' + rand() % 26;
+			s[i] = char('a' + rand() % 26);
 		}
 	}
 }
@@ -75,6 +77,124 @@ void LogThread(string id, int nLogCount, vector<string>* pvPreLog, nsFastLog::Lo
 	cout << ss.str();
 }
 
+
+void LogThread2(string id, int nLogCount, vector<string>* pvPreLog, nsFastLog::Logger* pLogger)
+{
+	using namespace chrono;
+	srand((int)time(nullptr));
+
+	stringstream ss;
+	ss << "Thread " << id << " ENTER" << endl;
+	cout << ss.str();
+	auto tp = Tick();
+	int idxPreLog = 0;
+	if (pLogger && pvPreLog)
+	{
+		const auto& vPreLog = *pvPreLog;
+		const auto nPreSize = (int)vPreLog.size();
+//		auto logger = pLogger->GetThreadLogger(id, pLogger);
+		std::vector<std::array<char, 256>>* pv = nullptr;
+		std::mutex* pMtx = nullptr;
+
+		pLogger->GetCntr(pv, pMtx);
+		auto& v = *pv;
+		auto& mtx = *pMtx;
+		for (int i = 0; i < nLogCount; ++i)
+		{
+			idxPreLog++;
+			if (idxPreLog >= nPreSize)
+			{
+				idxPreLog = 0;
+			}
+			lock_guard<mutex> lk(mtx);
+			v.emplace_back();
+			memcpy(v.back().data(), vPreLog[idxPreLog].c_str(), vPreLog[idxPreLog].length() + 1);
+		}
+	}
+	auto tCost = Tock(tp);
+
+	ss.str("");
+	ss << "Thread " << id << " LEAVE, cost" << tCost << " ms" << endl;
+	cout << ss.str();
+}
+
+
+void LogThreadMem(string id, int nLogCount, vector<string>* pvPreLog, nsFastLog::Logger* pLogger)
+{
+	using namespace chrono;
+	srand((int)time(nullptr));
+
+	stringstream ss;
+	ss << "Thread " << id << " ENTER" << endl;
+	cout << ss.str();
+	auto tp = Tick();
+	int idxPreLog = 0;
+	int idxTarget = -1;
+	const int nMaxCntrSize = 10000;
+	vector<array<char,256>> v(nMaxCntrSize);
+	if (pLogger && pvPreLog)
+	{
+		const auto& vPreLog = *pvPreLog;
+		const auto nPreSize = (int)vPreLog.size();
+		auto logger = pLogger->GetThreadLogger(id, pLogger);
+		for (int i = 0; i < nLogCount; ++i)
+		{
+			++idxPreLog;
+			if (idxPreLog >= nPreSize)
+			{
+				idxPreLog = 0;
+			}
+			++idxTarget;
+			if (idxTarget >= nMaxCntrSize)
+			{
+				idxTarget = 0;
+			}
+			memcpy(v[idxTarget].data(), vPreLog[idxPreLog].c_str(), vPreLog[idxPreLog].length() + 1);
+		}
+	}
+	auto tCost = Tock(tp);
+
+	ss.str("");
+	ss << "Thread " << id << " LEAVE, cost" << tCost << " ms" << endl;
+	cout << ss.str();
+}
+
+void LogThreadMem2(string id, int nLogCount, vector<string>* pvPreLog, nsFastLog::Logger* pLogger, mutex* pMtx)
+{
+	using namespace chrono;
+	srand((int)time(nullptr));
+
+	stringstream ss;
+	ss << "Thread " << id << " ENTER" << endl;
+	cout << ss.str();
+	auto tp = Tick();
+	int idxPreLog = 0;
+	vector<array<char, 256>> v;
+	mutex& mtx = *pMtx;
+	if (pLogger && pvPreLog)
+	{
+		const auto& vPreLog = *pvPreLog;
+		const auto nPreSize = (int)vPreLog.size();
+		auto logger = pLogger->GetThreadLogger(id, pLogger);
+		for (int i = 0; i < nLogCount; ++i)
+		{
+			++idxPreLog;
+			if (idxPreLog >= nPreSize)
+			{
+				idxPreLog = 0;
+			}
+			lock_guard<mutex> lk(mtx);
+			v.emplace_back();
+			memcpy(v.back().data(), vPreLog[idxPreLog].c_str(), vPreLog[idxPreLog].length() + 1);
+		}
+	}
+	auto tCost = Tock(tp);
+
+	ss.str("");
+	ss << "Thread " << id << " LEAVE, cost" << tCost << " ms" << ", size " << v.size() << endl;
+	cout << ss.str();
+}
+
 int main(void)
 {
 	int nThread = 8;
@@ -95,30 +215,38 @@ int main(void)
 	
 	vector<thread> vThread;
 	string sThreadId("THID0000");
+	vector<mutex> vMutex(nThread);
 	for (int i = 0; i < nThread; ++i)
 	{
 		++sThreadId.back();
+//		thread th(LogThreadMem2, sThreadId, nLogPerThread, &vPreLog, &fastLogger, &vMutex[i]);
 		thread th(LogThread, sThreadId, nLogPerThread, &vPreLog, &fastLogger);
 		vThread.push_back(std::move(th));
 	}
 
 	auto tp0 = Tick();
 
-
-	for (auto& th : vThread)
-	{
-		th.join();
-	}
-
 	// test for crash
 // 	nsFastLog::Logger* p = nullptr;
 // 	p->GetThreadLogger("", nullptr);
+
+	for (auto& th : vThread)
+	{
+		if (th.joinable())
+		{
+			th.join();
+		}
+	}
+
 
 	auto cost = Tock(tp0);
 
 	cout << "log cost " << cost << " ms" << endl;
 
+	
 	fastLogger.Stop();
+
+	cout << "log stoped." << endl;
 
 	return 0;
 }

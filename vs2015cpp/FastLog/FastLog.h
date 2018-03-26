@@ -5,6 +5,8 @@
 #include <vector>
 #include <atomic>
 #include <thread>
+#include <cstring>
+#include <array>
 
 /*
 实现一个低延迟的日志系统，这个系统单次允许写入长度为128-256字节的字符串, 字符串顺序包含写入线程的名
@@ -43,12 +45,14 @@ namespace nsFastLog
 	struct SLogItem
 	{
 		std::int64_t tp;
-		std::string log;
+//		std::string log;
+		char log[256];
 
 		SLogItem(std::int64_t t, const std::string& l)
 			: tp(t)
-			, log(l)
-		{}
+		{
+			memcpy(log, l.c_str(), l.length() + 1);
+		}
 	};
 
 	struct SLogHeader
@@ -76,6 +80,7 @@ namespace nsFastLog
 		
 		std::vector<std::mutex> vMtx;
 		std::vector<SLogHeader> vLogContent;
+		std::vector<std::vector<std::array<char, 256>>> vLogContent2;
 		std::atomic_uint idxCntr;
 		unsigned nThread;
 
@@ -84,18 +89,22 @@ namespace nsFastLog
 		static void ThreadFlush(Logger* pLogger);
 
 		void FlushLog(void);
+		void FlushLog2(void);
 	public: 
-		Logger() :vMtx(MAXCNTR), vLogContent(MAXCNTR)
+		Logger() :vMtx(MAXCNTR), vLogContent(MAXCNTR), vLogContent2(MAXCNTR)
 		{
 		};
 		bool Init(const std::string& logFile, unsigned threadCnt);
 		void Stop(void);
 		ThreadLogger GetThreadLogger(const std::string& hdr, Logger* pFastLogger);
+		void GetCntr(std::vector<std::array<char, 256>>*& pv, std::mutex*& pMtx);
 		inline void Log(const int idCntr, const std::string& logHdr, const std::string& log)
 		{
 			std::int64_t tp = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 			std::lock_guard<std::mutex> lk(vMtx[idCntr]);
 			vLogContent[idCntr].vLogs.emplace_back(tp, log);
+//			vLogContent2[idCntr].emplace_back();
+//			memcpy(vLogContent2[idCntr].back().data(), log.c_str(), log.size());
 		}
 
 		void SigHandler(int signal_number);

@@ -14,8 +14,36 @@
 
 using namespace std;
 
+void VectorWithArrayTest(void)
+{
+	// 定长数组容器
+	const int nArrayLen = 10;
+	int nVecSize = 20;
+	vector<array<char, nArrayLen>> va(nVecSize);
+	unsigned idx = -1;
+	for (auto& a : va)
+	{
+		for (auto& c : a)
+		{
+			c = ++idx % 16 + 'a';
+		}
+	}
+	auto p = va.data(); // 第一个数组地址
+	auto pp = p->data(); // 第一个数组地址
+	auto pp2 = (p + 1)->data(); // 第二个数组地址
+	auto pp3 = (p + 2)->data(); // 第二个数组地址
+/*	
+	内存从va.data()->data()开始，连续重复存放(16字符为一组）
+	abcdefghijklmnopabcdefghijklmnop...
+	arr1: abcdefghijk  arr2: klmnopabcd
+*/
+	cout << "done" << endl;
+}
+
 void ArrayTest(void)
 {
+	VectorWithArrayTest();
+
 	int n = 5;
 	// n must be const
 	// array<int, n> is illegal

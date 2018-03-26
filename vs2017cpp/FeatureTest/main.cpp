@@ -8,7 +8,11 @@
 using namespace std;
 void main(void)
 {
-	MainTest();
+
+	auto dmax = std::numeric_limits<double>::max();
+	ArrayTest();
+
+
 	cout << "enter to continue" << endl;
 	string s;
 	getline(cin, s);

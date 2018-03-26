@@ -22,12 +22,3 @@ void ConsoleWindowControlTest(void);
 void TailRecurTest(void);
 
 #include <numeric>
-
-
-inline void MainTest(void)
-{
-
-	auto dmax = std::numeric_limits<double>::max();
-	TailRecurTest();
-}
-
