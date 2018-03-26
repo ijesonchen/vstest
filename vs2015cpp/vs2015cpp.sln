@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SvnInfo2CppSrcStr", "SvnInf
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TBB", "TBB\TBB.vcxproj", "{7DC0CE95-72D0-4FDF-9B07-211700AC3FAB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastLog", "FastLog\FastLog.vcxproj", "{1EAB08DF-8894-4336-8932-A17535E39E17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -81,6 +83,14 @@ Global
 		{7DC0CE95-72D0-4FDF-9B07-211700AC3FAB}.Release|Win32.Build.0 = Release|Win32
 		{7DC0CE95-72D0-4FDF-9B07-211700AC3FAB}.Release|x64.ActiveCfg = Release|x64
 		{7DC0CE95-72D0-4FDF-9B07-211700AC3FAB}.Release|x64.Build.0 = Release|x64
+		{1EAB08DF-8894-4336-8932-A17535E39E17}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1EAB08DF-8894-4336-8932-A17535E39E17}.Debug|Win32.Build.0 = Debug|Win32
+		{1EAB08DF-8894-4336-8932-A17535E39E17}.Debug|x64.ActiveCfg = Debug|x64
+		{1EAB08DF-8894-4336-8932-A17535E39E17}.Debug|x64.Build.0 = Debug|x64
+		{1EAB08DF-8894-4336-8932-A17535E39E17}.Release|Win32.ActiveCfg = Release|Win32
+		{1EAB08DF-8894-4336-8932-A17535E39E17}.Release|Win32.Build.0 = Release|Win32
+		{1EAB08DF-8894-4336-8932-A17535E39E17}.Release|x64.ActiveCfg = Release|x64
+		{1EAB08DF-8894-4336-8932-A17535E39E17}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
