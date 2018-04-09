@@ -9,8 +9,11 @@
 #include <chrono>
 #include <cstring>
 #include <array>
+#include <atomic>
 
 using namespace std;
+
+std::atomic_uint_fast32_t g_totalCost;
 
 std::chrono::system_clock::time_point Tick(void)
 {
@@ -169,7 +172,8 @@ void LogThreadMem2(string id, int nLogCount, vector<string>* pvPreLog, nsFastLog
 	cout << ss.str();
 	auto tp = Tick();
 	int idxPreLog = 0;
-	vector<array<char, 256>> v;
+//	vector<array<char, 256>> v;
+	int idx = 0;
 	mutex& mtx = *pMtx;
 	if (pLogger && pvPreLog)
 	{
@@ -184,19 +188,22 @@ void LogThreadMem2(string id, int nLogCount, vector<string>* pvPreLog, nsFastLog
 				idxPreLog = 0;
 			}
 			lock_guard<mutex> lk(mtx);
-			v.emplace_back();
-			memcpy(v.back().data(), vPreLog[idxPreLog].c_str(), vPreLog[idxPreLog].length() + 1);
+			idx += i;
+// 			v.emplace_back();
+// 			memcpy(v.back().data(), vPreLog[idxPreLog].c_str(), vPreLog[idxPreLog].length() + 1);
 		}
 	}
 	auto tCost = Tock(tp);
 
 	ss.str("");
-	ss << "Thread " << id << " LEAVE, cost" << tCost << " ms" << ", size " << v.size() << endl;
+	ss << "Thread " << id << " LEAVE, cost" << tCost << " ms" << endl;
+	g_totalCost += tCost;
 	cout << ss.str();
 }
 
 int main(void)
 {
+	g_totalCost = 0;
 	int nThread = 8;
 	int nLogPerThread = 1000000;
 	vector<string> vPreLog;
@@ -216,11 +223,12 @@ int main(void)
 	vector<thread> vThread;
 	string sThreadId("THID0000");
 	vector<mutex> vMutex(nThread);
+	mutex mtx;
 	for (int i = 0; i < nThread; ++i)
 	{
 		++sThreadId.back();
-//		thread th(LogThreadMem2, sThreadId, nLogPerThread, &vPreLog, &fastLogger, &vMutex[i]);
-		thread th(LogThread, sThreadId, nLogPerThread, &vPreLog, &fastLogger);
+		thread th(LogThreadMem2, sThreadId, nLogPerThread, &vPreLog, &fastLogger, &mtx);
+//		thread th(LogThread, sThreadId, nLogPerThread, &vPreLog, &fastLogger);
 		vThread.push_back(std::move(th));
 	}
 
@@ -242,6 +250,7 @@ int main(void)
 	auto cost = Tock(tp0);
 
 	cout << "log cost " << cost << " ms" << endl;
+	cout << "total cost " << g_totalCost << " ms" << ", avg " << g_totalCost / nThread << endl;
 
 	
 	fastLogger.Stop();

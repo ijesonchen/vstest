@@ -3,6 +3,7 @@
 //#include <cstdlib>
 #include "main.h"
 
+void Test();
 
 
 using namespace std;
@@ -10,7 +11,7 @@ void main(void)
 {
 
 	auto dmax = std::numeric_limits<double>::max();
-	ArrayTest();
+	Test();
 
 
 	cout << "enter to continue" << endl;

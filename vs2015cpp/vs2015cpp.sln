@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastLog", "FastLog\FastLog.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastLogLinux", "FastLog\FastLogLinux.vcxproj", "{CF297EBE-ED3E-4FED-B714-9AF1C1F6653E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UdpTest", "UdpTest\UdpTest.vcxproj", "{F63F957C-CEC9-4104-A71F-BE9AEE93165A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -123,6 +125,16 @@ Global
 		{CF297EBE-ED3E-4FED-B714-9AF1C1F6653E}.Release|Win32.Build.0 = Release|x86
 		{CF297EBE-ED3E-4FED-B714-9AF1C1F6653E}.Release|x64.ActiveCfg = Release|x64
 		{CF297EBE-ED3E-4FED-B714-9AF1C1F6653E}.Release|x64.Build.0 = Release|x64
+		{F63F957C-CEC9-4104-A71F-BE9AEE93165A}.Debug|ARM.ActiveCfg = Debug|Win32
+		{F63F957C-CEC9-4104-A71F-BE9AEE93165A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F63F957C-CEC9-4104-A71F-BE9AEE93165A}.Debug|Win32.Build.0 = Debug|Win32
+		{F63F957C-CEC9-4104-A71F-BE9AEE93165A}.Debug|x64.ActiveCfg = Debug|x64
+		{F63F957C-CEC9-4104-A71F-BE9AEE93165A}.Debug|x64.Build.0 = Debug|x64
+		{F63F957C-CEC9-4104-A71F-BE9AEE93165A}.Release|ARM.ActiveCfg = Release|Win32
+		{F63F957C-CEC9-4104-A71F-BE9AEE93165A}.Release|Win32.ActiveCfg = Release|Win32
+		{F63F957C-CEC9-4104-A71F-BE9AEE93165A}.Release|Win32.Build.0 = Release|Win32
+		{F63F957C-CEC9-4104-A71F-BE9AEE93165A}.Release|x64.ActiveCfg = Release|x64
+		{F63F957C-CEC9-4104-A71F-BE9AEE93165A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

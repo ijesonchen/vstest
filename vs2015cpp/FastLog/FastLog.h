@@ -42,18 +42,21 @@ namespace nsFastLog
 		}
 	};
 
-	struct SLogItem
-	{
-		std::int64_t tp;
-//		std::string log;
-		char log[256];
+	typedef std::int64_t SLogItem;
 
-		SLogItem(std::int64_t t, const std::string& l)
-			: tp(t)
-		{
-			memcpy(log, l.c_str(), l.length() + 1);
-		}
-	};
+// 	struct SLogItem
+// 	{
+// 		std::int64_t tp;
+//		std::string log;
+//		char log[256];
+		
+// 		SLogItem(std::int64_t t, const std::string& l)
+// 			: tp(t)
+//			, log(l)
+//		{
+//			memcpy(log, l.c_str(), l.length() + 1);
+//		}
+//	};
 
 	struct SLogHeader
 	{
@@ -102,7 +105,7 @@ namespace nsFastLog
 		{
 			std::int64_t tp = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 			std::lock_guard<std::mutex> lk(vMtx[idCntr]);
-			vLogContent[idCntr].vLogs.emplace_back(tp, log);
+			vLogContent[idCntr].vLogs.emplace_back(tp);
 //			vLogContent2[idCntr].emplace_back();
 //			memcpy(vLogContent2[idCntr].back().data(), log.c_str(), log.size());
 		}

@@ -14,8 +14,13 @@
 
 using namespace std;
 
+
 void VectorWithArrayTest(void)
 {
+	// int n = 5;
+	// n must be const
+	// array<int, n> is illegal
+
 	// 定长数组容器
 	const int nArrayLen = 10;
 	int nVecSize = 20;
@@ -40,14 +45,8 @@ void VectorWithArrayTest(void)
 	cout << "done" << endl;
 }
 
-void ArrayTest(void)
+void VectorWithVectorTest()
 {
-	VectorWithArrayTest();
-
-	int n = 5;
-	// n must be const
-	// array<int, n> is illegal
-	array<int, 5> a = {};
 
 
 	unsigned length = 4;
@@ -63,7 +62,7 @@ void ArrayTest(void)
 	}
 	cout << endl;
 	auto spssp = make_unique<int**>(ssp);
-	
+
 	auto rawssp = *spssp;
 	auto rawssp2 = spssp.get();
 	for (unsigned i = 0; i < length; ++i)
@@ -73,21 +72,19 @@ void ArrayTest(void)
 		cout << p << endl;
 	}
 
-	vector<vector<unsigned char>> vv(length, vector<unsigned char>(length2));
+	vector<vector<char>> vv(length, vector<char>(length2));
 
-	for (size_t i = 0; i < length; i++)
+	int idx = -1;
+	for (auto& v : vv)
 	{
-		vv[i][i] = (int)i;
-	}
-
-	for (size_t i = 0; i < length; i++)
-	{
-		for (size_t j = 0; j < length2; j++)
+		for (auto& c : v)
 		{
-			vv[i][j] = i + j;
+			c = (++idx % 26) + 'a';
 		}
 	}
 
+	auto pvv1 = vv.data();
+	auto pvv2 = pvv1->data();
 
 	int length3 = 4;
 	vector<vector<vector<int>>> vvv(length, vector<vector<int>>(length2, vector<int>(length3)));
@@ -106,7 +103,7 @@ void ArrayTest(void)
 	for (size_t i = 0; i < length; i++)
 	{
 		stringstream ss;
-		ss << "teststr_" << i << "+" << i*i;
+		ss << "teststr_" << i << "+" << i * i;
 		vvs.push_back(ss.str());
 	}
 
@@ -122,4 +119,11 @@ void ArrayTest(void)
 		cout << ppc[i] << endl;
 	}
 
+
+}
+
+void ArrayTest(void)
+{
+	VectorWithArrayTest();
+	VectorWithVectorTest();
 }
