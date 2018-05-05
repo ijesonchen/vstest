@@ -18,12 +18,12 @@ extern unsigned short Port;
 
 #pragma comment(lib, "Ws2_32.lib")
 
-void Send(std::string ip, int bufLen, int count)
+void Send(std::string ip, int bufLen)
 {
 	int nRet;
 
 
-	const int maxBufLen = 10 * 1024;
+	const int maxBufLen = 70 * 1024;
 	char sendBuf[maxBufLen] = { 0 };
 
 	char idx = -1;
@@ -132,7 +132,7 @@ void Recv(void)
 	sockaddr_in RecvAddr;
 
 
-	const int bufLen = 10 * 1024;
+	const int bufLen = 65 * 1024;
 	char recvBuf[bufLen];
 
 	sockaddr_in addrSend;

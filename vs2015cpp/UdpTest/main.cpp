@@ -27,13 +27,12 @@ int main(int argc, char** argv)
 	{
 		Recv();
 	}
-	else if (argc == 4)
+	else if (argc == 3)
 	{
 		string targetIp = argv[1];
 		auto nPackSize = atoi(argv[2]);
-		auto nPackCount = atoi(argv[3]);
-		cout << "ip " << targetIp << ",size " << nPackSize << ", count " << nPackCount << endl;
-		Send(targetIp, nPackSize, nPackCount);
+		cout << "ip " << targetIp << ",size " << nPackSize << endl;
+		Send(targetIp, nPackSize);
 	}
 	else
 	{

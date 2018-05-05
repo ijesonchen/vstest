@@ -1,3 +1,3 @@
 #include <string>
-void Send(std::string ip, int bufLen, int count);
+void Send(std::string ip, int bufLen);
 void Recv(void);
