@@ -11,5 +11,5 @@ func init() {
 func main() {
 	log.Println("ENTER MAIN")
 	defer log.Println("LEAVE MAIN")
-	testTimedWait()
+	testTightLoop()
 }
