@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 )
 
 func init() {
@@ -11,5 +12,5 @@ func init() {
 func main() {
 	log.Println("ENTER MAIN")
 	defer log.Println("LEAVE MAIN")
-	testTightLoop()
+	log.Println(time.Now())
 }

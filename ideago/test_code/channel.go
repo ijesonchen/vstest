@@ -12,6 +12,28 @@ import (
  chan读写可以导致STW，for range chan不会导致tight loop，不会影响gc
 */
 
+func testChan2() {
+	ch := make(chan bool)
+	go func() {
+		time.Sleep(time.Second * 3)
+		close(ch)
+	}()
+
+	go func(sig chan bool) {
+		log.Println("wait3")
+		<-sig
+		log.Println("end3")
+	}(ch)
+
+	log.Println("wait1")
+	<-ch
+	log.Println("end1")
+
+	log.Println("wait2")
+	<-ch
+	log.Println("end2")
+}
+
 func testChan() {
 	go func() {
 		for {
