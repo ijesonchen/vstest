@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"time"
+	"math"
 )
 
 func init() {
@@ -12,5 +12,7 @@ func init() {
 func main() {
 	log.Println("ENTER MAIN")
 	defer log.Println("LEAVE MAIN")
-	log.Println(time.Now())
+	for i := 0; i < 5; i++ {
+		log.Println(i, math.Ceil(float64(i*3)/float64(5)))
+	}
 }
