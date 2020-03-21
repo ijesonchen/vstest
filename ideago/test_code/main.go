@@ -1,8 +1,8 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
-	"math"
 )
 
 func init() {
@@ -12,7 +12,9 @@ func init() {
 func main() {
 	log.Println("ENTER MAIN")
 	defer log.Println("LEAVE MAIN")
-	for i := 0; i < 5; i++ {
-		log.Println(i, math.Ceil(float64(i*3)/float64(5)))
-	}
+
+	k := map[int]int{1: 10, 2: 20, 3: 30}
+
+	b, e := json.Marshal(k)
+	log.Printf("%v %s %v", e, b, k)
 }
