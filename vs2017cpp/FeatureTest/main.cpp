@@ -2,17 +2,13 @@
 #include <string>
 //#include <cstdlib>
 #include "main.h"
-
-void Test();
+ 
 
 
 using namespace std;
 void main(void)
 {
-
-	auto dmax = std::numeric_limits<double>::max();
-	Test();
-
+	AtomicRaiiTest();
 
 	cout << "enter to continue" << endl;
 	string s;

@@ -20,5 +20,7 @@ void TestRemoveIf(void);
 void TimeTest(void);
 void ConsoleWindowControlTest(void);
 void TailRecurTest(void);
+void AtomicMapTest(void);
+void AtomicRaiiTest(void);
 
 #include <numeric>

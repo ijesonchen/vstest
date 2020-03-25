@@ -90,7 +90,16 @@
     <ClCompile Include="tailRecur.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="basic.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="BlankTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="atomic_map.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="atomic_raii.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
