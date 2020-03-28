@@ -102,6 +102,9 @@
     <ClCompile Include="atomic_raii.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="fstream.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -113,5 +116,10 @@
     <ClInclude Include="projschjThreadPool.h">
       <Filter>源文件</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="unordered_map.txt">
+      <Filter>源文件</Filter>
+    </Text>
   </ItemGroup>
 </Project>

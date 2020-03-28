@@ -1,4 +1,4 @@
 extern "C" {
-    int LoadModel(int n);
-    int ProcData(void* pvinInt, void* pvoutFloat, size_t nLen);
+    int LoadModel2(const char* fnHash, const char* fnEmbed);
+    int ProcData(void* pvinInt, void* pvoutFloat, int nLen);
 }

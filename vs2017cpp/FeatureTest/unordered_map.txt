@@ -1,0 +1,270 @@
+#include <atomic>
+#include <cstdint>
+#include <memory>
+#include <unordered_map>
+#include <vector>
+#include <fstream>
+#include <filesystem>
+#include <cstring>
+#include <chrono>
+#include <iostream>
+#include <thread>
+
+extern "C" {
+    int LoadModel(const char* fnHash, const char* fnEmbed);
+    int ProcData(void* pvinInt, void* pvoutFloat, size_t nLen);
+}
+ 
+using namespace std;
+
+shared_ptr<unordered_map<uint64_t, vector<float>>> g_spEmbedMap;
+#pragma pack(1)
+struct HashInfo {
+    uint64_t id;
+    uint8_t dim;
+};
+#pragma pack()
+struct HashInfo2 {
+    uint64_t id;
+    uint8_t dim;
+};
+
+const size_t dataLenHash = sizeof(HashInfo);
+const size_t dataLenHash2 = sizeof(HashInfo2);
+const size_t dataLenEmbed = sizeof(float);
+auto start = chrono::steady_clock::now();
+void tsInit(){
+    start = chrono::steady_clock::now();
+}
+void tsCost(const char* step){
+    auto end = chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    cout << step << " elapsed time: " << elapsed_seconds.count() << "s\n";
+}
+
+
+/*
+测试数据18M，10dim定长. 20次测试
+1. vector<float>直接赋值: 加载10秒。析构6s。共计~16s。
+2. emplace: 加载9.5s,析构6s。共计~16s。
+
+3. 使用指针，数据另外存放，加载7.5s，析构3.5s，共计~11s。内存降低明显。但是代码略复杂，并且一小时加载一次，后续可以考虑。
+struct EmbedInfo {
+    uint64_t length : 8;
+    uint64_t offset : 56;
+};
+*/
+int LoadModel(const char* fnHash, const char* fnEmbed) {
+    tsInit();
+    if (fnHash == nullptr || fnEmbed == nullptr) {
+        printf("invalid parameter\n");
+        return -3;
+    }
+    if (!filesystem::exists(fnHash) || !filesystem::exists(fnEmbed)) {
+        printf("file [%s] or [%s] not exists.\n", fnHash, fnEmbed);
+        return -4;
+    }
+    auto nHashByte = filesystem::file_size(fnHash);
+    auto nEmbedByte = filesystem::file_size(fnEmbed);
+    ifstream fHash(fnHash, ios::binary | ios::in);
+    if (!fHash.is_open()) {
+        printf("open file %s error\n", fnHash);
+        return -1;
+    }
+    ifstream fEmbed(fnEmbed, ios::binary | ios::in);
+    if (!fHash.is_open()) {
+        printf("open file %s error\n", fnEmbed);
+        return -2;
+    }
+    auto nHash = nHashByte / dataLenHash;
+    auto nEmbed = nEmbedByte / dataLenEmbed;
+    // check size
+    if (nHash * dataLenHash != nHashByte || nEmbed * dataLenEmbed!= nEmbedByte) {
+        printf("%zd * %zd != %zd; %zd * %zd != %zd", nHash, dataLenHash, nHashByte,
+            nEmbed, dataLenEmbed, nEmbedByte);
+        printf("invalid file size: hash %zd embed %zd\n", nHashByte, nEmbedByte);
+        return -5;
+    }
+    tsCost("size");
+
+    auto pMap = new unordered_map<uint64_t, vector<float>>;
+    shared_ptr< unordered_map<uint64_t, vector<float>>> spMap(pMap);
+    auto& m = *pMap;
+    pMap->reserve(nHash); 
+
+    auto pHash = new HashInfo[nHash];
+    auto pEmbed = new float[nEmbed];
+    unique_ptr<HashInfo> upHash(pHash);
+    unique_ptr<float> upEmbed(pEmbed);
+    tsCost("new data");
+
+    if (!fHash.read((char*)pHash, nHashByte) || fHash.gcount()!=nHashByte){
+        printf("read %s %zd expect %zd\n", fnHash, fHash.gcount(), nHashByte);
+        return -6;
+    }
+    tsCost("read hash");
+
+    if (!fEmbed.read((char*)pEmbed, nEmbedByte) || fEmbed.gcount()!=nEmbedByte){
+        printf("read %s %zd expect %zd\n", fnEmbed, fEmbed.gcount(), nEmbedByte);
+        return -6;
+    }
+    tsCost("read embed");
+    
+    long long pos = 0;
+    for (int i = 0; i < nHash; i++) {
+        // 以下优化有一定收益，但是不明显，会增加代码复杂度。
+        // more vec. use struct (pointer & len) instead vector
+        vector<float> vEmbed(pHash[i].dim);
+        memcpy(vEmbed.data(),pEmbed+pos, pHash[i].dim*sizeof(float));
+        pos += pHash[i].dim;
+        if (i < 5) {
+            printf("embed info: %lld", pHash[i].id);
+            for (auto p = vEmbed.begin(); p != vEmbed.end(); p++) {
+                printf(" %f", *p);
+            }
+            puts("");
+        }
+        m[pHash[i].id] = vEmbed;
+    }
+    tsCost("parse");
+    printf("load data total: %zd\n", nHash);
+    atomic_store(&g_spEmbedMap, spMap);
+    tsCost("store"); 
+    return 0;
+}
+
+struct EmbedInfo {
+    uint64_t length : 8;
+    uint64_t offset : 56;
+};
+shared_ptr<unordered_map<uint64_t, EmbedInfo>> g_spEmbedMapV2;
+shared_ptr<float> g_spEmbed;
+
+
+int LoadModelV2(const char* fnHash, const char* fnEmbed) {
+    tsInit();
+    if (fnHash == nullptr || fnEmbed == nullptr) {
+        printf("invalid parameter\n");
+        return -3;
+    }
+    if (!filesystem::exists(fnHash) || !filesystem::exists(fnEmbed)) {
+        printf("file [%s] or [%s] not exists.\n", fnHash, fnEmbed);
+        return -4;
+    }
+    auto nHashByte = filesystem::file_size(fnHash);
+    auto nEmbedByte = filesystem::file_size(fnEmbed);
+    ifstream fHash(fnHash, ios::binary | ios::in);
+    if (!fHash.is_open()) {
+        printf("open file %s error\n", fnHash);
+        return -1;
+    } 
+    ifstream fEmbed(fnEmbed, ios::binary | ios::in);
+    if (!fHash.is_open()) {
+        printf("open file %s error\n", fnEmbed);
+        return -2;
+    }
+    auto nHash = nHashByte / dataLenHash;
+    auto nEmbed = nEmbedByte / dataLenEmbed;
+    // check size
+    if (nHash * dataLenHash != nHashByte || nEmbed * dataLenEmbed != nEmbedByte) {
+        printf("%zd * %zd != %zd; %zd * %zd != %zd", nHash, dataLenHash, nHashByte,
+            nEmbed, dataLenEmbed, nEmbedByte);
+        printf("invalid file size: hash %zd embed %zd\n", nHashByte, nEmbedByte);
+        return -5;
+    }
+    tsCost("size");
+
+    auto pMap = new unordered_map<uint64_t, EmbedInfo>;
+    shared_ptr< unordered_map<uint64_t, EmbedInfo>> spMap(pMap);
+    auto& m = *pMap;
+    pMap->reserve(nHash);
+
+    auto pHash = new HashInfo[nHash];
+    auto pEmbed = new float[nEmbed];
+    unique_ptr<HashInfo> upHash(pHash);
+    shared_ptr<float> spEmbed(pEmbed);
+    tsCost("new data");
+
+    if (!fHash.read((char*)pHash, nHashByte) || fHash.gcount() != nHashByte) {
+        printf("read %s %zd expect %zd\n", fnHash, fHash.gcount(), nHashByte);
+        return -6;
+    }
+    tsCost("read hash");
+
+    if (!fEmbed.read((char*)pEmbed, nEmbedByte) || fEmbed.gcount() != nEmbedByte) {
+        printf("read %s %zd expect %zd\n", fnEmbed, fEmbed.gcount(), nEmbedByte);
+        return -6;
+    }
+    tsCost("read embed");
+
+    long long pos = 0;
+    for (int i = 0; i < nHash; i++) {
+        // 以下优化有一定收益，但是不明显，会增加代码复杂度。
+        // more vec. use struct (pointer & len) instead vector
+        EmbedInfo info;
+        info.length = pHash[i].dim;
+        info.offset = pos; 
+        m[pHash[i].id]=info;
+        pos += pHash[i].dim;
+        if (i < 5) {
+            printf("embed info: %lld len %lld", pHash[i].id, info.length);
+            for (int i = 0; i < info.length; i++) {
+                printf(" %f", pEmbed[info.offset+i]);
+            }
+            puts("");
+        }
+        //m[pHash[i].id] = vEmbed;
+    }
+    tsCost("parse");
+    printf("load data total: %zd\n", nHash);
+    atomic_store(&g_spEmbedMapV2, spMap);
+    atomic_store(&g_spEmbed, spEmbed);
+    tsCost("store");
+    return 0;
+}
+
+int ProcData(void* pvinInt, void* pvoutFloat, size_t nLen) {
+    return 0;
+}
+
+void loadTest(){
+    auto start = chrono::steady_clock::now();
+    auto n = LoadModel("mtctr_v1a.idx", "mtctr_v1a.embed");
+    printf("return %d\n", n);
+    auto end = chrono::steady_clock::now();
+    chrono::duration<double> elapsed_seconds = end-start;
+    cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
+
+    auto sp = atomic_load(&g_spEmbedMap);
+    //auto spEmbed = atomic_load(&g_spEmbed);
+    //auto pEmbed = spEmbed.get();
+    vector<uint64_t> v{ 260604297723074114,158926864742793154,173875697360607746 };
+    for (auto pid = v.begin(); pid != v.end(); pid++) {
+        printf("embed %llu:", *pid);
+        auto& embed = (*sp)[*pid];
+        //auto info = (*sp)[*pid];
+        for (int i = 0; i < embed.size(); i++) {
+            //printf(" %f", pEmbed[info.offset + i]);
+            printf(" %f", embed[i]);
+        } 
+        puts("");
+    } 
+}
+
+void BlankTest() {
+    printf("len %zd %zd %zd\n", dataLenHash, dataLenHash2, dataLenEmbed);
+    printf("ptr len %zd\n", sizeof(void*));
+    for(int i=0;i<10;i++){
+        loadTest();
+        cout << "sleep 3 sec" << endl;
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+    } 
+   
+    //shared_ptr< unordered_map<uint64_t, vector<float>>> spMap(nullptr);
+    //atomic_store(&g_spEmbedMap, spMap);
+    cout << "press enter" << endl;
+	getchar();
+}
+
+
+

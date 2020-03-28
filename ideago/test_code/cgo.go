@@ -41,6 +41,13 @@ void Print(char* s){
 	fflush(stdout);
 }
 
+void PrintV2(void* p){
+	char* s = (char*)p;
+	printf("input : %s\n", s);
+	s[0]='*';
+	printf("modify: %s\n", s);
+	fflush(stdout);
+}
 void PrintSliceData(void* p){
 	char* s;
 	s = (char*)p;
@@ -98,26 +105,130 @@ void FreeData(char* p){
 }
 
 
+int LoadModel(const char* fnHash, const char* fnEmbed){
+	printf("LoadModel %s %s\n", fnHash, fnEmbed);
+	return 0;
+}
 
-void ProcFloatV2(void* pv, size_t nLen){
+#define uint64_t unsigned long long
+
+int Feature2Embedding(char* workers, char* feaConf, uint64_t feaConfByte,
+        char* ucFea, uint64_t ucFeaByte,
+        char** ppItemFeas, uint64_t* pItemFeaBytes, uint64_t itemCount,
+        float** ppEmbeds, uint64_t embedSize){
+	printf("u %zd ul %zd ull %zd\n", sizeof(unsigned), sizeof(unsigned long), sizeof(unsigned long long));
+
+	printf("Feature2Embedding =========>\n workers %s\n", workers);
+	feaConf[feaConfByte-1]=0;
+	printf("feaconf %s\n", feaConf);
+	for(size_t i=0;i<itemCount;i++){
+		ppItemFeas[i][pItemFeaBytes[i]-1]=0;
+		printf("item %zd %s\n", i, ppItemFeas[i]);
+		for (size_t j = 0;j<embedSize;j++){
+			//printf("==> %p %p\n", ppEmbeds, ppEmbeds[i]);
+			ppEmbeds[i][j] = 1.0/(i+j+1);
+		}
+	}
+return 0;
 }
 */
 import "C"
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"reflect"
 	"unsafe"
 )
 
+func getCPtr(ps *string) (p *C.char, n C.ulonglong) {
+	pps := (*reflect.StringHeader)(unsafe.Pointer(ps))
+	p = (*C.char)(unsafe.Pointer(pps.Data))
+	n = (C.ulonglong)(pps.Len)
+	return
+}
+
+func getCAPtr(ps *[]string, pa []uintptr, pan []C.ulonglong) (pp **C.char, pn *C.ulonglong) {
+	for i := range *ps {
+		p, n := getCPtr(&(*ps)[i])
+		pa[i] = uintptr(unsafe.Pointer(p))
+		pan[i] = n
+	}
+	pp = (**C.char)(unsafe.Pointer((*reflect.SliceHeader)(unsafe.Pointer(&pa)).Data))
+	pn = (*C.ulonglong)(unsafe.Pointer((*reflect.SliceHeader)(unsafe.Pointer(&pan)).Data))
+	return
+}
+func getFAPtr(ps *[][]float32, pa []uintptr) (pp **C.float) {
+	for i := range *ps {
+		pa[i] = (*reflect.SliceHeader)(unsafe.Pointer(&(*ps)[i])).Data
+	}
+	log.Println("pa:", pa)
+	pp = (**C.float)(unsafe.Pointer((*reflect.SliceHeader)(unsafe.Pointer(&pa)).Data))
+	return
+}
+
+func testFeature2Embedding() {
+	var buf bytes.Buffer
+
+	buf.WriteString("workdata")
+	buf.WriteByte(0)
+	worker := buf.String()
+
+	buf.Reset()
+	buf.WriteString("feaconf")
+	feaConf := buf.String()
+
+	buf.Reset()
+	buf.WriteString("ucfea")
+	ucFea := buf.String()
+
+	var nItem C.ulonglong = 3
+	iFeas := make([]string, nItem)
+	for i := 0; i < int(nItem); i++ {
+		buf.Reset()
+		buf.WriteString(fmt.Sprintf("itemFea_%d_", i))
+		for j := 0; j < i; j++ {
+			buf.WriteString("x")
+		}
+		iFeas[i] = buf.String()
+	}
+
+	var embedSize C.ulonglong = 5
+	embed := make([][]float32, nItem)
+	for i := 0; i < int(nItem); i++ {
+		embed[i] = make([]float32, embedSize)
+	}
+
+	p1, _ := getCPtr(&worker)
+	p2, s2 := getCPtr(&feaConf)
+	p3, s3 := getCPtr(&ucFea)
+	ppfa := make([]uintptr, len(iFeas))
+	ppfan := make([]C.ulonglong, len(iFeas))
+	ppf1, pnf1 := getCAPtr(&iFeas, ppfa, ppfan)
+	ppea := make([]uintptr, len(embed))
+	ppe1 := getFAPtr(&embed, ppea)
+
+	C.Feature2Embedding(p1, p2, s2, p3, s3, ppf1, pnf1, nItem, ppe1, embedSize)
+	log.Printf("%T %T %T", ppfa, ppfan, ppea)
+	log.Println(embed)
+}
+
 func testCgo() {
+	testFeature2Embedding()
+	return
 	var buf bytes.Buffer
 	buf.WriteString("this is a test")
 	s := buf.String()
 	log.Printf("s01 %s", s)
 	C.Print(C.CString(s))
 	log.Printf("s02 %s", s)
+
+	log.Printf("ss01 %s", s)
+	ps := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	C.PrintV2(unsafe.Pointer(ps.Data))
+	log.Printf("ss02 %s", s)
+	log.Println()
 
 	b := buf.Bytes()
 	b = append(b, 0)

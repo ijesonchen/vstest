@@ -22,5 +22,7 @@ void ConsoleWindowControlTest(void);
 void TailRecurTest(void);
 void AtomicMapTest(void);
 void AtomicRaiiTest(void);
+void BlankTest(void);
+void FstreamTest(void);
 
 #include <numeric>

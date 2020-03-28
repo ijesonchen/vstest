@@ -32,8 +32,8 @@ public:
 	}
 	~AtomicRaiiS() { printf("remove AtomicRaiiS %zd\n", id); }\
 
-private:
 	unordered_map<int, int> m;
+private:
 	size_t id;
 };
 
@@ -42,8 +42,31 @@ void AtomicRaiiLoad(int x) {
 	atomic_store(&g_spRaiiStru, sp);
 }
 
+
+
+int LoadModel(int n) {
+	shared_ptr< AtomicRaiiS> sp(new AtomicRaiiS(n, 5));
+	atomic_store(&g_spRaiiStru, sp);
+	return 0;
+}
+
+int ProcData(void* pvinInt, void* pvoutFloat, size_t nLen) {
+	auto pIn = (int64_t*)pvinInt;
+	auto pOut = (float*)pvoutFloat;
+	auto spData = atomic_load(&g_spRaiiStru);
+	auto& m = spData->m;
+	for (auto i = 0; i < nLen; i++) {
+		pOut[i] = m[pIn[i]];
+	}
+	return 0;
+}
+
 void AtomicRaiiTest()
 { 
+	unordered_map<int, int> m;
+	m[5] = 3;
+	printf("map 5 %d", m[5]);
+	printf("map 10 %d", m[10]);
 	auto p = atomic_load(&g_spRaiiStru);
 	if (p){
 		p->Print();

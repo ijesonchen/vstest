@@ -47,7 +47,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -80,6 +80,8 @@
     <OutDir>$(SolutionDir)bin\run\</OutDir>
     <IntDir>$(SolutionDir)bin\inter\$(ProjectName)_$(Configuration)_$(Platform)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)_$(Platform)</TargetName>
+    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -92,6 +94,7 @@
     <OutDir>$(SolutionDir)bin\run\</OutDir>
     <IntDir>$(SolutionDir)bin\inter\$(ProjectName)_$(Configuration)_$(Platform)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)_$(Platform)</TargetName>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -117,10 +120,12 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; _DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,7 +157,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -170,6 +175,7 @@
     <ClCompile Include="BlankTest.cpp" />
     <ClCompile Include="callableTest.cpp" />
     <ClCompile Include="ConsoleWindowControlTest.cpp" />
+    <ClCompile Include="fstream.cpp" />
     <ClCompile Include="tailRecur.cpp" />
     <ClCompile Include="TimeTest.cpp" />
     <ClCompile Include="common.cpp" />
@@ -195,6 +201,9 @@
     <ClInclude Include="common.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="projschjThreadPool.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="unordered_map.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
