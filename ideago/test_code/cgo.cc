@@ -1,8 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <memory>
 #include "cgo.h"
 
-int LoadModel2(const char* fnHash, const char* fnEmbed) {
-return 0;
+struct ObjectInfo{
+
+    ObjectInfo(int a){
+        x=a;
+        printf("object ctor >>>> %d\n",x);
+    }
+    ~ObjectInfo(){printf("object dtor <<<< %d\n",x);};
+private:
+    int x;
+};
+
+ObjectInfo* LoadObject(int x){
+    return  new ObjectInfo(x);
 }
-int ProcData(void* pvinInt, void* pvoutFloat, int nLen){
-return 0;
+
+void ReleaseObject(ObjectInfo* p){
+    delete  p;
 }

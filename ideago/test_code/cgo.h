@@ -1,4 +1,5 @@
 extern "C" {
-    int LoadModel2(const char* fnHash, const char* fnEmbed);
-    int ProcData(void* pvinInt, void* pvoutFloat, int nLen);
+	typedef struct ObjectInfo ObjectInfo;
+    ObjectInfo* LoadObject(int x);
+    void ReleaseObject(ObjectInfo* p);
 }

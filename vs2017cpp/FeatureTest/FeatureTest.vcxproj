@@ -172,10 +172,11 @@
     <ClCompile Include="atomic_map.cpp" />
     <ClCompile Include="basic.cpp" />
     <ClCompile Include="BitField.cpp" />
-    <ClCompile Include="BlankTest.cpp" />
     <ClCompile Include="callableTest.cpp" />
     <ClCompile Include="ConsoleWindowControlTest.cpp" />
     <ClCompile Include="fstream.cpp" />
+    <ClCompile Include="gcc.cpp" />
+    <ClCompile Include="string.cpp" />
     <ClCompile Include="tailRecur.cpp" />
     <ClCompile Include="TimeTest.cpp" />
     <ClCompile Include="common.cpp" />
@@ -203,6 +204,8 @@
     <ClInclude Include="projschjThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="BlankTest2.txt" />
+    <Text Include="BlankTest3.txt" />
     <Text Include="unordered_map.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

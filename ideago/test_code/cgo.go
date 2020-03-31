@@ -20,8 +20,28 @@ package main
      p := (*reflect.SliceHeader)(unsafe.Pointer(&b)), unsafe.Pointer(p.Data) -> cgo void*
    1) Go调用C Code时，Go传递给C Code的Go指针所指的Go Memory中不能包含任何指向Go Memory的Pointer。否则会出现panic
 	panic: runtime error: cgo argument has Go pointer to Go pointer
+	go 1.13.5 函数runtime/cgocall.go: cgoCheckArg中注释：
+ 		// These types contain internal pointers that will
+		// always be allocated in the Go heap. It's never OK
+		// to pass them to C.
+	函数runtime/mgc.go: gcMarkTermination中gcMark部分注释
+		// The outer function's stack may have moved
+		// during gcMark (it shrinks stacks, including the
+		// outer function's stack), so we must not refer
+		// to any of its variables.
+    似乎gc过程中可能到时内存中对象的移动。
+    但同时，mgc.go文件开头注释表明，go的gc是non-generational and non-compacting非分代的，根据介绍非分代垃圾回收一般不会移动内存。
+    这里还没有更详细的资料。
+    但是cgo建议是通过cgo函数对内存进行复制之后，再调用。例如go字符串是先C.CString在C栈上构造内存，然后传给c函数，之后C.free掉。
+    反向也是类似的流程。并且禁止直接传递go内存到c中。因为，为了安全建议互相不要直接操作对方的内存。
+    短期测试，直接传递go内存给c操作实际中可行，未发现程序panic异常，但未验证内存数据正确性，并且存在风险。
 7. 从测试来看，go中的float32和c中的float数值表示方式一致。
-8. 可以使用runtime.SetFinalizer来管理资源（还没仔细研究）
+8. 可以使用runtime.SetFinalizer来管理资源。示例代码可以参考
+   https://github.com/tensorflow/tensorflow.git
+	tensorflow/go/saved_model.go:LoadSavedModel  资源申请，SetFinalizer
+	tensorflow/go/session.go: (s *Session) Run   资源使用，KeepAlive
+	tensorflow/go/session.go: (s *Session) Close 资源释放，并发处理 //这部分可以简化
+
    关键词 Go语言资源自动回收技术
    https://zhuanlan.zhihu.com/p/76504936 使用runtime.SetFinalizer优雅关闭后台goroutine
    https://mlog.club/article/90611  垃圾收集和cgo
@@ -105,10 +125,6 @@ void FreeData(char* p){
 }
 
 
-int LoadModel(const char* fnHash, const char* fnEmbed){
-	printf("LoadModel %s %s\n", fnHash, fnEmbed);
-	return 0;
-}
 
 #define uint64_t unsigned long long
 
@@ -131,6 +147,20 @@ int Feature2Embedding(char* workers, char* feaConf, uint64_t feaConfByte,
 	}
 return 0;
 }
+
+void TestppFloat(float** p){
+	printf("p %p\n", p);
+    printf("deref %p\n", *p);
+	for(int i = 0; i < 10;i++){
+		printf("pp %d %p\n", i, p[i]);
+	}
+}
+
+
+	typedef struct ObjectInfo ObjectInfo;
+
+    ObjectInfo* LoadObject(int x);
+    void ReleaseObject(ObjectInfo* p);
 */
 import "C"
 
@@ -159,6 +189,7 @@ func getCAPtr(ps *[]string, pa []uintptr, pan []C.ulonglong) (pp **C.char, pn *C
 	pn = (*C.ulonglong)(unsafe.Pointer((*reflect.SliceHeader)(unsafe.Pointer(&pan)).Data))
 	return
 }
+
 func getFAPtr(ps *[][]float32, pa []uintptr) (pp **C.float) {
 	for i := range *ps {
 		pa[i] = (*reflect.SliceHeader)(unsafe.Pointer(&(*ps)[i])).Data
@@ -166,6 +197,32 @@ func getFAPtr(ps *[][]float32, pa []uintptr) (pp **C.float) {
 	log.Println("pa:", pa)
 	pp = (**C.float)(unsafe.Pointer((*reflect.SliceHeader)(unsafe.Pointer(&pa)).Data))
 	return
+}
+
+func cgoFloatAA(ps *[][]float32, pa []uintptr) (pp **C.float) {
+	for i := range *ps {
+		pa[i] = (*reflect.SliceHeader)(unsafe.Pointer(&(*ps)[i])).Data
+	}
+	log.Println("pa:", pa)
+	var buf bytes.Buffer
+	for i := range pa {
+		buf.WriteString(fmt.Sprintf("%x ", pa[i]))
+	}
+	log.Printf("float array hex %s", buf.String())
+	ppgo := (*reflect.SliceHeader)(unsafe.Pointer(&pa)).Data
+	log.Printf("float array hex pp %x", ppgo)
+	pp = (**C.float)(unsafe.Pointer(ppgo))
+	return
+}
+
+func testFloatAA() {
+	pp := make([][]float32, 10)
+	for i := range pp {
+		pp[i] = make([]float32, 5)
+	}
+	pa := make([]uintptr, 10)
+	ppc := cgoFloatAA(&pp, pa)
+	C.TestppFloat(ppc)
 }
 
 func testFeature2Embedding() {
@@ -214,7 +271,30 @@ func testFeature2Embedding() {
 	log.Println(embed)
 }
 
+func testCgoCLength() {
+	var a C.size_t
+	var b C.int
+	var c C.long
+	var d C.longlong
+	log.Printf("C length size_t %d int %d long %d longlong %d",
+		unsafe.Sizeof(a), unsafe.Sizeof(b), unsafe.Sizeof(c), unsafe.Sizeof(d))
+	// C length size_t 8 int 4 long 8 longlong 8
+}
+
+func testCRes() {
+	var x C.int = 10
+	p := C.LoadObject(x)
+	log.Printf("%T", p)
+	C.ReleaseObject(p)
+}
+
 func testCgo() {
+	testCRes()
+	return
+	testFloatAA()
+	return
+	testCgoCLength()
+	return
 	testFeature2Embedding()
 	return
 	var buf bytes.Buffer

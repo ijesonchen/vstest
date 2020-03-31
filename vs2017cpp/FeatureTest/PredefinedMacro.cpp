@@ -12,7 +12,21 @@ __FUNCTION__ : PredefinedMacro
 __FUNCTION__ not found in c++17 prestandard, but both supported in vs & g++
 In vs2015 and C++17 pre standard, __func__ is defined, but vs2013 not supported.
 __func__ is an implementation-defined string, can be used after a function is defined.
-MyStruct::MyStruct
+MyStruct ctor __FUNCTION__: MyStruct::MyStruct
+enter to continue
+
+vs2019 x64 debug:
+PredefinedMacro from CPP standard
+__FILE__     : C:\dev\go\qtt\src\git.innotechx.com\mtrec\vstest\vs2017cpp\FeatureTest\PredefinedMacro.cpp
+__LINE__     : 39
+__DATE__     : Mar 31 2020
+__TIME__     : 15:55:58
+__FUNCTION__ : PredefinedMacro
+__func__     : PredefinedMacro
+__FUNCTION__ not found in c++17 prestandard, but both supported in vs & g++
+In vs2015 and C++17 pre standard, __func__ is defined, but vs2013 not supported.
+__func__ is an implementation-defined string, can be used after a function is defined.
+MyStruct ctor __FUNCTION__: MyStruct::MyStruct
 enter to continue
 
 NOTE: x32 debug, not x32 release
@@ -26,7 +40,7 @@ struct MyStruct
 	MyStruct() :s(__FUNCTION__) {}
 	void Test()
 	{
-		cout << s << endl;
+		cout << "MyStruct ctor __FUNCTION__: "<< s << endl;
 	}
 
 	string s;
@@ -40,6 +54,7 @@ void PredefinedMacro(void)
 	cout << "__DATE__     : " << __DATE__ << endl;
 	cout << "__TIME__     : " << __TIME__ << endl;
 	cout << "__FUNCTION__ : " << __FUNCTION__ << endl;
+	cout << "__func__     : " << __func__ << endl;
 	cout << "__FUNCTION__ not found in c++17 prestandard, but both supported in vs & g++" << endl;
 	cout << "In vs2015 and C++17 pre standard, __func__ is defined, but vs2013 not supported." << endl;
 	cout << "__func__ is an implementation-defined string, can be used after a function is defined." << endl;

@@ -3,13 +3,13 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
-#include <fstream>
-#include <filesystem>
+#include <fstream> 
 #include <cstring>
 #include <chrono>
 #include <iostream>
 #include <thread>
- 
+#include <sys/stat.h> 
+#include <mutex>
 
 extern "C" {
     char* init(const char* config_path);
@@ -17,10 +17,6 @@ extern "C" {
     void release(char* mem);
 }
 
-std::string hashTestData;
-char* init(const char* config_path) { return nullptr; }
-char* process(char* workers, const char* value_str, size_t len) { return hashTestData.data(); };
-void release(char* mem) {};
 
 extern "C" {
     int LoadModel(const char* fnHash, const char* fnEmbed);
@@ -28,10 +24,12 @@ extern "C" {
         const char* ucFea, size_t ucFeaByte,
         const char** ppItemFeas, size_t* pItemFeaBytes, size_t itemCount,
         float** ppEmbeds, size_t embedSize);
+    int Feature2EmbeddingTest(char* testString, size_t testByte);
 }
- 
+
 using namespace std;
- 
+
+
 #pragma pack(1)
 struct HashInfo {
     uint64_t id;
@@ -39,10 +37,9 @@ struct HashInfo {
 };
 #pragma pack() 
 
-const size_t dataLenHash = sizeof(HashInfo); 
+const size_t dataLenHash = sizeof(HashInfo);
 const size_t dataLenEmbed = sizeof(float);
 
-// 注意字段顺序
 struct EmbedInfo {
     uint64_t length : 8;
     uint64_t offset : 56;
@@ -55,18 +52,43 @@ struct EmbedMap {
     float* pEmbed;
 };
 
+
+struct FeaConf {
+    int slot;
+    int start;
+    int dim;
+};
+
+mutex g_mtxEmbedMap;
 shared_ptr<EmbedMap> g_spEmbedMap;
- 
- 
+
+///////////////////////////////////////////////////
+// for debug & test begin
+void printFeaConf(std::unordered_map<string, FeaConf>& feaConfMap) {
+    printf("feaConf %zd: ", feaConfMap.size());
+    for (auto it = feaConfMap.begin(); it != feaConfMap.end(); it++) {
+        printf("%s@%d,%d,%d||", it->first.c_str(), it->second.slot, it->second.start, it->second.dim);
+    }
+    puts("");
+}
+/*
 auto start = chrono::steady_clock::now();
-void tsInit(){
+void tsInit() {
     start = chrono::steady_clock::now();
 }
-void tsCost(const char* step){
+void tsCost(const char* step) {
     auto end = chrono::steady_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::chrono::duration<double> elapsed_seconds = end - start;
     cout << step << " elapsed time: " << elapsed_seconds.count() << "s\n";
 }
+
+std::string hashTestData;
+char* init(const char* config_path) { return nullptr; }
+char* process(char* workers, const char* value_str, size_t len) { return hashTestData.data(); };
+void release(char* mem) {};
+// for debug & test end
+///////////////////////////////////////////////////
+*/
  
 /*
 测试数据18M，10dim定长. 20次测试
@@ -80,18 +102,45 @@ union EmbedInfo {
 };
 */ 
 
+void printFloat(float* p, size_t len) {
+    printf("float %zd: ", len);
+    for (size_t i = 0; i < len; i++) {
+        printf("%f ", p[i]);
+    }
+    puts("");
+}
+
+
+int Feature2EmbeddingTest(char* testString, size_t testByte) {
+    printf("length size_t %zd int %zd long %zd long long %zd\n", sizeof(size_t), sizeof(int), sizeof(long), sizeof(long long));
+    cout << "Feature2EmbeddingTest: " << string(testString, testByte) << endl;
+    return 0;
+}
+
 int LoadModel(const char* fnHash, const char* fnEmbed) {
-    tsInit();
+    //tsInit();
     if (fnHash == nullptr || fnEmbed == nullptr) {
         printf("invalid parameter\n");
         return -3;
     }
-    if (!filesystem::exists(fnHash) || !filesystem::exists(fnEmbed)) {
-        printf("file [%s] or [%s] not exists.\n", fnHash, fnEmbed);
+
+    struct stat stat1, stat2;
+
+    auto r1 = stat(fnHash, &stat1);
+    auto r2 = stat(fnEmbed, &stat2);
+    if (r1 != 0 || r2 != 0) {
+        printf("stat file error %d %d\n", r1, r2);
         return -4;
     }
-    auto nHashByte = filesystem::file_size(fnHash);
-    auto nEmbedByte = filesystem::file_size(fnEmbed);
+     
+    auto nHashByte = stat1.st_size;
+    auto nEmbedByte = stat2.st_size;
+    if (nHashByte <= 0 || nEmbedByte <= 0) {
+        printf("stat length error %ld %ld\n", nHashByte, nEmbedByte);
+        return -5;
+    }
+
+
     ifstream fHash(fnHash, ios::binary | ios::in);
     if (!fHash.is_open()) {
         printf("open file %s error\n", fnHash);
@@ -106,29 +155,29 @@ int LoadModel(const char* fnHash, const char* fnEmbed) {
     auto nEmbed = nEmbedByte / dataLenEmbed;
     // check size
     if (nHash * dataLenHash != nHashByte || nEmbed * dataLenEmbed!= nEmbedByte) {
-        printf("%zd * %zd != %zd; %zd * %zd != %zd", nHash, dataLenHash, nHashByte,
+        printf("%zd * %zd != %ld; %zd * %zd != %ld", nHash, dataLenHash, nHashByte,
             nEmbed, dataLenEmbed, nEmbedByte);
-        printf("invalid file size: hash %zd embed %zd\n", nHashByte, nEmbedByte);
+        printf("invalid file size: hash %ld embed %ld\n", nHashByte, nEmbedByte);
         return -5;
     }
-    tsCost("size");
+    //tsCost("size");
 
     auto pHash = new HashInfo[nHash];
     auto pEmbed = new float[nEmbed];
     unique_ptr<HashInfo> upHash(pHash);
-    tsCost("new data");
+    //tsCost("new data");
 
     if (!fHash.read((char*)pHash, nHashByte) || fHash.gcount()!=nHashByte){
-        printf("read %s %zd expect %zd\n", fnHash, fHash.gcount(), nHashByte);
+        printf("read %s %zd expect %ld\n", fnHash, fHash.gcount(), nHashByte);
         return -6;
     }
-    tsCost("read hash");
+    //tsCost("read hash");
 
     if (!fEmbed.read((char*)pEmbed, nEmbedByte) || fEmbed.gcount()!=nEmbedByte){
-        printf("read %s %zd expect %zd\n", fnEmbed, fEmbed.gcount(), nEmbedByte);
+        printf("read %s %zd expect %ld\n", fnEmbed, fEmbed.gcount(), nEmbedByte);
         return -6;
     }
-    tsCost("read embed");
+    //tsCost("read embed");
 
     auto pMap = new EmbedMap();
     pMap->embedMap.reserve(nHash);
@@ -145,41 +194,20 @@ int LoadModel(const char* fnHash, const char* fnEmbed) {
         pos += pHash[i].dim;
         if (i < 5) {
             printf("embed info: %lld %lld %lld+%lld:", pHash[i].id,pos, info.offset, info.length);
-            for (uint64_t i = 0; i < info.length; i++) {
-                printf(" %f",  *(pEmbed + info.offset + i));
-            }
-            puts("");
+            printFloat(pEmbed + info.offset, info.length); 
         }
     }
-    tsCost("parse");
+    //tsCost("parse");
     printf("load data total: %zd\n", nHash);
-    atomic_store(&g_spEmbedMap, spMap);
-    tsCost("store"); 
+    g_mtxEmbedMap.lock();
+    g_spEmbedMap = spMap;
+    g_mtxEmbedMap.unlock(); 
+    //tsCost("store"); 
     return 0;
 }
 
 
-struct FeaConf {
-    int slot;
-    int start;
-    int dim;
-};
 
-void printFeaConf(unordered_map<string, FeaConf>& feaConfMap) {
-    printf("feaConf %zd: ", feaConfMap.size());
-    for (auto it = feaConfMap.begin(); it != feaConfMap.end(); it++) {
-        printf("%s@%d,%d,%d||", it->first.c_str(), it->second.slot, it->second.start, it->second.dim);
-    }
-    puts("");
-}
-
-void printFloat(float* p, size_t len) {
-    printf("float %zd: ", len);
-    for (size_t i = 0; i < len; i++) {
-        printf("%f ", p[i]);
-    }
-    puts("");
-}
 
 void parseFeaConf(char* confStr, size_t confByte, unordered_map<string, FeaConf>& feaConfMap) {
     // key@slot,start,dim||
@@ -256,8 +284,8 @@ void calcEmbed(char* pLast,  string& key,float* const pOutEmbed, unordered_map<s
         for (uint64_t i = 0; i < info.length; i++) {
             pOutEmbed[conf.start + i] += pHashEmbed[i];
         }
-        printf("key %s hash %zd: embed",key.data(), hash);
-        printFloat(pOutEmbed + conf.start, conf.dim);
+        //printf("key %s hash %zd: embed",key.data(), hash);
+        //printFloat(pOutEmbed + conf.start, conf.dim);
     }
     else {
         printf("invalid conf key %s\n", key.data());
@@ -310,13 +338,57 @@ int Feature2Embedding(char* workers, char* feaConf, size_t feaConfByte,
     const char* ucFea, size_t ucFeaByte,
     const char** ppItemFeas, size_t* pItemFeaBytes, size_t itemCount,
     float** ppEmbeds, size_t embedSize){
+    
+    /*
+    //////////////////////////////////////////////////////////////////////
+    // for debug begin
+    printf("debug Feature2Embedding wrk %p pconf %p bconf %zd puc %p buc %zd ppi %p pil %p ic %zd ppe %p es %zd\n", workers, feaConf, feaConfByte,
+        ucFea, ucFeaByte, ppItemFeas, pItemFeaBytes, itemCount, ppEmbeds, embedSize); 
+
+    //cout << "workers " << workers << endl;
+    cout << "feaconf " << string(feaConf, feaConfByte) << endl;
+    cout << "ucFea   " << string(ucFea, ucFeaByte) << endl;
+    cout << "ppItems " << itemCount << endl;
+    for (size_t i = 0; i < itemCount; i++) {
+        printf("item %zd len %zd %p %s\n", i, pItemFeaBytes[i], ppItemFeas[i], string(ppItemFeas[i], pItemFeaBytes[i]).data());
+    }
+    cout << "embedSize " << embedSize << endl;
+    puts("debug done other");
+    printf("deref ppEmbeds %p", *ppEmbeds);
+    for (size_t i = 0; i < itemCount; i++) {
+        puts("float ptr try");
+        float* p = ppEmbeds[i];
+        for (size_t j = 0; j < embedSize; j++) {
+            ppEmbeds[i][j] = 1.0 / j;
+        }
+        puts("float ptr got");
+        printf("ppEmbed %zd %p\n", i, p);
+    }
+    puts("debug done float ptr");
+    fflush(stdout);
+    //return 0;
+    // for debug end
+    //////////////////////////////////////////////////////////////////////
+    */
+
+
     // len(itemFeas)==len(ppEmbeds)==itemCount
     // feaConf + feaConfByte -> feaConfMap
     unordered_map<string, FeaConf> feaConfMap;
-    parseFeaConf(feaConf, feaConfByte, feaConfMap);
-    printFeaConf(feaConfMap);
-
-    auto spEmbedMap = atomic_load(&g_spEmbedMap);
+    auto pfeaConf = new char[feaConfByte+1];
+    pfeaConf[feaConfByte] = 0;
+    memcpy(pfeaConf, feaConf, feaConfByte);
+    parseFeaConf(pfeaConf, feaConfByte, feaConfMap);
+    delete pfeaConf;
+    if (feaConfMap.size() == 0) {
+        cout << "invalid feaconf: " << string(feaConf, feaConfByte) << endl;
+        return -1;
+    }
+    //printFeaConf(feaConfMap); // debug
+    g_mtxEmbedMap.lock();
+    auto spEmbedMap = g_spEmbedMap;
+    g_mtxEmbedMap.unlock();
+    
     auto pEmbedMap = spEmbedMap.get();
     if (pEmbedMap->embedMap.size() == 0 || pEmbedMap->pEmbed == nullptr) {
         return -1;
@@ -328,9 +400,8 @@ int Feature2Embedding(char* workers, char* feaConf, size_t feaConfByte,
     unique_ptr<float> upucEmbed(pucEmbed);
     auto ucHashStr = process(workers, ucFea, ucFeaByte);
     hash2Embed(ucHashStr, pucEmbed, feaConfMap, pEmbedMap);
-    release(ucHashStr);
-    printFloat(pucEmbed, embedSize);
-    return 0;
+    //printFloat(pucEmbed, embedSize); // debug
+    release(ucHashStr); 
     for (size_t i = 0; i < itemCount; i++) {
         memcpy(ppEmbeds[i], pucEmbed, embedSize * sizeof(float));
     }
@@ -343,6 +414,7 @@ int Feature2Embedding(char* workers, char* feaConf, size_t feaConfByte,
     
     return 0;
 }
+ 
 
 void loadTest(){
     auto start = chrono::steady_clock::now();
@@ -351,8 +423,10 @@ void loadTest(){
     auto end = chrono::steady_clock::now();
     chrono::duration<double> elapsed_seconds = end-start;
     cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
-
-    auto sp = atomic_load(&g_spEmbedMap);
+     
+    g_mtxEmbedMap.lock();
+    auto sp = g_spEmbedMap;
+    g_mtxEmbedMap.unlock();
     //auto spEmbed = atomic_load(&g_spEmbed);
     auto pEmbed = sp->pEmbed;
     vector<uint64_t> v{ 260604297723074114,158926864742793154,173875697360607746 };
@@ -374,11 +448,19 @@ void testParser(void) {
 
     loadTest();
     string ucFea = "u_st_2_device_os@-1||u_bh_5_n_seq_listclick_cat2@14944,15088,10113,16785,11482,15480,10103,15896,10637,15480,15896,22473,10120,15896,10113,15407,15332,15312,15088,16189,15332,15332,10113,17119,10120,15480,10129,11043,11482,15924,11928,15312,15896,21834,15924,10120,11928,10130,15896,10130,22473,15195,15332,13533,22473,22473,10153,12118||u_bh_6_n_listpay_10@-1||u_st_2_city_id@0||u_st_6_favo_cat_2_10@15332,16230,15896,10120,15480,15924,15312,11928,10130,10113||u_bh_5_n_listclick_20@40157351,31933026,4016937,22689247,2365011,19456034,418313,40170240,40679852,1876809,26614490,40140126,16411124,1357226,40636304,40580251,12968551,12084085,31933026,40424926||u_bh_5_n_listfavorite@40157351,4016937,22689247,2365011,418313,40679852,1876809,26614490,40140126,16411124,40636304,40580251,12968551,12084085,31933026,40424926,7710778,139700,1072768,35958764,38312698,19456034,40533746,12027901,35802054,39886145,19941082,24395637,36913803,36338427,38816939,10716459,40356343,1357226,1866545,127262,40400808,116528,1917962,1672170,40421409||c_2_version_scene@2.6.8|10||u_st_2_sex@2||u_st_2_province_id@0||u_st_2_off_prf_src_city_off@-1||u_bh_5_n_seq_listpay_mall_id@-1||u_st_2_off_prf_src_province_off@山西||u_st_2_off_prf_is_member_off@-1||c_2_version_position@2.6.8|nav.1.精选.1||u_bh_5_n_listpay@-1||u_bh_5_n_seq_listpay_cat2@-1||u_st_3_off_prf_orders_count_coins_off@-1||u_bh_5_n_listclick@40157351,31933026,4016937,22689247,2365011,19456034,418313,40170240,40679852,1876809,26614490,40140126,16411124,1357226,40636304,40580251,12968551,12084085,31933026,40424926,7710778,139700,1072768,35958764,38312698,19456034,40533746,12027901,35802054,39886145,19941082,24395637,1357226,36913803,36338427,38816939,10716459,40356343,1357226,1866545,127262,40400808,116528,1917962,1672170,1672170,40421409,40334516||u_bh_5_n_seq_listclick_mall_id@105158,134573,117388,130210,114428,130711,103916,110134,120019,103836,103713,107648,103252,102862,135041,101903,113686,123474,134573,135318,105089,103284,104827,109395,103874,130711,106506,126948,136462,103712,131397,132978,102862,134447,102200,103252,119839,129896,102862,101674,102385,117348,102548,101820,102385,102385,102455,101071";
-    hashTestData = "u_st_2_off_prf_src_city_off@118795289206520094||u_bh_6_n_listpay_10@122442599700481609||c_2_version_position@46555936683421268||u_st_2_sex@79062501243293965||u_bh_5_n_seq_listpay_mall_id@210357862714473155||u_st_2_off_prf_src_province_off@151062721052127069||u_bh_5_n_seq_listpay_cat2@151609508597136212||u_st_2_city_id@46257627028003804||u_st_3_off_prf_orders_count_coins_off@109937187363673703||u_bh_5_n_seq_listclick_cat2@193395728114488319,220131855993435027,200182362236798127,212569083487218952,153964268801135833,123463884677286337,123463884677286337,253852479431575875,159265151190133402,17243654802365228,270171410513982004,200182362236798127,221986263303726257,60734412951980294,185330276656109257,199555371111923054,281898876839761958,253852479431575875,159265151190133402,199555371111923054,253852479431575875,67399655798418601,137255200005932742,253852479431575875,221986263303726257,104833020103483345,190826376082664704,231159043808186848,200182362236798127,251745873113347995,190826376082664704,190826376082664704,221986263303726257,132520154825740585,137255200005932742,199555371111923054,243868450892236805,41244191640727014,185330276656109257,69432244613679284,128369147875026118,231159043808186848,253852479431575875,226451274695375891,69432244613679284,137255200005932742,128369147875026118,152759536771767924,253852479431575875,152759536771767924,67399655798418601,94702419447291899,190826376082664704,58347318808646329,67399655798418601,67399655798418601,64250502146506519,121486731072856230||u_bh_5_n_seq_listclick_mall_id@5466152184861223,262133112497187906,249305238659806661,104515475647735198,104515475647735198,14179737183473622,14179737183473622,250164199774510115,152035299983491389,120435172096732855,78994124772867377,249305238659806661,27462552805538126,173648145038632277,225937790087945343,73023683519651050,243087286445733894,39445424120754852,152035299983491389,139944015693534771,270415744892524676,148346341690688945,185603491394034721,250164199774510115,43255050461068318,112022352199512150,46454858414730959,288045502253399266,249305238659806661,66336424447992933,126591108635087447,169217778876590307,267227679630209824,143792609811639817,117509776182695364,73023683519651050,181374106662815088,116329242115863825,47990272363819379,71731953651871566,66113490328116554,165620021211927854,250164199774510115,66851128583977382,97503825239893577,185603491394034721,38003148975178642,254452755139762129,250164199774510115,73256739660808257,132622071973459106,181799683478299197,184258597453904078,222110023457882439,132622071973459106,132622071973459106,93602339739254280,110113688508012688||u_bh_5_n_listclick_20@5208777079029462,27192623611425936,187755862847238263,219449139371930640,21913620155629987,231678087191393492,231678087191393492,190253618720598465,202877935163916143,20296415528383948,286512311323843847,187755862847238263,151894816432639809,210112195895543891,241926306391663437,235998545503406452,179786210854940123,99907991367671359,202877935163916143,109181865555787971||u_bh_5_n_listfavorite@140652392377039450,241644955498269193,183899012221661053,47196663787200988,19563987478628568,78583476089673461,77229946750228386,249453188406854738,231935496944497669,100267553691945806,132236875141634445,245205512966042739,107960522324331958,7050902531670033,86412266664848083,228178622341308499,62425242569796421,276756364267559952,283191908980581971,5705339925252030,211563322438397074,250343129496243858,3656833195688228,96354392971690063,88245009442085381,45449738549390577,248005091316007264,129294830813238871,17403810732568498,176706563134862573,127135592236746191,260369975758572294,15551514731149396,229581098232457732,248612693183253238,114358570252768703,20195411063612543,184917970335932096,252455833285968414,45369859672678146,215485596074876768,275408900075793809,79324503408382018,80721279934148117,26162293357255962,70074418859739473,45011174467288415||u_st_2_province_id@71688781301437041||u_bh_5_n_listpay@248635331116441474||u_st_2_device_os@181323986436721460||u_bh_5_n_listclick@144035643630423780,270545303299938171,98921565244526306,75209287914712985,221069015705710112,241987286907566767,241987286907566767,283413466454535940,38245363938236544,113807375209714317,153765323349470213,98921565244526306,262710996663638518,16424845369522462,285396724262726332,175033614329534967,37023343684090144,28153356797519303,38245363938236544,258528169976544270,28219426168708060,198344580402797505,152442042145551594,283413466454535940,8452129709515264,229646263307094714,92234533191021918,146876961482626708,98921565244526306,208787788803195722,44910884904004140,222366741286984385,84041776678625347,82702612429244786,254486468725172433,175033614329534967,195985621572759918,243557799626833665,228091835953739425,6729478541308305,158638714094140585,134588405854802245,283413466454535940,106396981290667299,245112789832083366,150724564597080635,142568081209858744,53416493402787383,283413466454535940,225180862621084019,118671697671481953,84583957717603244,24153452383138946,33782821437057453,158705663808541330,158705663808541330,70909056901835975,285616647300455148||c_2_version_scene@239820612103555453||u_st_6_favo_cat_2_10@9986053795315550,79481267400733497,159139594048756553,234377138508395687,48029159566311462,220751358057322301,193680139331849368,39680340439667852,37487119045546262,155694586804248916||u_st_2_off_prf_is_member_off@91424602149143916";
+    //hashTestData = "u_st_2_off_prf_src_city_off@118795289206520094||u_bh_6_n_listpay_10@122442599700481609||c_2_version_position@46555936683421268||u_st_2_sex@79062501243293965||u_bh_5_n_seq_listpay_mall_id@210357862714473155||u_st_2_off_prf_src_province_off@151062721052127069||u_bh_5_n_seq_listpay_cat2@151609508597136212||u_st_2_city_id@46257627028003804||u_st_3_off_prf_orders_count_coins_off@109937187363673703||u_bh_5_n_seq_listclick_cat2@193395728114488319,220131855993435027,200182362236798127,212569083487218952,153964268801135833,123463884677286337,123463884677286337,253852479431575875,159265151190133402,17243654802365228,270171410513982004,200182362236798127,221986263303726257,60734412951980294,185330276656109257,199555371111923054,281898876839761958,253852479431575875,159265151190133402,199555371111923054,253852479431575875,67399655798418601,137255200005932742,253852479431575875,221986263303726257,104833020103483345,190826376082664704,231159043808186848,200182362236798127,251745873113347995,190826376082664704,190826376082664704,221986263303726257,132520154825740585,137255200005932742,199555371111923054,243868450892236805,41244191640727014,185330276656109257,69432244613679284,128369147875026118,231159043808186848,253852479431575875,226451274695375891,69432244613679284,137255200005932742,128369147875026118,152759536771767924,253852479431575875,152759536771767924,67399655798418601,94702419447291899,190826376082664704,58347318808646329,67399655798418601,67399655798418601,64250502146506519,121486731072856230||u_bh_5_n_seq_listclick_mall_id@5466152184861223,262133112497187906,249305238659806661,104515475647735198,104515475647735198,14179737183473622,14179737183473622,250164199774510115,152035299983491389,120435172096732855,78994124772867377,249305238659806661,27462552805538126,173648145038632277,225937790087945343,73023683519651050,243087286445733894,39445424120754852,152035299983491389,139944015693534771,270415744892524676,148346341690688945,185603491394034721,250164199774510115,43255050461068318,112022352199512150,46454858414730959,288045502253399266,249305238659806661,66336424447992933,126591108635087447,169217778876590307,267227679630209824,143792609811639817,117509776182695364,73023683519651050,181374106662815088,116329242115863825,47990272363819379,71731953651871566,66113490328116554,165620021211927854,250164199774510115,66851128583977382,97503825239893577,185603491394034721,38003148975178642,254452755139762129,250164199774510115,73256739660808257,132622071973459106,181799683478299197,184258597453904078,222110023457882439,132622071973459106,132622071973459106,93602339739254280,110113688508012688||u_bh_5_n_listclick_20@5208777079029462,27192623611425936,187755862847238263,219449139371930640,21913620155629987,231678087191393492,231678087191393492,190253618720598465,202877935163916143,20296415528383948,286512311323843847,187755862847238263,151894816432639809,210112195895543891,241926306391663437,235998545503406452,179786210854940123,99907991367671359,202877935163916143,109181865555787971||u_bh_5_n_listfavorite@140652392377039450,241644955498269193,183899012221661053,47196663787200988,19563987478628568,78583476089673461,77229946750228386,249453188406854738,231935496944497669,100267553691945806,132236875141634445,245205512966042739,107960522324331958,7050902531670033,86412266664848083,228178622341308499,62425242569796421,276756364267559952,283191908980581971,5705339925252030,211563322438397074,250343129496243858,3656833195688228,96354392971690063,88245009442085381,45449738549390577,248005091316007264,129294830813238871,17403810732568498,176706563134862573,127135592236746191,260369975758572294,15551514731149396,229581098232457732,248612693183253238,114358570252768703,20195411063612543,184917970335932096,252455833285968414,45369859672678146,215485596074876768,275408900075793809,79324503408382018,80721279934148117,26162293357255962,70074418859739473,45011174467288415||u_st_2_province_id@71688781301437041||u_bh_5_n_listpay@248635331116441474||u_st_2_device_os@181323986436721460||u_bh_5_n_listclick@144035643630423780,270545303299938171,98921565244526306,75209287914712985,221069015705710112,241987286907566767,241987286907566767,283413466454535940,38245363938236544,113807375209714317,153765323349470213,98921565244526306,262710996663638518,16424845369522462,285396724262726332,175033614329534967,37023343684090144,28153356797519303,38245363938236544,258528169976544270,28219426168708060,198344580402797505,152442042145551594,283413466454535940,8452129709515264,229646263307094714,92234533191021918,146876961482626708,98921565244526306,208787788803195722,44910884904004140,222366741286984385,84041776678625347,82702612429244786,254486468725172433,175033614329534967,195985621572759918,243557799626833665,228091835953739425,6729478541308305,158638714094140585,134588405854802245,283413466454535940,106396981290667299,245112789832083366,150724564597080635,142568081209858744,53416493402787383,283413466454535940,225180862621084019,118671697671481953,84583957717603244,24153452383138946,33782821437057453,158705663808541330,158705663808541330,70909056901835975,285616647300455148||c_2_version_scene@239820612103555453||u_st_6_favo_cat_2_10@9986053795315550,79481267400733497,159139594048756553,234377138508395687,48029159566311462,220751358057322301,193680139331849368,39680340439667852,37487119045546262,155694586804248916||u_st_2_off_prf_is_member_off@91424602149143916";
     string sConf = "c_2_version_position@0,0,10||c_2_version_scene@1,10,10||i_dy_3_default_totalclick@2,20,10||i_dy_3_default_totalpay@3,30,10||i_st_2_cat_id_1@4,40,10||i_st_2_cat_id_2@5,50,10||i_st_2_cat_id_3@6,60,10||i_st_2_iid@7,70,10||i_st_2_is_refundable@8,80,10||i_st_2_mall_id@9,90,10||i_st_3_min_normal_price@10,100,10||i_st_5_item_title_words@11,110,10||u_bh_5_n_listclick@12,120,10||u_bh_5_n_listclick_20@13,130,10||u_bh_5_n_listfavorite@14,140,10||u_bh_5_n_listpay@15,150,10||u_bh_5_n_seq_listclick_cat2@16,160,10||u_bh_5_n_seq_listclick_mall_id@17,170,10||u_bh_5_n_seq_listpay_cat2@18,180,10||u_bh_5_n_seq_listpay_mall_id@19,190,10||u_bh_6_n_listpay_10@20,200,10||u_st_2_city_id@21,210,10||u_st_2_device_os@22,220,10||u_st_2_off_prf_is_member_off@23,230,10||u_st_2_off_prf_src_city_off@24,240,10||u_st_2_off_prf_src_province_off@25,250,10||u_st_2_province_id@26,260,10||u_st_2_sex@27,270,10||u_st_3_off_prf_orders_count_coins_off@28,280,10||u_st_6_favo_cat_2_10@29,290,10";
-    auto ret = Feature2Embedding(nullptr, sConf.data(), sConf.length(),
+    auto ret = Feature2Embedding(nullptr, (char*)sConf.data(), sConf.length(),
         ucFea.data(), ucFea.length(), 0, 0, 0, 0, 300);
     cout << "Feature2Embedding ret " << ret << endl;
+}
+
+void testHash() {
+    string fea = "u_bh_5_n_seq_listclick_cat2@15526,12242,12242,16896,16090,22120,11266,11266,15219,21823,15526,16270,15151,13654,11445,16320,16211,15219,15032,15636,10628,10628,16270,16270,16270,12177,16211,22462,15526,21823,16124,10088,11482,16090,15977,21823,21823,10628,21823,21823,21823,21823,15407,10032,10024,10088,10088,18438,18438,16017,16017,10088,10628,11015,10949,10949,10547,16896,10113,10113,10113,10113,10113,10113,10113,10113,10113,10113,10113,10113,15896,20439,20439,13654,10024,22473,10151,16199,16199,11190,11058,11445,11068,11068,18438,11283,10628,21826,20817,15526,18438,10949,10063,11615,15924,15750,21834,21834,15924,15924,15750,22132,10132,10132,10132,18438,18438,15924,15219,16270,22473,15750,15750,15750,16252,15247";
+
+    auto p = init("feature_config.json");
+    auto r = process(p, fea.data(), fea.length());
+    cout <<"process result: " << r << endl;
 }
 
 void BlankTest() {   

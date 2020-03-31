@@ -16,6 +16,9 @@
     <Filter Include="main">
       <UniqueIdentifier>{3ab051cf-3d86-466d-9b97-0c54f02d0cdb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="说明文件">
+      <UniqueIdentifier>{cafaf36b-27cf-4a6a-bb99-50be2c4e0712}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PredefinedMacro.cpp">
@@ -93,9 +96,6 @@
     <ClCompile Include="basic.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="BlankTest.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="atomic_map.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -103,6 +103,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="fstream.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gcc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="string.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,7 +125,13 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="unordered_map.txt">
-      <Filter>源文件</Filter>
+      <Filter>说明文件</Filter>
+    </Text>
+    <Text Include="BlankTest2.txt">
+      <Filter>说明文件</Filter>
+    </Text>
+    <Text Include="BlankTest3.txt">
+      <Filter>说明文件</Filter>
     </Text>
   </ItemGroup>
 </Project>
