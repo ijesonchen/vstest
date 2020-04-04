@@ -8,7 +8,8 @@ package main
 5. b []byte -> cgo void*
    unsafe.Pointer p = C.CBytes(b) -> cgo void*
    会在C堆上分配内存。使用完成后需要调用C.free(p)
-6. cgo的指针传递
+6. cgo的指针传递:
+	 如果定义相同内存布局的结构体，通过unsafe.Pointer -> void* 可直接通过指针访问。
    https://studygolang.com/articles/3113 Go和C如何共享内存资源
    https://segmentfault.com/a/1190000013590585 cgo的指针传递
    简单来说，go分配的内存，不能通过指针传递给cgo。包括go调用cgo，或者cgo调用go时返回。
@@ -36,16 +37,7 @@ package main
     反向也是类似的流程。并且禁止直接传递go内存到c中。因为，为了安全建议互相不要直接操作对方的内存。
     短期测试，直接传递go内存给c操作实际中可行，未发现程序panic异常，但未验证内存数据正确性，并且存在风险。
 7. 从测试来看，go中的float32和c中的float数值表示方式一致。
-8. 可以使用runtime.SetFinalizer来管理资源。示例代码可以参考
-   https://github.com/tensorflow/tensorflow.git
-	tensorflow/go/saved_model.go:LoadSavedModel  资源申请，SetFinalizer
-	tensorflow/go/session.go: (s *Session) Run   资源使用，KeepAlive
-	tensorflow/go/session.go: (s *Session) Close 资源释放，并发处理 //这部分可以简化
-
-   关键词 Go语言资源自动回收技术
-   https://zhuanlan.zhihu.com/p/76504936 使用runtime.SetFinalizer优雅关闭后台goroutine
-   https://mlog.club/article/90611  垃圾收集和cgo
-   https://juejin.im/post/5d74783bf265da03ca11923d 深入理解Go-runtime.SetFinalizer原理剖析
+8. 可以使用runtime.SetFinalizer来管理资源。参见finalizer.go
 
 */
 
@@ -161,6 +153,16 @@ void TestppFloat(float** p){
 
     ObjectInfo* LoadObject(int x);
     void ReleaseObject(ObjectInfo* p);
+
+	typedef struct CPtr{
+		 unsigned long p;
+		 unsigned long l;
+	}CPtr;
+
+	void PrintPtr(void* p){
+	CPtr* pp = (CPtr*)p;
+	printf("ptr %lu %lu\n",pp->p, pp->l);
+}
 */
 import "C"
 
@@ -288,8 +290,21 @@ func testCRes() {
 	C.ReleaseObject(p)
 }
 
+type CPtr struct {
+	ptr uint64
+	siz uint64
+}
+
+func testStruct() {
+	var ptr CPtr
+	ptr.ptr = 1111
+	ptr.siz = 2222
+	p := unsafe.Pointer(&ptr)
+	C.PrintPtr(p)
+}
+
 func testCgo() {
-	testCRes()
+	testStruct()
 	return
 	testFloatAA()
 	return

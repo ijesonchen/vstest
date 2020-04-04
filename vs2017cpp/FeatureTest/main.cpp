@@ -6,10 +6,13 @@
 		#include <vld.h>
 	#endif // _DEBUG 
 #endif // WIN32 
-  
+
+void debug_print(int& v) {
+	printf("%d, ", v);
+}
 using namespace std;
 int main(void) {
-	StringTest();
+	TestMap();
  	auto p = new char; // for memory leak detect
  	cout << "enter to continue" << endl;
 	string s;

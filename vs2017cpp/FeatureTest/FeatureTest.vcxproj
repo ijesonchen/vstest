@@ -172,10 +172,12 @@
     <ClCompile Include="atomic_map.cpp" />
     <ClCompile Include="basic.cpp" />
     <ClCompile Include="BitField.cpp" />
+    <ClCompile Include="BlankTest.cpp" />
     <ClCompile Include="callableTest.cpp" />
     <ClCompile Include="ConsoleWindowControlTest.cpp" />
     <ClCompile Include="fstream.cpp" />
     <ClCompile Include="gcc.cpp" />
+    <ClCompile Include="map.cpp" />
     <ClCompile Include="string.cpp" />
     <ClCompile Include="tailRecur.cpp" />
     <ClCompile Include="TimeTest.cpp" />

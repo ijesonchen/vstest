@@ -111,6 +111,12 @@
     <ClCompile Include="string.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BlankTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="map.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

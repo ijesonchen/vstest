@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory>
+#include <unistd.h>
 #include "cgo.h"
 
 struct ObjectInfo{
@@ -10,7 +11,7 @@ struct ObjectInfo{
         printf("object ctor >>>> %d\n",x);
     }
     ~ObjectInfo(){printf("object dtor <<<< %d\n",x);};
-private:
+
     int x;
 };
 
@@ -19,5 +20,9 @@ ObjectInfo* LoadObject(int x){
 }
 
 void ReleaseObject(ObjectInfo* p){
+    printf("enter ReleaseObject %d\n", p->x);
+    sleep(1);
+    printf("awake ReleaseObject %d\n", p->x);
     delete  p;
+    printf("leave ReleaseObject %d\n", p->x);
 }

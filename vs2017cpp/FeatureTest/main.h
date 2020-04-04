@@ -25,5 +25,6 @@ void AtomicRaiiTest(void);
 void BlankTest(void);
 void FstreamTest(void);
 void StringTest(void);
+void TestMap(void);
 
 #include <numeric>
