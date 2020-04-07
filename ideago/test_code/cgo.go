@@ -44,6 +44,7 @@ package main
 /*
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 typedef long long int int64;
 
 void Print(char* s){
@@ -155,13 +156,13 @@ void TestppFloat(float** p){
     void ReleaseObject(ObjectInfo* p);
 
 	typedef struct CPtr{
-		 unsigned long p;
-		 unsigned long l;
+		 char* p;
+		 uint64_t l;
 	}CPtr;
 
 	void PrintPtr(void* p){
 	CPtr* pp = (CPtr*)p;
-	printf("ptr %lu %lu\n",pp->p, pp->l);
+	printf("ptr %p %llu\n",pp->p, pp->l);
 }
 */
 import "C"
