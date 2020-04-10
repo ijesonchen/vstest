@@ -19,5 +19,5 @@ type Response struct {
 func main() {
 	log.Println("ENTER MAIN")
 	defer log.Println("LEAVE MAIN")
-	testCgo()
+	testString2Cstring()
 }

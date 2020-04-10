@@ -19,6 +19,11 @@ package main
      unsafe.Pointer(&b)不可以可以传递，因为是go memory
      也可以转换为SliceHeader,取Data（uintptr），然后转换为unsafe.Pointer:
      p := (*reflect.SliceHeader)(unsafe.Pointer(&b)), unsafe.Pointer(p.Data) -> cgo void*
+     结构体 d // 必须先转成uintptr变量。然后再次转成unsafe.Pointer。不能使用一条语句，否则会被go检查到
+       C.callvoidp(unsafe.Pointer(uintptr(unsafe.Pointer(&d))) // 会panic: runtime error: cgo argument has Go pointer to Go pointer
+     正确：
+       pd = uintptr(unsafe.Pointer(&d))
+       C.callvoidp(unsafe.Pointer(pd))
    1) Go调用C Code时，Go传递给C Code的Go指针所指的Go Memory中不能包含任何指向Go Memory的Pointer。否则会出现panic
 	panic: runtime error: cgo argument has Go pointer to Go pointer
 	go 1.13.5 函数runtime/cgocall.go: cgoCheckArg中注释：

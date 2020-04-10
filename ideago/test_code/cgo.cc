@@ -2,7 +2,12 @@
 #include <stdlib.h>
 #include <memory>
 #include <unistd.h>
+#include <iostream>
 #include "cgo.h"
+
+void testf(void){
+  std::cout << "test"<<std::endl;
+}
 
 struct ObjectInfo{
 

@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"reflect"
 	"strconv"
+	"unsafe"
 )
 
 /*
@@ -12,8 +15,17 @@ import (
 */
 
 func testSlice() {
-	testFillSlice1()
-	testFillSlice2()
+	testString2Cstring()
+}
+
+func testString2Cstring() {
+	s := fmt.Sprintf("test")
+	buf := append([]byte(s), 0)
+	p := (*reflect.SliceHeader)(unsafe.Pointer(&buf))
+	log.Printf("%x %d %d %s", p.Data, p.Len, len(s), buf)
+	for _, b := range buf {
+		fmt.Printf("%x ", b)
+	}
 }
 
 func testFillSlice1() {
