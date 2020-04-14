@@ -82,7 +82,18 @@ func testStringArray2() {
 	C.printStringArray(C.ulong(pa.Data), C.ulong(5), C.ulong(pa.Len*2))
 }
 
+func testStringNull() {
+	var s string
+	p := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	log.Println("nil: ", p.Data, p.Len)
+	s = ""
+	p = (*reflect.StringHeader)(unsafe.Pointer(&s))
+	log.Println("blank: ", p.Data, p.Len)
+}
+
 func testString() {
+	log.Println("===> testStringNull")
+	testStringNull()
 	log.Println("===> strAssign")
 	strAssign()
 	log.Println("===> testStringArray")

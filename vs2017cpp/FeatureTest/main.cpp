@@ -12,7 +12,7 @@ void debug_print(int& v) {
 }
 using namespace std;
 int main(void) {
-	TestMap();
+	StringTest();
  	auto p = new char; // for memory leak detect
  	cout << "enter to continue" << endl;
 	string s;

@@ -1,7 +1,10 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <iostream>
 #include <unordered_set>
+#include <time.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -29,7 +32,20 @@ void debug_print_map_kv(T& m) {
 	}
 }
 
+void TestMapOrder(void) {
+	int loop = 10;
+	srand(time(nullptr));
+	map<int, int> m;
+	for (int i = 0; i < loop; i++) {
+		m[rand()] = rand();
+	}
+	for (auto& it : m) {
+		cout << it.first << " " << it.second << endl;
+	}
+}
+
 void TestMap() {
+	TestMapOrder();
 	using WorkerMap = std::map<std::string, int>;
 
 	WorkerMap w;

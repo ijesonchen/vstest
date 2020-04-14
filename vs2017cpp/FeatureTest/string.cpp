@@ -11,7 +11,16 @@ using namespace std;
 2. (p, len)构造会拷贝内存。
 */
 
+void StringNull(void) {
+	char* p = nullptr;
+	int len = 0;
+	string s(p, len);
+	cout << s << endl;
+}
+
 void StringTest(void) {
+	StringNull();
+
 	int len = 16;
 	auto p = new char[len];
 	for (int i = 0; i < len; i++) {
