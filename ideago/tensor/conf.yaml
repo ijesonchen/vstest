@@ -1,0 +1,6 @@
+
+DataPath: ./data/zero.log
+
+TensorFlow:
+  ModPath: ./data
+  Output: tower_0_test/tower_0/Relu_1
