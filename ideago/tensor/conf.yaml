@@ -1,6 +1,6 @@
 
-DataPath: ./data/zero.log
+DataPath: ./data/dssm.log
 
 TensorFlow:
   ModPath: ./data
-  Output: tower_0_test/tower_0/Relu_1
+  Output: tower_0_test/tower_0/user_nn_l2_norm

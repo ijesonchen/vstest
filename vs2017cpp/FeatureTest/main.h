@@ -14,6 +14,7 @@ void LocaleTest(void);
 void CallableTest(void);
 void projschjThreadPoolTest(void);
 void LockTest(void);
+void ThreadPoolTest(void);
 void TestStructuredBindingsDeclaration(void);
 void TestRemoveIf(void);
 
@@ -26,5 +27,4 @@ void BlankTest(void);
 void FstreamTest(void);
 void StringTest(void);
 void TestMap(void);
-
-#include <numeric>
+void ChronoTest(void); 

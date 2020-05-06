@@ -207,12 +207,68 @@ void TestPassByRef(void)
 	{
 		i.join();
 	}
+} 
+
+struct ThreadCtx1 {
+	atomic_bool running = true;
+};
+
+void ThreadFunc1(ThreadCtx1* ctx) {
+	while (ctx->running)
+	{
+		this_thread::sleep_for(chrono::milliseconds(500));
+		cout << "ThreadFunc1 running" << endl;
+	}
+	cout << "ThreadFunc1 LEAVE" << endl;
 }
 
+void ThreadProp(void){
+	ThreadCtx1 ctx;
+	thread t1(ThreadFunc1, &ctx);
+
+	this_thread::sleep_for(chrono::seconds(2));
+	cout << "joinable: " << t1.joinable() << endl;
+
+	ctx.running = false;
+	this_thread::sleep_for(chrono::milliseconds(500));
+	cout << "joinable: " << t1.joinable() << endl;
+	t1.join();
+	// 线程必须join，否则抛异常
+}
+
+
+void ThreadFunc2(int id) { 
+	if (id % 1000 == 0) {
+		stringstream ss;
+		ss << "ThreadFunc2 LEAVE " << id << endl;
+		cout << ss.str();
+	}
+}
+
+void ThreadDetach(void) {
+	auto loop1 = 100;
+	auto loop2 = 100; 
+
+	auto start = chrono::steady_clock::now();
+	for (int i = 0; i < loop1; i++) {
+		vector<thread> v;
+		v.reserve(loop2);
+		for (int j = 0; j < loop2; j++) {
+			v.push_back(thread(ThreadFunc2, i * loop2 + j));
+		}
+		for (auto& t : v) {
+			t.join();
+		}
+	}
+	auto cost = chrono::steady_clock::now() - start;
+	cout << "total cost " << chrono::duration_cast<chrono::milliseconds>(cost).count() << endl;
+}
 void ThreadTest(void)
-{
-	TestPassByRef();
+{ 
+	ThreadDetach();
 	return;
+	ThreadProp();
+	TestPassByRef();
 	PromiseFutureTest();
 	YieldTest();
 	ThreadExceptionTest();

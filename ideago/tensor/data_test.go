@@ -6,16 +6,16 @@ import (
 )
 
 func Test_parseLogMsg(t *testing.T) {
-	msg := "check_point_feature: 1587091280694216153983 score 40566546 0.0038456554 [3.0879004 1.0358167]"
+	msg := "check_point_score: 111111111 2367092 0.001332 [0.03977116,0.0076476964]"
 	data, ok := parseLogMsg(msg)
 	if !ok {
 		t.Errorf("parseLogMsg() return false")
 	}
 	want := dnnData{
-		input: []float32{3.0879004, 1.0358167},
-		score: 0.0038456554,
-		req:   "1587091280694216153983",
-		doc:   "40566546",
+		input: []float32{0.03977116, 0.0076476964},
+		score: 0.001332,
+		req:   "111111111",
+		doc:   "2367092",
 	}
 
 	if !reflect.DeepEqual(want, data) {

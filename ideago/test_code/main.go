@@ -1,7 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
+	_ "net/http/pprof"
+	"reflect"
+	"unsafe"
 )
 
 func init() {
@@ -19,5 +24,18 @@ type Response struct {
 func main() {
 	log.Println("ENTER MAIN")
 	defer log.Println("LEAVE MAIN")
-	testString()
+	testStringSplitPart()
+
+	go func() {
+		log.Println(http.ListenAndServe("localhost:9999", nil))
+	}()
+
+	s := fmt.Sprintf("ttttt")
+	s1 := s
+	s2 := string([]byte(s))
+
+	pfn := func(p *string) uintptr {
+		return (*reflect.StringHeader)(unsafe.Pointer(p)).Data
+	}
+	log.Printf("%x %x %x", pfn(&s), pfn(&s1), pfn(&s2))
 }

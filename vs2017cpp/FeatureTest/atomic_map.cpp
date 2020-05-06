@@ -8,9 +8,7 @@ void AtomicMapTest();
 
 int g_nAtomicMapLen = 10;
 atomic<unordered_map<int, int>*> g_pAtomicMap;
-
-
-
+  
 void atomicMapLoad(int factor)
 {
 	int len = g_nAtomicMapLen;

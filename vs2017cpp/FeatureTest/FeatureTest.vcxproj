@@ -174,12 +174,14 @@
     <ClCompile Include="BitField.cpp" />
     <ClCompile Include="BlankTest.cpp" />
     <ClCompile Include="callableTest.cpp" />
+    <ClCompile Include="chrono.cpp" />
     <ClCompile Include="ConsoleWindowControlTest.cpp" />
     <ClCompile Include="fstream.cpp" />
     <ClCompile Include="gcc.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="string.cpp" />
     <ClCompile Include="tailRecur.cpp" />
+    <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="TimeTest.cpp" />
     <ClCompile Include="common.cpp" />
     <ClCompile Include="filesystem_test.cpp" />
@@ -201,6 +203,7 @@
     <ClCompile Include="atomic_raii.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="chrono.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="projschjThreadPool.h" />

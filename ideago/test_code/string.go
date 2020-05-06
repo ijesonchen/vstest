@@ -28,7 +28,8 @@ void printStr(char*p, uint64_t l){
 
 void printStringArray(uint64_t pi, uint64_t l, uint64_t siz){
 	struct GoStr* pgo = (struct GoStr*)(pi);
-	for (uint64_t i = 0; i < siz; i++){
+	uint64_t i = 0;
+	for (i = 0; i < siz; i++){
 		printStr(pgo[i].p, pgo[i].l);
 	}
 }
@@ -39,6 +40,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 	"unsafe"
 )
 
@@ -67,7 +69,8 @@ func testStringArray() {
 		strs[i*2+1] = fmt.Sprintf("val_%d", i)
 	}
 	pa := (*reflect.SliceHeader)(unsafe.Pointer(&strs))
-	C.printStringArray(C.ulong(pa.Data), C.ulong(5), C.ulong(pa.Len))
+	log.Println(pa)
+	//	C.printStringArray(C.ulonglong(pa.Data), C.ulonglong(5), C.ulonglong(pa.Len))
 }
 
 type StrArr [2]string
@@ -79,7 +82,8 @@ func testStringArray2() {
 		strs[i] = StrArr{fmt.Sprintf("key_%d", i), fmt.Sprintf("val_%d", i)}
 	}
 	pa := (*reflect.SliceHeader)(unsafe.Pointer(&strs))
-	C.printStringArray(C.ulong(pa.Data), C.ulong(5), C.ulong(pa.Len*2))
+	log.Println(pa)
+	//	C.printStringArray(C.ulonglong(pa.Data), C.ulonglong(5), C.ulonglong(pa.Len*2))
 }
 
 func testStringNull() {
@@ -89,6 +93,27 @@ func testStringNull() {
 	s = ""
 	p = (*reflect.StringHeader)(unsafe.Pointer(&s))
 	log.Println("blank: ", p.Data, p.Len)
+}
+
+func testIntArrJoin() {
+	ia := []int{1, 2, 3, 4, 5}
+	s1 := fmt.Sprint(ia)
+	log.Printf("%q", s1)
+	s2 := strings.Trim(s1, "[]")
+	log.Printf("%q", s2)
+	s3 := strings.Fields(s2) // or split
+	s4 := strings.Join(s3, ",")
+	log.Printf("%q", s4)
+
+	log.Printf("%q", strings.Trim(fmt.Sprint(ia), "[]"))
+}
+
+func testStringSplitPart() {
+	s := "check_point_user: 1587716566071467897194 k@v|-|..."
+	v := strings.Split(s, " ")
+	pos := strings.Index(s, v[1])
+	s2 := s[pos+len(v[1])+1:]
+	log.Printf("[%s]", s2)
 }
 
 func testString() {

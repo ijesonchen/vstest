@@ -32,9 +32,10 @@ func printModel(model *tf.SavedModel) (input, output string) { // 占位符为�
 	return
 }
 
-func printModelV2(model *tf.SavedModel) (input, output string) { // 占位符为输入 out的输出为无消费者
+func printModelV2(model *tf.SavedModel) (input, output string, layerNames []string) { // 占位符为输入 out的输出为无消费者
 	for i, op := range model.Graph.Operations() {
-		log.Printf("op %d t %q n %q in %d out %d dev %q", i, op.Type(), op.Name(), op.NumInputs(), op.NumOutputs(), op.Device())
+		layerNames = append(layerNames, op.Name())
+		log.Printf("op %d t %q n %q in %d out %d", i, op.Type(), op.Name(), op.NumInputs(), op.NumOutputs())
 		for j := 0; j < op.NumOutputs(); j++ {
 			out := op.Output(j)
 			name := out.Op.Name()
@@ -42,10 +43,39 @@ func printModelV2(model *tf.SavedModel) (input, output string) { // 占位符为
 			consumers := out.Consumers()
 			log.Printf("  %d %q %v %v %v", j, name, shape, err, consumers)
 			for k, consume := range consumers {
-				log.Printf("   consume %d %v", k, consume.DataType())
+				log.Printf("    consume %d %v", k, consume.Op.Name())
 			}
 
 		}
+	}
+	return
+}
+
+func getModelShape(model *tf.SavedModel, outputs []string) (shapes []int) {
+	shapeMap := make(map[string]int, len(outputs))
+	for _, o := range outputs {
+		shapeMap[o] = -1
+	}
+	for i, op := range model.Graph.Operations() {
+		//log.Printf("op %d t %q n %q in %d out %d dev %q", i, op.Type(), op.Name(), op.NumInputs(), op.NumOutputs(), op.Device())
+		for j := 0; j < op.NumOutputs(); j++ {
+			name := op.Output(j).Op.Name()
+			if _, ok := shapeMap[name]; ok {
+				shapes, err := op.Output(j).Shape().ToSlice()
+				if err != nil {
+					log.Printf("[%d]%q.[%d](%q) shape error %v", i, op.Name(), j, name, err)
+					continue
+				}
+				if len(shapes) != 2 || shapes[1] <= 0 {
+					log.Printf("[%d]%q.[%d](%q) shape invalid %v", i, op.Name(), j, name, shapes)
+					continue
+				}
+				shapeMap[name] = int(shapes[1])
+			}
+		}
+	}
+	for _, o := range outputs {
+		shapes = append(shapes, shapeMap[o])
 	}
 	return
 }

@@ -1,19 +1,22 @@
 #include <mutex>
 #include <shared_mutex>
-#include <thread>
-
+#include <thread> 
 #include <iostream>
 #include <cstdint>
 #include <string>
 #include <chrono>
 
 void LockTest(void);
+
+using namespace std;
+uint64_t UnixSec(void);
+uint64_t UnixNanoSec(void);
+string AppTime(void);
 //////////////////////////////////////////////////////////////////////////
 /*
 see "Note for STL thread support library" (note-stl-thread.md) on gitpages
 */
-
-using namespace std;
+ 
 
 // mutex & variables
 mutex mtx;
@@ -114,14 +117,14 @@ void WorkerThread(void)
 
 
 	// after the wait, we own the lock.
-	std::cout << "<<-- Worker thread is processing data and sleep 2 seconds.\n";
+	std::cout << AppTime() << "<<-- Worker thread is processing data and sleep 2 seconds.\n";
 	cvData += " after processing";
 	this_thread::sleep_for(chrono::seconds(2));
 
 
 	// Send data back to main()
 	processed = true;
-	std::cout << "<<-- Worker thread signals data processing completed\n";
+	std::cout << AppTime() << "<<-- Worker thread signals data processing completed\n";
 
 	// Manual unlocking is done before notifying, to avoid waking up
 	// the waiting thread only to block again (see notify_one for details)
@@ -131,7 +134,6 @@ void WorkerThread(void)
 
 void CVTest(void)
 {
-
 	std::thread worker(WorkerThread);
 
 	cvData = "Example data";
@@ -139,16 +141,16 @@ void CVTest(void)
 	{
 		std::lock_guard<std::mutex> lk(m);
 		ready = true;
-		std::cout << "-->> main() data = " << cvData << '\n';
-		std::cout << "-->> main() signals data ready for processing\n";
+		std::cout << AppTime() << "-->> main() data = " << cvData << '\n';
+		std::cout << AppTime() << "-->> main() signals data ready for processing\n";
 	}
 
 	{
 		std::lock_guard<std::mutex> lk(m);
 		cv.notify_one();
-		std::cout << "-->> main() notify_one but hold lock, sleep 2 seconds" << endl;
+		std::cout << AppTime() << "-->> main() notify_one but hold lock, sleep 2 seconds" << endl;
 		this_thread::sleep_for(chrono::seconds(2));
-		std::cout << "-->> main() release lock" << endl;
+		std::cout << AppTime() << "-->> main() release lock" << endl;
 	}
 
 	// wait for the worker
@@ -156,7 +158,7 @@ void CVTest(void)
 		std::unique_lock<std::mutex> lk(m);
 		cv.wait(lk, [] {return processed; });
 	}
-	std::cout << "-->> Back in main(), data = " << cvData << '\n';
+	std::cout << AppTime() << "-->> Back in main(), data = " << cvData << '\n';
 
 	worker.join();
 
@@ -174,56 +176,57 @@ void CVTest(void)
 void WorkerThreadNoPred(void)
 {
 	// Wait until main() sends data
-	std::cout << "<<-- Worker thread try lock...\n";
+	std::cout << AppTime() << "<<-- Worker thread try lock...\n";
 	std::unique_lock<std::mutex> lk(m);
-	std::cout << "<<-- Worker thread try wait...\n";
+	std::cout << AppTime() << "<<-- Worker thread try wait...\n";
 	cv.wait(lk);
 
 
 	// after the wait, we own the lock.
-	std::cout << "<<-- Worker thread is processing data and sleep 2 seconds, then unlock.\n";
+	std::cout << AppTime() << "<<-- Worker thread is processing data and sleep 2 seconds, then unlock.\n";
 	cvData += " after processing";
 	this_thread::sleep_for(chrono::seconds(2));
 
 	// Manual unlocking is done before notifying, to avoid waking up
 	// the waiting thread only to block again (see notify_one for details)
-	std::cout << "<<-- Worker thread unlock.\n";
+	std::cout << AppTime() << "<<-- Worker thread unlock.\n";
 	lk.unlock();
 
-	std::cout << "<<-- Worker thread sleep 2 seconds before notify_one\n";
+	std::cout << AppTime() << "<<-- Worker thread sleep 2 seconds before notify_one\n";
 	this_thread::sleep_for(chrono::seconds(2));
-	std::cout << "<<-- Worker thread notify_one\n";
+	std::cout << AppTime() << "<<-- Worker thread notify_one\n";
 	cv.notify_one();
 
-	std::cout << "<<-- Worker thread sleep 2 seconds before exit\n";
+	std::cout << AppTime() << "<<-- Worker thread sleep 2 seconds before exit\n";
 	this_thread::sleep_for(chrono::seconds(2));
-	std::cout << "<<-- Worker thread exited.\n";
+	std::cout << AppTime() << "<<-- Worker thread exited.\n";
 }
 
 void CVTestNoPred(void)
 {
 
 	std::thread worker(WorkerThreadNoPred);
+	this_thread::sleep_for(chrono::milliseconds(100));
 
 	cvData = "Example data";
 	// send data to the worker thread
-	std::cout << "-->> main() data = " << cvData << '\n';
-	std::cout << "-->> main() sleep 2 seconds" << endl;
+	std::cout << AppTime() << "-->> main() data = " << cvData << '\n';
+	std::cout << AppTime() << "-->> main() sleep 2 seconds" << endl;
 	this_thread::sleep_for(chrono::seconds(2));
-	std::cout << "-->> main() notify_one" << endl;
+	std::cout << AppTime() << "-->> main() notify_one" << endl;
 	cv.notify_one();
 
 
 	// wait for the worker
-	std::cout << "-->> main() try lock...\n";
+	std::cout << AppTime() << "-->> main() try lock...\n";
 	std::unique_lock<std::mutex> lk(m);
-	std::cout << "-->> main() try wait...\n";
+	std::cout << AppTime() << "-->> main() try wait...\n";
 	cv.wait(lk);
-	std::cout << "-->> Back in main(), data = " << cvData << '\n';
+	std::cout << AppTime() << "-->> Back in main(), data = " << cvData << '\n';
 
-	std::cout << "-->> main() wait worker thread to exit.\n";
+	std::cout << AppTime() << "-->> main() wait worker thread to exit.\n";
 	worker.join();
-	std::cout << "-->> main() exit.\n";
+	std::cout << AppTime() << "-->> main() exit.\n";
 
 	/*
 	// 理论结果 空行表示sleep，无空行部分可以认为是同时运行
@@ -280,9 +283,9 @@ void LockTest2(void)
 	(lock_guard<mutex>) mtx;
 	// right: local guard
 	lock_guard<mutex> g { mtx };
-	cout << "aaa" << endl;
+	cout << AppTime() << "aaa" << endl;
 	this_thread::sleep_for(chrono::seconds(3));
-	cout << "bbb" << endl;
+	cout << AppTime() << "bbb" << endl;
 }
 
 void LockTest(void)

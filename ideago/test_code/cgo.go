@@ -43,7 +43,10 @@ package main
     短期测试，直接传递go内存给c操作实际中可行，未发现程序panic异常，但未验证内存数据正确性，并且存在风险。
 7. 从测试来看，go中的float32和c中的float数值表示方式一致。
 8. 可以使用runtime.SetFinalizer来管理资源。参见finalizer.go
-
+9. 调用开销：每次调用消耗约50ns，一般可忽略不计。C.Add直接返回一个值。1M次循环，笔记本 75ms，服务器81ms。
+10. cgo调用不会阻塞gc。（go1.13.4/1.14.2)
+	C.NoReturn循环随机数，随机输出日志（表明存活）
+    testNoReturnGC启动两个线程，一个阻塞在C.NoReturn，一个每秒强制gc。观察gc输出不受影响（包括STW时间也很短）
 */
 
 /*
@@ -85,7 +88,8 @@ void PrintSlice(void* p){
 }
 
 void printFloat(float* p, size_t nLen){
-	for (size_t i=0; i<nLen;i++){
+	size_t i=0;
+	for (i=0; i<nLen;i++){
 		printf("%.12f ", p[i]);
 	}
 	puts("");
@@ -97,7 +101,8 @@ void ProcFloat(void* pv, long long nLen){
 	printf("input : ");
 	printFloat(p, nLen);
 	float d = 1;
-	for (size_t i=0; i<nLen;i++){
+	size_t i=0;
+	for (i=0; i<nLen;i++){
 		p[i]= d/3;
 		d = p[i];
 	}
@@ -135,10 +140,12 @@ int Feature2Embedding(char* workers, char* feaConf, uint64_t feaConfByte,
 	printf("Feature2Embedding =========>\n workers %s\n", workers);
 	feaConf[feaConfByte-1]=0;
 	printf("feaconf %s\n", feaConf);
-	for(size_t i=0;i<itemCount;i++){
+	size_t i = 0;
+	size_t j = 0;
+	for(i=0;i<itemCount;i++){
 		ppItemFeas[i][pItemFeaBytes[i]-1]=0;
 		printf("item %zd %s\n", i, ppItemFeas[i]);
-		for (size_t j = 0;j<embedSize;j++){
+		for (j=0;j<embedSize;j++){
 			//printf("==> %p %p\n", ppEmbeds, ppEmbeds[i]);
 			ppEmbeds[i][j] = 1.0/(i+j+1);
 		}
@@ -149,7 +156,8 @@ return 0;
 void TestppFloat(float** p){
 	printf("p %p\n", p);
     printf("deref %p\n", *p);
-	for(int i = 0; i < 10;i++){
+	int i = 0;
+	for(i = 0; i < 10;i++){
 		printf("pp %d %p\n", i, p[i]);
 	}
 }
@@ -169,6 +177,33 @@ void TestppFloat(float** p){
 	CPtr* pp = (CPtr*)p;
 	printf("ptr %p %llu\n",pp->p, pp->l);
 }
+
+typedef struct {
+	char *msg;
+} myStruct;
+void myFunc(myStruct *strct) {
+	printf("Hello %s!\n", strct->msg);
+}
+
+int gAdd = 1;
+int Add(int x){
+	return gAdd+x;
+}
+
+int NoReturn(int s){
+	srand(s);
+	long long x = 0;
+	while(1){
+		int y = rand();
+		if (y%1000==0){ x++;}
+		if (x%10000==0){
+			x++;
+			printf("===> live %lld\n", x);
+			fflush(stdout);
+		}
+	}
+	return x % 1000;
+}
 */
 import "C"
 
@@ -177,6 +212,9 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"runtime"
+	"sync"
+	"time"
 	"unsafe"
 )
 
@@ -309,8 +347,47 @@ func testStruct() {
 	C.PrintPtr(p)
 }
 
+func testCgo2() {
+	val := ([]byte)("world!")
+	msg := C.myStruct{(*C.char)(unsafe.Pointer(&val[0]))}
+	C.myFunc(&msg)
+}
+
+/*
+
+ */
+func testNoReturnGC() {
+	s := time.Now().Unix()
+	var wg sync.WaitGroup
+	go func() {
+		log.Printf("C.NoReturn enter")
+		x := C.NoReturn(C.int(s))
+		log.Printf("C.NoReturn return %d", int(x))
+	}()
+
+	go func() {
+		for {
+			runtime.GC()
+			time.Sleep(time.Second)
+		}
+	}()
+	wg.Add(1)
+	wg.Wait()
+}
+
+func testCgoCost() {
+	var res int64
+	t0 := time.Now()
+	for i := 0; i < 1000000; i++ {
+		ret := C.Add(C.int(i))
+		res += int64(ret)
+	}
+	cost := time.Now().Sub(t0)
+	log.Println(cost, res)
+}
+
 func testCgo() {
-	testStruct()
+	testNoReturnGC()
 	return
 	testFloatAA()
 	return

@@ -18,7 +18,7 @@ util.LogInfof("check_point_feature: %s score %d %v %v", reqID, id, score[i], ret
 */
 
 type dnnData struct {
-	input []float32
+	embed []float32
 	score float32
 	req   string
 	doc   string
@@ -30,8 +30,8 @@ type logData struct {
 	Message string
 }
 
-func parseLogMsg(msg string) (data dnnData, ok bool) {
-	// check_point_score: 1587091280694216153983 40566546 0.0038456554 [3.0879004 1.0358167]
+func parseScoreLog(msg string) (data cpData, ok bool) {
+	// check_point_feature: 1587091280694216153983 score 40566546 0.0038456554 [3.0879004 1.0358167]
 	// check_point_score: 111111111 2367092 0.001332 [0.03977116,0.0076476964]
 	if !strings.Contains(msg, "check_point_score: ") {
 		return
@@ -42,28 +42,40 @@ func parseLogMsg(msg string) (data dnnData, ok bool) {
 		log.Printf("msg len error %d %v", len(seps), sepCount)
 		return
 	}
-	data.req = seps[1]
-	data.doc = seps[2]
+	var err error
+	data.Rid = seps[1]
+	data.Iid, err = strconv.ParseInt(seps[2], 10, 64)
+	if err != nil {
+		log.Printf("parse iid %s error %v", seps[2], err)
+		return
+	}
 	score, err := strconv.ParseFloat(seps[3], 64)
 	if err != nil {
 		log.Printf("parse score %s error %v", seps[3], err)
+		return
 	}
-	data.score = float32(score)
-	err = json.Unmarshal([]byte(seps[4]), &data.input)
-	if err != nil {
-		log.Printf("parse embeding %s error %v", seps[4], err)
-	}
+	data.Score = float32(score)
+
+	//err = json.Unmarshal([]byte(seps[4]), &data.Embed)
+	//if err!=nil{
+	//	log.Printf("parse embedding %s error %v", seps[4], err)
+	//}
+
 	ok = true
 	return
 }
 
-func loadDnnData(path string) (data map[string]dnnData) {
+func appendZeroLog(path string, data map[string]map[int64]*cpData) {
+	if data == nil {
+		log.Println("invalid nil data")
+		return
+	}
 	file, err := os.Open(path)
 	if err != nil {
 		log.Printf("open %s error %v", path, err)
 		return
 	}
-	data = make(map[string]dnnData)
+	//data = make(map[string]map[int64]cpData)
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		buf := scanner.Bytes()
@@ -78,9 +90,13 @@ func loadDnnData(path string) (data map[string]dnnData) {
 		}
 		//log.Printf("%v %v", oneLog.Level, oneLog.Time)
 		msg := oneLog.Message
-		d, ok := parseLogMsg(msg)
+		d, ok := parseScoreLog(msg)
 		if ok {
-			data[d.req+"_"+d.doc] = d
+			if _, ok := data[d.Rid]; ok {
+				data[d.Rid][d.Iid].Score = d.Score
+			} else {
+				log.Printf("score not found %s %d", d.Rid, d.Iid)
+			}
 		}
 	}
 	return

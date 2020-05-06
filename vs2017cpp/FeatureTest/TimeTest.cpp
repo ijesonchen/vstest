@@ -24,6 +24,8 @@ std::get_time: template< class CharT >
 
 #include <ctime>
 
+void TimeTest(void);
+
 using namespace std;
 
 void TimeTest(void)
