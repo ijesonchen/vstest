@@ -1,0 +1,31 @@
+I0505 14:51:36.081017  7634 thread_pool.hpp:101] mgr 1804289383 thread 0 ENTER
+I0505 14:51:36.081179  7635 thread_pool.hpp:101] mgr 1804289383 thread 1 ENTER
+I0505 14:51:36.081224  7636 thread_pool.hpp:101] mgr 1804289383 thread 2 ENTER
+I0505 14:51:36.081321  7637 thread_pool.hpp:101] mgr 1804289383 thread 3 ENTER
+I0505 14:51:36.081457  7638 thread_pool.hpp:101] mgr 1804289383 thread 4 ENTER
+I0505 14:51:36.081472  7640 thread_pool.hpp:101] mgr 1804289383 thread 6 ENTER
+I0505 14:51:36.081524  7639 thread_pool.hpp:101] mgr 1804289383 thread 5 ENTER
+I0505 14:51:36.081570  7641 thread_pool.hpp:101] mgr 1804289383 thread 7 ENTER
+I0505 14:51:36.081629  7642 thread_pool.hpp:101] mgr 1804289383 thread 8 ENTER
+I0505 14:51:36.081698  7643 thread_pool.hpp:101] mgr 1804289383 thread 9 ENTER
+I0505 14:51:36.081737  7644 thread_pool.hpp:101] mgr 1804289383 thread 10 ENTER
+I0505 14:51:36.081800  7645 thread_pool.hpp:101] mgr 1804289383 thread 11 ENTER
+I0505 14:51:36.081902  7647 thread_pool.hpp:101] mgr 1804289383 thread 13 ENTER
+I0505 14:51:36.081897  7646 thread_pool.hpp:101] mgr 1804289383 thread 12 ENTER
+I0505 14:51:36.081992  7648 thread_pool.hpp:101] mgr 1804289383 thread 14 ENTER
+I0505 14:51:36.082015  7649 thread_pool.hpp:101] mgr 1804289383 thread 15 ENTER
+I0505 14:51:36.082087  7650 thread_pool.hpp:101] mgr 1804289383 thread 16 ENTER
+I0505 14:51:36.082170  7651 thread_pool.hpp:101] mgr 1804289383 thread 17 ENTER
+I0505 14:51:36.082185  7652 thread_pool.hpp:101] mgr 1804289383 thread 18 ENTER
+I0505 14:51:36.082264  7485 model_serve.cpp:275] init thread pool size 19
+I0505 14:51:36.082305  7485 model_serve.cpp:422] __debug load_dnn_model new 0x7f5c84004d60
+E0505 14:51:36.082322  7644 model_serve.cpp:152] __debug 1804289383 thread 10 DebugTask ENTER
+E0505 14:51:36.191020  7677 thread_pool.hpp:23] __debug WaitGroup 1428285414 add 50
+E0505 14:51:36.197096  7677 thread_pool.hpp:35] __debug WaitGroup 1428285414 wait 0
+E0505 14:51:36.203476  7647 thread_pool.hpp:29] __debug WaitGroup 1428285414 notify 0
+E0505 14:51:36.238060  7675 thread_pool.hpp:23] __debug WaitGroup 15826729 add 500
+E0505 14:51:36.261932  7646 thread_pool.hpp:29] __debug WaitGroup 15826729 notify 0
+E0505 14:51:36.262182  7675 thread_pool.hpp:35] __debug WaitGroup 15826729 wait 0
+I0505 14:57:01.676075  7670 thread_pool.hpp:76] __debug busy thread manager 1804289383 left 0
+I0505 14:57:01.776197  7670 thread_pool.hpp:76] __debug busy thread manager 1804289383 left 0
+I0505 14:57:01.876308  7670 thread_pool.hpp:80] __debug TERM thread manager 1804289383

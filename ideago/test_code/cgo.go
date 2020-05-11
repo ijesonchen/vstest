@@ -50,6 +50,9 @@ package main
 */
 
 /*
+#cgo CXXFLAGS: -std=c++11
+#cgo LDFLAGS:  -lstdc++ -lm -lpthread
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -204,6 +207,10 @@ int NoReturn(int s){
 	}
 	return x % 1000;
 }
+
+void* AllocMem(void);
+void FillMem(void*p, char n);
+void FreeMem(void*);
 */
 import "C"
 
@@ -386,9 +393,33 @@ func testCgoCost() {
 	log.Println(cost, res)
 }
 
+func testMemRelease() {
+	log.Printf("sleep...")
+	time.Sleep(time.Second * 3)
+	var pp []unsafe.Pointer
+	var i int8
+	for {
+		i++
+		p := C.AllocMem()
+		log.Printf("AllocMem %x", unsafe.Pointer(p))
+		C.FillMem(p, C.char(i))
+		pp = append(pp, p)
+		time.Sleep(time.Second * 3)
+		if len(pp) > 5 {
+			for _, p := range pp {
+				C.FreeMem(p)
+				log.Printf("FreeMem %x", p)
+			}
+			pp = make([]unsafe.Pointer, 0)
+			time.Sleep(time.Second * 3)
+		}
+	}
+}
+
 func testCgo() {
-	testNoReturnGC()
+	testMemRelease()
 	return
+	testNoReturnGC()
 	testFloatAA()
 	return
 	testCgoCLength()

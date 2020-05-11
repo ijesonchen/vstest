@@ -9,6 +9,11 @@ import (
 	"reflect"
 )
 
+/*
+{"id":[242819869104918869,29531891818007427,...],
+"len":[1,1,1,1,...], "r_id":111111111, "iid":3803341, "score":0.00067748927},
+*/
+
 type cpOneline struct {
 	Id    []uint64    `json:"id"`
 	Len   []int       `json:"len"`
@@ -19,6 +24,7 @@ type cpOneline struct {
 
 func main() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags)
+	log.Println("comp checkpoint.txt and checkpoint1.txt and show diff")
 	hashMap1 := getCpStruct("./checkpoint.txt")
 	//hashMap2 := getCpStructV2("./checkpoint1.txt")
 	hashMap2 := getCpStruct("./checkpoint1.txt")
