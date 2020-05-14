@@ -15,11 +15,11 @@ import (
 */
 
 type cpOneline struct {
-	Id    []uint64    `json:"id"`
-	Len   []int       `json:"len"`
-	Rid   json.Number `json:"r_id"`
-	Iid   int64       `json:"iid"`
-	Score float32     `json:"score"`
+	Id    []uint64 `json:"id"`
+	Len   []int    `json:"len"`
+	Rid   string   `json:"r_id"`
+	Iid   int64    `json:"iid"`
+	Score float32  `json:"score"`
 }
 
 func main() {
@@ -124,7 +124,7 @@ func getCpStruct(path string) map[string]map[int64]idInfo {
 		jsonDec.UseNumber()
 		if err := jsonDec.Decode(&a); err == nil {
 			// if err := json.Unmarshal(data[:len(data)-1], &a); err == nil {
-			rid := a.Rid.String()
+			rid := a.Rid
 			if _, ok := hashMap[rid]; !ok {
 				hashMap[rid] = make(map[int64]idInfo)
 			}
@@ -157,7 +157,7 @@ func getCpStructV2(path string) (hashMap map[string]map[int64]idInfo) {
 			data = data[n+cplen:]
 			var a cpOneline
 			if err := json.Unmarshal(data, &a); err == nil {
-				rid := a.Rid.String()
+				rid := a.Rid
 				if _, ok := hashMap[rid]; !ok {
 					hashMap[rid] = make(map[int64]idInfo)
 				}
