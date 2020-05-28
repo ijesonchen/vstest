@@ -34,9 +34,24 @@ void ReleaseObject(ObjectInfo* p){
     printf("enter ReleaseObject %d\n", p->x);
     sleep(1);
     printf("awake ReleaseObject %d\n", p->x);
+    auto x = p->x;
     delete  p;
-    printf("leave ReleaseObject %d\n", p->x);
+    printf("leave ReleaseObject %d\n", x);
 }
+
+
+char* AllocChar(int n){
+    if (n<=0) { n = 1;}
+    auto p = new char[n];
+    printf("AllocChar %d %p\n", n, p);
+    return p;
+}
+
+void  FreeChar(char* p){
+    printf("FreeChar %p\n", p);
+    delete p;
+}
+
 
 struct AllocHolder{
     int siz;

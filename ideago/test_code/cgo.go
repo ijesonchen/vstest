@@ -47,6 +47,19 @@ package main
 10. cgo调用不会阻塞gc。（go1.13.4/1.14.2)
 	C.NoReturn循环随机数，随机输出日志（表明存活）
     testNoReturnGC启动两个线程，一个阻塞在C.NoReturn，一个每秒强制gc。观察gc输出不受影响（包括STW时间也很短）
+11. 链接动态库或静态库 https://blog.csdn.net/u011411069/java/article/details/96159840
+
+// 支持C++11
+#cgo CXXFLAGS: -std=c++11
+//包含header的目录
+#cgo CFLAGS: -I/home/leen/header
+//-L指定所在目录,支持绝对、相对路径，-l指定类库名称(去掉前面的lib及后面的.so,如libUsbKey.so为-lUsbKey)
+//静态库方式（后缀名为.a）,编译时库内容会内嵌在最终程序中，执行环境不在需要依赖库(.a)
+#cgo LDFLAGS: -L/home/leen/lib -lUsbKey -lRockey6SmartPlus
+//动态库方式(后缀名为.so)，编译时只做链接，不包含在程序中，执行环境lib目录下需要包含同样的依赖库(.so)
+#cgo LDFLAGS: -L./ -lUsbKey -lRockey6SmartPlus -Wl,-rpath=./
+
+
 */
 
 /*

@@ -17,6 +17,9 @@ runtime.SetFinalizer需要和runtime.KeepAlive配合使用，避免提前gc
 SetFinalizer注册的函数阻塞不会导致gc阻塞
 （go 1.14 释放是C函数中sleep 1秒，但是gc耗时和pace看起来正常。）
 
+runtime.SetFinalizer处理的需要是go对象。所以C对象需要一个holder。直接传C对象会导致panic
+fatal error: runtime.SetFinalizer: pointer not in allocated block
+
 用途：可以通过gc来管理资源（如cgo打开的文件句柄，创建的内存对象等）
 原理：将需要管理的资源放在某个go对象中，当该对象不可达（一般指针方式使用），可以触发SetFinalizer，从而回收资源。
 
@@ -49,6 +52,9 @@ model dtor <<<< 1											// 提前释放1
 	typedef struct ObjectInfo ObjectInfo;
     ObjectInfo* LoadObject(int x);
     void ReleaseObject(ObjectInfo* p);
+
+    char* AllocChar(int n);
+    void  FreeChar(char* p);
 */
 import "C"
 
@@ -128,4 +134,64 @@ func testFinalizer() {
 	startProc(25)
 	time.Sleep(time.Second * 5)
 	log.Println("LEAVE testFinalizer")
+}
+
+var globalObject atomic.Value
+
+func startObjLoader2(ms float32) {
+	go func() {
+		i := 0
+		for {
+			cobj := &CObject{
+				c:  C.LoadObject(C.int(i)),
+				id: i,
+			}
+			runtime.SetFinalizer(cobj, func(p *CObject) {
+				C.ReleaseObject(p.c)
+
+				log.Printf("object offload <=== %d", p.id)
+			})
+			globalObject.Store(cobj)
+			log.Printf("object loaded  ===> %d", i)
+			i++
+			time.Sleep(time.Millisecond * time.Duration(ms+rand.Float32()*ms))
+		}
+	}()
+}
+
+// 50-150 ms proc. avg 100ms
+func proc2(p interface{}) {
+	data := p.(*CObject)
+	log.Printf("data proc ENTER %d", data.id)
+	time.Sleep(time.Millisecond * time.Duration(50+rand.Float32()*100))
+	log.Printf("data proc LEAVE %d", data.id)
+	runtime.KeepAlive(p)
+}
+
+func startProc2(ms float32) {
+	go func() {
+		for {
+			time.Sleep(time.Millisecond * time.Duration(ms))
+			proc2(globalObject.Load())
+		}
+	}()
+}
+
+func testFinalizer2() {
+	testCRes()
+	rand.Seed(time.Now().UnixNano())
+
+	// force gc
+	go func() {
+		for {
+			runtime.GC()
+			time.Sleep(time.Millisecond * 10)
+		}
+	}()
+
+	// start
+	startObjLoader2(400)
+	startProc2(25)
+	time.Sleep(time.Second * 5)
+	log.Println("LEAVE testFinalizer2")
 }

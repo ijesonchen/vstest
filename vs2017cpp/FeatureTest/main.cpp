@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <cstring> 
 #include <sstream>
+#include <vector>
 #include "main.h"
 #ifdef _WIN32
 	#ifdef _DEBUG
@@ -23,9 +24,27 @@ struct TTT {
 };
  
 
+vector<int> getProbs(int nlist) {
+    vector<int> v;
+    for (int i = 1; i < nlist && i < 5; i++) {
+        v.push_back(i);
+    }
+    for (int i = 5; i < nlist && i < 20; i += 5) {
+        v.push_back(i);
+    }
+    for (int i = 20; i < nlist&&i<100; i += 10) {
+        v.push_back(i);
+    }
+    for (int i = 100; i < nlist; i += 50) {
+        v.push_back(i);
+    }
+    return std::move(v);
+}
 
-int main(void) {  
-	ThreadTest();
+int main(void) { 
+    auto v = getProbs(3);
+    v = getProbs(30);
+    v = getProbs(300);
  	auto p = new char; // for memory leak detect
  	cout << "enter to continue" << endl;
 	string s;
