@@ -26,5 +26,5 @@ func main() {
 		log.Println(http.ListenAndServe("localhost:9999", nil))
 	}()
 
-	testFinalizer2()
+	testNorm()
 }

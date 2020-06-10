@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"math"
+	"os"
 
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
@@ -25,5 +26,11 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	log.Printf("version %v", tf.Version())
 
-	dssmPred()
+	target := "./"
+
+	if len(os.Args) == 2 {
+		target = os.Args[1]
+	}
+
+	bertPredV2(target)
 }

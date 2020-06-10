@@ -91,3 +91,44 @@ func loadModel(modPath string) (*tfmodle, error) {
 
 	return &tfmodle{Mod: model, InputName: input, OutputName: output}, nil
 }
+
+func loadModelV2(modPath string) (model *tf.SavedModel, err error) {
+	model, err = tf.LoadSavedModel(modPath, []string{"serve"}, nil) // 需要tag
+	if err != nil {
+		return nil, err
+	}
+	return
+}
+
+func debugLoadModInfo(modPath string) {
+	log.Println("tf version: ", tf.Version())
+
+	modInfo, err := loadModel(modPath)
+	if err != nil {
+		log.Printf("load modPath %s error %v", modPath, err)
+		return
+	}
+	fmt.Println()
+	fmt.Println()
+	_, _, allLayers := printModelV2(modInfo.Mod)
+	fmt.Println()
+	fmt.Println()
+	//layerNames := []string{
+	//	"tower_0_test/tower_0/user_nn_l2_norm",
+	//	"tower_0_test/tower_0/doc_nn_l2_norm",
+	//	"tower_0_test/tower_0/Mul",
+	//	"tower_0_test/tower_0/Sum",
+	//	"tower_0_test/tower_0/mul_1",
+	//	"tower_0_test/tower_0/Reshape_12",
+	//	"tower_0_test/tower_0/softmax/Softmax",
+	//}
+	var layerNames []string
+	for _, l := range allLayers {
+		if l != modInfo.InputName {
+			layerNames = append(layerNames, l)
+		}
+	}
+	shapes := getModelShape(modInfo.Mod, layerNames)
+
+	log.Printf("shapes %v", shapes)
+}
